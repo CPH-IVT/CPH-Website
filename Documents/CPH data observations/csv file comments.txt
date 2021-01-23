@@ -1,0 +1,15 @@
+A readme needs to be created that documents the contents of the various CSVs.
+
+CensusDivisions.csv, CensusRegions.csv
+-.  Why do some regions share region codes?  e.g., Mountain and Pacific?
+-.  Do these codes relate at all to the States divisions?
+
+Counties.csv, Counties-org.csv
+-.  Why two separate files?
+-.  Why is Counties.csv apparently incomplete?
+
+States.csv
+-.  I assume these are ISO state codes.  A reference to a source seems important.
+-.  what are the FIPS codes?  Also, why are codes missing?
+    specifically, 3, 7, 14, 43, 52, 57-59, 61-65, 67, 68, 70, 71, 73, 75-77
+-.  what are the divisions?   I can guess - but, again, this is undocumented.

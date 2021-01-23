@@ -1,0 +1,30 @@
+﻿@model ICollection<CPH_IVT.Models.CensusRegion>
+@using CPH_IVT.Models
+
+@{
+    ViewData["Title"] = "Select a Region";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Region Name
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-route-id="@item.Number" asp-action="indicators">@Html.DisplayFor(modelItem => item.Name)</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
