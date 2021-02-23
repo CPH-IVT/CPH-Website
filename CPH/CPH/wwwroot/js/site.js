@@ -126,7 +126,7 @@ function initMap() {
                         marker = new google.maps.Marker({
                             position: cord,
                             map: map,
-                            title: "Popup Title, Heeeeyyyy!"
+                            title: `${event.feature.j.NAME}`
                         });
 
                         addMarker(marker);
@@ -175,9 +175,6 @@ function getStateCounties(state) {
     });
     map.data.setStyle((feature) => {
         var testing = feature.getProperty("NAME");
-
-
-
     });
 }
 
