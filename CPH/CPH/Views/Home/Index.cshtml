@@ -7,35 +7,9 @@
 
 
 @section scripts{ 
-    <script type="text/javascript">
-        d3.csv('csv/analytic_data2010.csv').then(function (data) {
-
-            var col1 = data.map(function (d) { return d['Teen births raw value'] });
-            console.log(d3.sum(col1));
-
-            var test = [];
-            var length = data.length;
-
-            for (var a = 0; a < length; a++) {
-
-                // Getting all of the counties that aree washington
-                if (data[a]['Name'].includes('Washington')) {
-                    test.push(data[a]);
-                }
-            }
-
-
-
-            console.log(test);
-            console.log(data[3001]);
-
-            for (var i = 0; i < 10; i++) {
-                console.log(data);
-
-
-               // console.log(data);
-            }
-            console.log(data.columns);
-        });
-    </script>
+    <script type="text/javascript" src="~/js/charts.js"></script>
+    @*<script type="text/javascript" src="~/js/map.js"></script>*@
+<script type="text/javascript">
+    StartMap();
+</script>
 }

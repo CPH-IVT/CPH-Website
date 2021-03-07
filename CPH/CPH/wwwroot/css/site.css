@@ -78,3 +78,29 @@ body {
     position: absolute;
 }
 
+/* D3 Map Css*/
+
+.marker {
+    fill: #31558d;
+    stroke: #31558d;
+    fill-opacity: .75;
+    transition: all .2s ease-in-out;
+}
+
+.marker:hover {
+
+    fill: #8d3155;
+    fill-opacity: 1;
+    cursor: pointer;
+
+}
+
+.county-boundary {
+    fill: #aaa;
+    stroke: #fff;
+    stroke-width: .5px;
+}
+
+    .county-boundary:hover, .state:hover {
+        fill: orange;
+    }

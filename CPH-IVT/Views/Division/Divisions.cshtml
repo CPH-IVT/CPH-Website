@@ -1,0 +1,28 @@
+﻿@model IEnumerable<CPH_IVT.Models.CensusDivision>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Select a Division</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-route-id="@item.Number" asp-action="Indicators">@Html.DisplayFor(modelItem => item.Name)</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
