@@ -101,6 +101,10 @@ body {
     stroke-width: .5px;
 }
 
-    .county-boundary:hover, .state:hover {
-        fill: orange;
-    }
+.county-boundary:hover, .state:hover {
+    fill: orange;
+}
+
+.county-clicked {
+    fill: orange;
+}

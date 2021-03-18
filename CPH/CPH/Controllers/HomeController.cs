@@ -1,4 +1,5 @@
 ﻿using CPH.Models;
+using CPH.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,14 +13,27 @@ namespace CPH.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ICSV _csv;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ICSV csv)
         {
             _logger = logger;
+            _csv = csv;
         }
 
         public IActionResult Index()
         {
+            return View();
+        }
+
+        public IActionResult Chart()
+        {
+            var getCSVInfo = _csv.ReadAll();
+
+            if(getCSVInfo != null)
+            {
+                return View(getCSVInfo);
+            }
             return View();
         }
 
@@ -33,5 +47,7 @@ namespace CPH.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+       
     }
 }
