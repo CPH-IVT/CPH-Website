@@ -13,12 +13,12 @@ namespace CPH.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ICSV _csv;
+       
 
-        public HomeController(ILogger<HomeController> logger, ICSV csv)
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            _csv = csv;
+         
         }
 
         public IActionResult Index()
@@ -28,12 +28,6 @@ namespace CPH.Controllers
 
         public IActionResult Chart()
         {
-            var getCSVInfo = _csv.ReadAll();
-
-            if(getCSVInfo != null)
-            {
-                return View(getCSVInfo);
-            }
             return View();
         }
 

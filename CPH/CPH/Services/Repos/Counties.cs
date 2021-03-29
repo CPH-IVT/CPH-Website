@@ -1,33 +1,34 @@
-﻿using System;
+﻿using CPH.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CPH.Services
+namespace CPH.Services.Repos
 {
-    public class CSV : ICSV
+    public class Counties : ICounties
     {
-        public CSV Create(CSV csv)
+        public Models.Counties Create(Models.Counties counties)
         {
             throw new NotImplementedException();
         }
 
-        public CSV Delete(CSV csv)
+        public void Delete(Models.Counties counties)
         {
             throw new NotImplementedException();
         }
 
-        public CSV Read(int id)
+        public Models.Counties Read(int id)
         {
             throw new NotImplementedException();
         }
 
-        public ICollection<CSV> ReadAll()
+        public ICollection<Models.Counties> ReadAll()
         {
             throw new NotImplementedException();
         }
 
-        public CSV Update(CSV csv)
+        public Models.Counties Update(Models.Counties counties)
         {
             throw new NotImplementedException();
         }

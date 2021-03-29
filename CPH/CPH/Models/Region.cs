@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace CPH.Models
 {
-    public class SaveCharts
+    public class Region
     {
-        public IDictionary<string, string> CountyState { get; set; }
-
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
-
