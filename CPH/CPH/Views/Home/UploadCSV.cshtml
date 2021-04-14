@@ -1,0 +1,120 @@
+﻿@model CPH.Models.ViewModels.UploadCSVModel
+
+@{
+    ViewData["Title"] = "UploadCSV";
+}
+
+<h1>UploadCSV</h1>
+
+<h4>UploadCSVModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="upload-form" asp-action="UploadCSV" method="POST"  enctype="multipart/form-data" runat="server">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input hidden value="@User.Identity" asp-for="UserIdentity" class="form-control" />
+                <span asp-validation-for="UserIdentity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input hidden value="@DateTime.Now" asp-for="UploadeDate" class="form-control" />
+                <span asp-validation-for="UploadeDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="File" class="control-label"></label>
+                <input id="file-upload" type="file" asp-for="File" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls"/>
+                <span asp-validation-for="File" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Upload" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        const fileSelector = document.getElementById('file-upload');
+        fileSelector.addEventListener('change', (event) => {
+            const fileList = event.target.files;
+            console.log(fileList);
+        })
+
+        function readSingleFile(e) {
+            var file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            var reader = new FileReader();
+
+            reader.onload = function (a) {
+                var contents = a.target.result;
+               // console.log(contents);
+                var rows = contents.split("\r");
+                //console.log("Split");
+                console.log(rows);
+               
+
+                rows.splice(1, 1);
+                
+
+                var year = rows[2].split(",")[5];
+
+                
+
+                console.log("Year");
+                console.log(year);
+
+                let csvData = new Blob([rows], { type: 'text/csv' });
+                console.log(csvData);
+
+
+
+                var file = new File([csvData], `${year}.csv`, { type: "text/csv", lastModified: new Date().getTime() });
+
+                //console.log("File");
+                //console.log(file);
+
+                var container = new DataTransfer();
+                container.items.add(file);
+
+                var fileInputerElement = document.getElementById('file-upload');
+
+                fileInputerElement.files = container.files;
+
+                console.log(fileInputerElement.files[0]);
+
+                //let form = document.getElementById('upload-form');
+
+                //var formData = new FormData(form[0]);
+                //form = formData;
+                //document.getElementById('file-upload').nodeValue = csvData;
+                //console.log(document.getElementById('file-upload'));
+
+            };
+
+            reader.readAsBinaryString(file);
+
+            //let form = document.getElementById('upload-form');
+
+            //console.log(form);
+            
+
+            //var formData = new FormData(form);
+
+            //form = formData;
+
+            //console.log(formData);
+
+        }
+
+        document.getElementById('file-upload').addEventListener('change', readSingleFile, false);
+    </script>
+}

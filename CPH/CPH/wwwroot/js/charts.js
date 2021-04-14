@@ -16,22 +16,40 @@ var svg = d3.select("#my_dataviz")
 
 function csv() {
     d3.csv('csv/analytic_data2010.csv').then(function (data) {
+
         var col1 = data.map(function (d) { return d['Teen births raw value'] });
+
         console.log(d3.sum(col1));
+
+        console.log("Print data:")
+        console.log(data);
+        console.log([1, 2, 3].map(n => n * 10));
+
         var test = [];
         var length = data.length;
+
         for (var a = 0; a < length; a++) {
             // Getting all of the counties that aree washington
             if (data[a]['Name'].includes('Washington')) {
                 test.push(data[a]);
             }
         }
+        console.log("Print test: ");
         console.log(test);
+
+        console.log("Print data[3001]:")
         console.log(data[3001]);
+
         for (var i = 0; i < 10; i++) {
-            console.log(data);
+
             // console.log(data);
         }
+
+        console.log("Print data.columns:")
         console.log(data.columns);
     });
+}
+
+function getCSVDatapoints() {
+
 }

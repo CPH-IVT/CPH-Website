@@ -1,17 +1,72 @@
 ﻿
 @{
     ViewData["Title"] = "Chart";
+
+
+
+
+
 }
 
 <h1>Chart</h1>
 
 <div id="my_dataviz"></div>
 
+@* The files are named the year that they represent. *@
+<select id="Year" name="Year">
+    @foreach (var file in (string[])ViewData["Files"])
+    {
+        <option value="@file">@file</option>
+    }
+</select>
+
+
+
+
 @section scripts{
     <script type="text/javascript" src="~/js/charts.js"></script>
     @*<script type="text/javascript" src="~/js/map.js"></script>*@
     <script type="text/javascript">
 
+        function readYear(year) {
+            console.log(year.target.value);
 
+            d3.csv(`../uploads/${year.target.value}.csv`).then(function (data) {
+
+                var col1 = data.map(function (d) { return d['Teen births raw value'] });
+
+                console.log(d3.sum(col1));
+
+                console.log("Print data:")
+                console.log(data);
+  
+
+                var test = [];
+                var length = data.length;
+
+                for (var a = 0; a < length; a++) {
+                    // Getting all of the counties that aree washington
+                    if (data[a]['Name'].includes('Washington')) {
+                        test.push(data[a]);
+                    }
+                }
+                console.log("Print test: ");
+                console.log(test);
+
+                console.log("Print data[3001]:")
+                console.log(data[3001]);
+
+                for (var i = 0; i < 10; i++) {
+
+                    // console.log(data);
+                }
+
+                console.log("Print data.columns:")
+                console.log(data.columns);
+            });
+
+        }
+
+        document.getElementById('Year').addEventListener('change', readYear, false);
     </script>
 }
