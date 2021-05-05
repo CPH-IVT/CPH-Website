@@ -18,6 +18,16 @@ namespace CPH
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+            .ConfigureLogging(logging =>
+            {
+                logging.AddEventLog(eventLogSettings =>
+                {
+                    eventLogSettings.SourceName = "CPHLogs";
+                });
+
+                logging.SetMinimumLevel(LogLevel.Information);
+                
+            })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

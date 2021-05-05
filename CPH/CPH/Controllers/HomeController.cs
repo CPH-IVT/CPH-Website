@@ -22,7 +22,6 @@ namespace CPH.Controllers
         {
             _logger = logger;
             _hostEnv = hostEnv;
-         
         }
 
         public IActionResult Index()
@@ -64,7 +63,7 @@ namespace CPH.Controllers
                 {
                     var fileName = Path.GetFileName(file.FileName);
 
-                    //get the wwwroot path and append the guid dir
+                    //get the wwwroot path and append the dir
                     var filePath = _hostEnv.WebRootPath + "\\uploads\\";
 
                     //create the dir

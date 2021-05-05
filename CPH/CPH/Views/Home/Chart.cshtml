@@ -20,6 +20,10 @@
     }
 </select>
 
+<ul id="columns" class="overflow-auto">
+
+</ul>
+
 
 
 
@@ -32,6 +36,35 @@
             console.log(year.target.value);
 
             d3.csv(`../uploads/${year.target.value}.csv`).then(function (data) {
+                console.log(data.columns);
+
+                for (var i = 0; i < data.columns.length; i++) {
+
+                    //Get the columns div
+                    var columnDiv = document.getElementById("columns");
+
+                    //Create input node
+                    var node = document.createElement("input");
+
+                    node.type = "checkbox";
+                    node.value = data.columns[i];
+                    node.id = data.columns[i];
+
+                    //Label for the checkboxes
+                    var label = document.createElement('label');
+
+                    label.htmlFor = data.columns[i];
+
+                    // append the created text to the created label tag
+                    label.appendChild(document.createTextNode(`${data.columns[i]}`));
+
+                    // append the checkbox and label to div
+                    columnDiv.appendChild(node);
+                    columnDiv.appendChild(label);
+
+
+                }
+
 
                 var col1 = data.map(function (d) { return d['Teen births raw value'] });
 
@@ -53,7 +86,7 @@
                 console.log("Print test: ");
                 console.log(test);
 
-                console.log("Print data[3001]:")
+                console.log("Print data[3001]:");
                 console.log(data[3001]);
 
                 for (var i = 0; i < 10; i++) {
