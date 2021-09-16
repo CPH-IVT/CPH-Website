@@ -10,20 +10,28 @@
 
 <h1>Chart</h1>
 
-<div id="my_dataviz"></div>
+<div id="ChartArea"></div>
 
 @* The files are named the year that they represent. *@
 <select id="Year" name="Year">
+    <option value="SelectYear">Select a Year</option>
     @foreach (var file in (string[])ViewData["Files"])
     {
         <option value="@file">@file</option>
     }
 </select>
 
-<ul id="columns" class="overflow-auto">
 
-</ul>
-
+<div class="form-group">
+    <label for="columns">Health Attributes</label>
+    <ul style="list-style: none; height: 300px" id="columns" class="form-control overflow-auto col-5">
+    </ul>
+</div>
+<div class="form-group">
+    <label for="counties">Counties</label>
+    <ul style="list-style: none; height: 300px" id="counties" class="form-control overflow-auto col-5">
+    </ul>
+</div>
 
 
 
@@ -31,75 +39,188 @@
     <script type="text/javascript" src="~/js/charts.js"></script>
     @*<script type="text/javascript" src="~/js/map.js"></script>*@
     <script type="text/javascript">
+        var dataHolder = [];
+        var maxValue = 0;
+        var minValue = 0;
+        var domainInput = [];
+
+        //yAxis();
+
 
         function readYear(year) {
             console.log(year.target.value);
 
+
+            //Get the columns div
+            var columnDiv = document.getElementById("columns");
+            var countiesDiv = document.getElementById("counties");
+
+            var check = checkIfNodeIsEmpty(columnDiv);
+            var checkCounties = checkIfNodeIsEmpty(countiesDiv);
+
+            if (checkCounties === false) {
+                removeAllChildNodes(countiesDiv);
+            }
+
+            if (check === false) {
+                removeAllChildNodes(columnDiv);
+            }
+
             d3.csv(`../uploads/${year.target.value}.csv`).then(function (data) {
-                console.log(data.columns);
-
-                for (var i = 0; i < data.columns.length; i++) {
-
-                    //Get the columns div
-                    var columnDiv = document.getElementById("columns");
-
-                    //Create input node
-                    var node = document.createElement("input");
-
-                    node.type = "checkbox";
-                    node.value = data.columns[i];
-                    node.id = data.columns[i];
-
-                    //Label for the checkboxes
-                    var label = document.createElement('label');
-
-                    label.htmlFor = data.columns[i];
-
-                    // append the created text to the created label tag
-                    label.appendChild(document.createTextNode(`${data.columns[i]}`));
-
-                    // append the checkbox and label to div
-                    columnDiv.appendChild(node);
-                    columnDiv.appendChild(label);
-
-
-                }
-
-
-                var col1 = data.map(function (d) { return d['Teen births raw value'] });
-
-                console.log(d3.sum(col1));
-
-                console.log("Print data:")
                 console.log(data);
-  
 
-                var test = [];
-                var length = data.length;
+                dataHolder = data;
 
-                for (var a = 0; a < length; a++) {
-                    // Getting all of the counties that aree washington
-                    if (data[a]['Name'].includes('Washington')) {
-                        test.push(data[a]);
-                    }
-                }
-                console.log("Print test: ");
-                console.log(test);
+                var counties = getCountyList(data);
 
-                console.log("Print data[3001]:");
-                console.log(data[3001]);
-
-                for (var i = 0; i < 10; i++) {
-
-                    // console.log(data);
-                }
-
-                console.log("Print data.columns:")
-                console.log(data.columns);
+                getTheColumnNamesAndAddToHTML(data, columnDiv);
+                addCountyNamesToHtml(counties);
             });
 
         }
 
-        document.getElementById('Year').addEventListener('change', readYear, false);
+        function addCountyNamesToHtml(counties) {
+
+            //Get the columns div
+            var countiesDiv = document.getElementById("counties");
+            for (var i = 0; i < counties.length; i++) {
+
+                //console.log(data[i].Name);
+
+                //Create list item for the input and label to be inserted into
+                var liNode = document.createElement("li");
+
+                //Create input node
+                var node = document.createElement("input");
+
+                node.type = "checkbox";
+                node.value = counties[i];
+                node.id = counties[i];
+
+                //Label for the checkboxes
+                var label = document.createElement('label');
+
+                label.htmlFor = counties[i];
+
+                // append the created text to the created label tag
+                label.appendChild(document.createTextNode(`${counties[i]}`));
+
+                // append the li to the ul div
+                countiesDiv.appendChild(liNode);
+
+                // append the checkbox and label to the li's
+                liNode.appendChild(node);
+                liNode.appendChild(label);
+
+
+            }
+
+        }
+
+        function getTheColumnNamesAndAddToHTML(data, columnDiv) {
+            for (var i = 0; i < data.columns.length; i++) {
+
+                //console.log(data[i].Name);
+
+                //Create list item for the input and label to be inserted into
+                var liNode = document.createElement("li");
+
+                //Create input node
+                var node = document.createElement("input");
+
+                node.type = "checkbox";
+                node.value = data.columns[i];
+                node.id = data.columns[i];
+
+                //Label for the checkboxes
+                var label = document.createElement('label');
+
+                label.htmlFor = data.columns[i];
+
+                // append the created text to the created label tag
+                label.appendChild(document.createTextNode(`${data.columns[i]}`));
+
+                // append the li to the ul div
+                columnDiv.appendChild(liNode);
+
+                // append the checkbox and label to the li's
+                liNode.appendChild(node);
+                liNode.appendChild(label);
+
+
+            }
+        }
+
+        function getCountyList(data) {
+            var listOfCounties = [];
+            for (var i = 0; i < data.length; i++) {
+                var countyWithState = `${data[i]["Name"]}, ${data[i]["State Abbreviation"]}`;
+                listOfCounties.push(countyWithState);
+            }
+
+            return listOfCounties;
+        }
+
+        function removeAllChildNodes(parent) {
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+        }
+
+        function checkIfNodeIsEmpty(node) {
+
+            if (node.childNodes.length > 0) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function readCheckbox(clickEvent) {
+            console.log(clickEvent);
+            console.log(clickEvent["target"].value);
+            if (clickEvent["target"].checked) {
+                var getColumn = dataHolder.map(function (d) { return d[clickEvent["target"].value] });
+
+                getColumn = getColumn.map(Number);
+
+                console.log(Math.max(...getColumn));
+                maxValue = Math.max(...getColumn);
+
+                console.log(Math.min(...getColumn));
+                minValue = Math.min(...getColumn);
+
+                console.log(getColumn.sort((a, b) => a - b));
+            } else {
+                console.log("Not Checked");
+            }
+        }
+
+        function readCountyCheckbox(event) {
+            console.log(dataHolder);
+            console.log(event["target"].value);
+            if (event["target"].checked) {
+                var countyAndState = parseCountyAndStateName(event["target"].value);
+                var length = dataHolder.length;
+                for (var i = 0; i < length; i++) {
+                    //if()
+                }
+                console.log(getColumn);
+            }
+        }
+
+        function parseCountyAndStateName(countyState) {
+            var split = countyState.split(",");
+
+            split[0] = split[0].trim();
+            split[1] = split[1].trim();
+
+            return split;
+        }
+
+       
+        document.getElementById('Year').addEventListener('change', readYear, false); 
+        document.getElementById('columns').addEventListener('click', readCheckbox, false);
+        document.getElementById('counties').addEventListener('click', readCountyCheckbox, false);
     </script>
 }

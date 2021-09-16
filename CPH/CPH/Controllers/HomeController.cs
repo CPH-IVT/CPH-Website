@@ -46,6 +46,11 @@ namespace CPH.Controllers
             return View();
         }
 
+        public IActionResult Regions()
+        {
+            return View();
+        }
+
         public IActionResult UploadCSV()
         {
             return View();
