@@ -10,6 +10,7 @@ namespace CPH.Models.ViewModels
     {
         public string UserIdentity { get; set; }
         public IFormFile File { get; set; }
+        public IFormFile OriginalFile { get; set; }
         public DateTime UploadeDate { get; set; }
 
     }

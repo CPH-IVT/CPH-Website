@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace CPH.Data.Migrations
+namespace CPH.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210329202908_chartFuncitonality")]
-    partial class chartFuncitonality
+    [Migration("20210921235338_FirstMig")]
+    partial class FirstMig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -196,6 +196,338 @@ namespace CPH.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("States");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Abbriviation = "AL",
+                            Name = "ALABAMA"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Abbriviation = "AK",
+                            Name = "ALASKA"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Abbriviation = "AZ",
+                            Name = "ARIZONA"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Abbriviation = "AR",
+                            Name = "ARKANSAS"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Abbriviation = "CA",
+                            Name = "CALIFORNIA"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Abbriviation = "CO",
+                            Name = "COLORADO"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Abbriviation = "CT",
+                            Name = "CONNECTICUT"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Abbriviation = "DE",
+                            Name = "DELAWARE"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Abbriviation = "FL",
+                            Name = "FLORIDA"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Abbriviation = "GA",
+                            Name = "GEORGIA"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Abbriviation = "HI",
+                            Name = "HAWAII"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Abbriviation = "ID",
+                            Name = "IDAHO"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Abbriviation = "IL",
+                            Name = "ILLINOIS"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Abbriviation = "IN",
+                            Name = "INDIANA"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Abbriviation = "IA",
+                            Name = "IOWA"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Abbriviation = "KS",
+                            Name = "KANSAS"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Abbriviation = "KY",
+                            Name = "KENTUCKY"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Abbriviation = "LA",
+                            Name = "LOUISIANA"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Abbriviation = "ME",
+                            Name = "MAINE"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Abbriviation = "MD",
+                            Name = "MARYLAND"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Abbriviation = "MA",
+                            Name = "MASSACHUSETTS"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Abbriviation = "MI",
+                            Name = "MICHIGAN"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Abbriviation = "MN",
+                            Name = "MINNESOTA"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Abbriviation = "MS",
+                            Name = "MISSISSIPPI"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Abbriviation = "MO",
+                            Name = "MISSOURI"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Abbriviation = "MT",
+                            Name = "MONTANA"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Abbriviation = "NE",
+                            Name = "NEBRASKA"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Abbriviation = "NV",
+                            Name = "NEVADA"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Abbriviation = "NH",
+                            Name = "NEW HAMPSHIRE"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Abbriviation = "NJ",
+                            Name = "NEW JERSEY"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Abbriviation = "NM",
+                            Name = "NEW MEXICO"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Abbriviation = "NY",
+                            Name = "NEW YORK"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Abbriviation = "NC",
+                            Name = "NORTH CAROLINA"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Abbriviation = "ND",
+                            Name = "NORTH DAKOTA"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Abbriviation = "OH",
+                            Name = "OHIO"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Abbriviation = "OK",
+                            Name = "OKLAHOMA"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Abbriviation = "OR",
+                            Name = "OREGON"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Abbriviation = "PA",
+                            Name = "PENNSYLVANIA"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Abbriviation = "RI",
+                            Name = "RHODE ISLAND"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Abbriviation = "SC",
+                            Name = "SOUTH CAROLINA"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Abbriviation = "SD",
+                            Name = "SOUTH DAKOTA"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Abbriviation = "TN",
+                            Name = "TENNESSEE"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Abbriviation = "TX",
+                            Name = "TEXAS"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Abbriviation = "UT",
+                            Name = "UTAH"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Abbriviation = "VT",
+                            Name = "VERMONT"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Abbriviation = "VA",
+                            Name = "VIRGINIA"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            Abbriviation = "WA",
+                            Name = "WASHINGTON"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Abbriviation = "WV",
+                            Name = "WEST VIRGINIA"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            Abbriviation = "WI",
+                            Name = "WISCONSIN"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            Abbriviation = "WY",
+                            Name = "WYOMING"
+                        },
+                        new
+                        {
+                            Id = 60,
+                            Abbriviation = "AS",
+                            Name = "AMERICAN SAMOA"
+                        },
+                        new
+                        {
+                            Id = 66,
+                            Abbriviation = "GU",
+                            Name = "GUAM"
+                        },
+                        new
+                        {
+                            Id = 69,
+                            Abbriviation = "MP",
+                            Name = "NORTHERN MARIANA ISLANDS"
+                        },
+                        new
+                        {
+                            Id = 72,
+                            Abbriviation = "PR",
+                            Name = "PUERTO RICO"
+                        },
+                        new
+                        {
+                            Id = 78,
+                            Abbriviation = "VI",
+                            Name = "VIRGIN ISLANDS"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -18,6 +18,9 @@ namespace CPH.Data
         {
             base.OnModelCreating(builder);
 
+            // Seed db with admin user
+
+
             // Seed db with state information
             builder.Entity<States>().HasData(
                 new States
