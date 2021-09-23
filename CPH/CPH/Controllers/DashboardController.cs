@@ -48,19 +48,25 @@ namespace CPH.Controllers
             if (ModelState.IsValid)
             {
                 var file = form.File;
+                var originalFile = form.OriginalFile;
 
                 if (file != null && file.Length > 0)
                 {
                     var fileName = Path.GetFileName(file.FileName);
+                    var originalFileName = Path.GetFileName(originalFile.FileName);
 
                     //get the wwwroot path and append the dir
                     var filePath = _hostEnv.WebRootPath + "\\uploads\\";
 
+                    var originalCsvFiles = _hostEnv.WebRootPath + @"\uploads\original\";
+
                     //create the dir
                     Directory.CreateDirectory(filePath);
+                    Directory.CreateDirectory(originalCsvFiles);
 
                     //create the path for the uploaded file
                     var path = Path.Combine(filePath, fileName);
+                    var pathToOriginal = Path.Combine(originalCsvFiles, originalFileName);
 
                     //copy the uploaded file to the dir
                     using (var stream = System.IO.File.Create(path))
@@ -68,10 +74,18 @@ namespace CPH.Controllers
                         await file.CopyToAsync(stream);
                     }
 
+                    using (var streamForOriginal = System.IO.File.Create(pathToOriginal))
+                    {
+                        await originalFile.CopyToAsync(streamForOriginal);
+                        var test = streamForOriginal.GetHashCode();
+                    }
                 }
             }
+
             return View();
         }
+
+
 
     }
 }
