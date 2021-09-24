@@ -5,9 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
 
 namespace CPH.Controllers
 {
@@ -47,8 +50,12 @@ namespace CPH.Controllers
         {
             if (ModelState.IsValid)
             {
+                var hashCodes = GetCsvHashCodes();
+
                 var file = form.File;
                 var originalFile = form.OriginalFile;
+
+                var testHash = GetFileHash(originalFile);
 
                 if (file != null && file.Length > 0)
                 {
@@ -85,7 +92,41 @@ namespace CPH.Controllers
             return View();
         }
 
+        private int GetFileHash(IFormFile file)
+        {
+            byte[] hash;
+            using ( var stream = file.OpenReadStream())
+            {
+                hash = MD5.Create().ComputeHash(stream);
+                
+            }
 
+            return BitConverter.ToInt32(hash);
+        }
+
+        private List<int> GetCsvHashCodes()
+        {
+            var originalCsvFilesPath = _hostEnv.WebRootPath + @"\uploads\original\";
+
+            var files = Directory.GetFiles(originalCsvFilesPath);
+
+            List<int> hashCodes = new List<int>();
+
+            if (files != null)
+            {
+                foreach(var file in files)
+                {
+                    using(FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        var hash = MD5.Create().ComputeHash(stream);
+                        hashCodes.Add(BitConverter.ToInt32(hash));
+
+                        
+                    }
+                }
+            }
+            return hashCodes;
+        }
 
     }
 }

@@ -1,0 +1,124 @@
+﻿@model CPH.Models.ViewModels.UploadCSVModel
+
+@{
+    ViewData["Title"] = "UploadCSV";
+}
+
+<h1>UploadCSV</h1>
+
+<h4>UploadCSVModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="upload-form" asp-action="UploadCSV" method="POST" enctype="multipart/form-data" runat="server">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input hidden value="@User.Identity" asp-for="UserIdentity" class="form-control" />
+                <span asp-validation-for="UserIdentity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input hidden value="@DateTime.Now" asp-for="UploadeDate" class="form-control" />
+                <span asp-validation-for="UploadeDate" class="text-danger"></span>
+            </div>
+            <input id="original-file-upload" type="file" asp-for="OriginalFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" hidden />
+            <div class="form-group">
+                <label asp-for="File" class="control-label"></label>
+                <input id="file-upload" type="file" asp-for="File" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" />
+                <span asp-validation-for="File" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Upload" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        const fileSelector = document.getElementById('file-upload');
+        fileSelector.addEventListener('change', (event) => {
+            const fileList = event.target.files;
+            console.log(fileList);
+        })
+
+        function readSingleFile(e) {
+
+            // check if a file has been uploaded
+            var file = e.target.files[0];
+
+            // if the file has not been uploaded, cancel the method
+            if (!file) {
+                return;
+            }
+
+
+            var reader = new FileReader();
+
+            reader.onload = function (a) {
+
+                // get the csv file that was uploaded
+                var contents = a.target.result;
+
+                // split the csv on \r rows
+                var rows = contents.split("\r");
+
+
+
+
+                // Remove the second row of the CSV
+                rows.splice(1, 1);
+
+                var year = rows[2].split(",")[5];
+
+                console.log("Year");
+                console.log(year);
+
+
+                // ORIGINAL CSV
+                let originalCsvData = new Blob([rows], { type: 'text/csv' });
+
+
+                var originalFile = new File([originalCsvData], `CHR-${year}.csv`, { type: "text/csv", lastModified: new Date().getTime() });
+
+                var containerOriginal = new DataTransfer();
+                containerOriginal.items.add(originalFile);
+
+                // get the original input element for the CSV
+                var originalCSVInput = document.getElementById("original-file-upload");
+
+                originalCSVInput.files = containerOriginal.files;
+                // end ORIGINAL CSV
+
+
+                let csvData = new Blob([rows], { type: 'text/csv' });
+                console.log(csvData);
+
+                var file = new File([csvData], `${year}.csv`, { type: "text/csv", lastModified: new Date().getTime() });
+
+                var container = new DataTransfer();
+                container.items.add(file);
+
+                // get the input element to set the new CSV file object to
+                var fileInputerElement = document.getElementById('file-upload');
+
+                // set the new CSV file to the input element
+                fileInputerElement.files = container.files;
+
+                console.log(fileInputerElement.files[0]);
+
+            };
+
+            reader.readAsBinaryString(file);
+            reader.readAsBinaryString(originalFile);
+
+        }
+
+        document.getElementById('file-upload').addEventListener('change', readSingleFile, false);
+    </script>
+}

@@ -4,14 +4,16 @@ using CPH.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CPH.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210923200649_SeedUsersWithPass")]
+    partial class SeedUsersWithPass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -779,16 +781,16 @@ namespace CPH.Migrations
                         {
                             Id = "9ba79920-3bac-4420-ba4d-4b0c9ddf6ef8",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "23323371-d725-483b-b38a-65b0b451ad2b",
+                            ConcurrencyStamp = "98d58fae-c1be-4da1-a05f-a1df67d0fa69",
                             Email = "trimmj@etsu.edu",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "TRIMMJ@ETSU.EDU",
                             NormalizedUserName = "TRIMMJ@ETSU.EDU",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAOWHbURECwG1oniTXRJRRlnctMnu2oM2j7Mx9om9wXwqMXQhQLaGJR6BXSyqRjGkw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAgIQJJ075zSCI64ukEkvtspFPVvC7DW3v28PJJQ7qHs2D6xo1U5EVQ7x+XfGMRJ5g==",
                             PhoneNumber = "4233415125",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2533b70b-7c8f-469b-8935-7a448b88c360",
+                            SecurityStamp = "551f96d6-1c1f-44bb-84ac-5f4f0718a0e7",
                             TwoFactorEnabled = false,
                             UserName = "trimmj@etsu.edu",
                             FirstName = "Joshua",
@@ -798,16 +800,16 @@ namespace CPH.Migrations
                         {
                             Id = "af8ccf87-2ab5-4be3-9bf5-c422ee785e82",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b5e62fd5-6d94-4f2b-95da-24e2384b90ba",
+                            ConcurrencyStamp = "6e9ee479-4960-40f0-8a70-b7cb9469e276",
                             Email = "jbthype@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "JBTHYPE@GMAIL.COM",
                             NormalizedUserName = "JBTHYPE@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEOg42KSjPeRhqHcr7ws/pDfboXBgcSEXNiDfwsFU00b52jL+0RUDacKJ+/sRrOHxKQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELaSJd/MpwWbmi3oQ4t4l21ETallN1VkeLCB0BXbYkAGsTpt+qzwwh9jrIuP0Gyaag==",
                             PhoneNumber = "4233415125",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f32c362f-7926-4fe2-9a73-432d09ea664b",
+                            SecurityStamp = "66459aab-e7bf-44f4-89c1-6b88a15da628",
                             TwoFactorEnabled = false,
                             UserName = "jbthype@gmail.com",
                             FirstName = "Mariam",

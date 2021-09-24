@@ -8,7 +8,7 @@ using System.Text;
 
 namespace CPH.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -34,31 +34,39 @@ namespace CPH.Data
 
         private void AdminAndCartographerSeed(ModelBuilder builder)
         {
-            builder.Entity<ApplicationUser>().HasData(
-                new ApplicationUser
-                {
-                    Id = "9ba79920-3bac-4420-ba4d-4b0c9ddf6ef8",
-                    UserName = "trimmj@etsu.edu",
-                    Email = "trimmj@etsu.edu",
-                    FirstName = "Joshua",
-                    LastName = "Trimm",
-                    PhoneNumber = "4233415125",
-                    NormalizedEmail = "TRIMMJ@ETSU.EDU",
-                    NormalizedUserName = "TRIMMJ@ETSU.EDU"
+            var hasher = new PasswordHasher<ApplicationUser>();
+           var adminUser = new ApplicationUser
+           {
+               Id = "9ba79920-3bac-4420-ba4d-4b0c9ddf6ef8",
+               UserName = "trimmj@etsu.edu",
+               Email = "trimmj@etsu.edu",
+               FirstName = "Joshua",
+               LastName = "Trimm",
+               PhoneNumber = "4233415125",
+               NormalizedEmail = "TRIMMJ@ETSU.EDU",
+               NormalizedUserName = "TRIMMJ@ETSU.EDU",
+               EmailConfirmed = true
 
-                },
-                new ApplicationUser
-                {
-                    Id = "af8ccf87-2ab5-4be3-9bf5-c422ee785e82",
-                    UserName = "jbthype@gmail.com",
-                    Email = "jbthype@gmail.com",
-                    FirstName = "Mariam",
-                    LastName = "Trimm",
-                    PhoneNumber = "4233415125",
-                    NormalizedEmail = "JBTHYPE@GMAIL.COM",
-                    NormalizedUserName = "JBTHYPE@GMAIL.COM"
-                }
-                );
+           };
+
+            var cartUser = new ApplicationUser
+            {
+                Id = "af8ccf87-2ab5-4be3-9bf5-c422ee785e82",
+                UserName = "jbthype@gmail.com",
+                Email = "jbthype@gmail.com",
+                FirstName = "Mariam",
+                LastName = "Trimm",
+                PhoneNumber = "4233415125",
+                NormalizedEmail = "JBTHYPE@GMAIL.COM",
+                NormalizedUserName = "JBTHYPE@GMAIL.COM",
+                EmailConfirmed = true
+
+            };
+
+            adminUser.PasswordHash = hasher.HashPassword(adminUser, "Password1!");
+            cartUser.PasswordHash = hasher.HashPassword(cartUser, "Password1!");
+
+            builder.Entity<ApplicationUser>().HasData(adminUser, cartUser);
         }
         private void RolesSeed(ModelBuilder builder)
         {
