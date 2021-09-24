@@ -57,6 +57,8 @@ namespace CPH.Controllers
 
                 var testHash = GetFileHash(originalFile);
 
+                var check = CheckIfYearExists(file.FileName);
+
                 if (file != null && file.Length > 0)
                 {
                     var fileName = Path.GetFileName(file.FileName);
@@ -90,6 +92,29 @@ namespace CPH.Controllers
             }
 
             return View();
+        }
+
+        public async Task<IActionResult> CSVYearDuplicateCheck(IFormFile csvYear)
+        {
+            var check = CheckIfYearExists(csvYear.FileName);
+
+            return Json(check);
+        }
+
+        private bool CheckIfYearExists(string fileName)
+        {
+            var csvFilesPath = _hostEnv.WebRootPath + @"\uploads\";
+
+            var files = Directory.GetFiles(csvFilesPath);
+
+            foreach(var file in files)
+            {
+                var testing = Path.GetFileName(file);
+                if (testing == fileName)
+                    return true;
+            }
+
+            return false;
         }
 
         private int GetFileHash(IFormFile file)
