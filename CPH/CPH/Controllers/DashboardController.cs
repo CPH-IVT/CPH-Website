@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http;
 
+/// <summary>
+/// 
+/// </summary>
 namespace CPH.Controllers
 {
     [Authorize]
