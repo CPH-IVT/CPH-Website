@@ -13,6 +13,12 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http;
 
 /// <summary>
+/// To Do:
+/// Comment Using Statements.
+/// What is the conrollers namespace for? 
+/// Note above about each page.
+/// Async timeouts defined and configured
+/// https://stackoverflow.com/questions/4238345/asynchronously-wait-for-taskt-to-complete-with-timeout
 /// 
 /// </summary>
 namespace CPH.Controllers
@@ -62,6 +68,7 @@ namespace CPH.Controllers
 
                 var check = CheckIfYearExists(file.FileName);
 
+                // Make sure the original file is not null
                 if (file != null && file.Length > 0)
                 {
                     var fileName = Path.GetFileName(file.FileName);
@@ -132,12 +139,18 @@ namespace CPH.Controllers
             return BitConverter.ToInt32(hash);
         }
 
+        /// <summary>
+        /// Put this into the CSV Managment class obj
+        /// </summary>
+        /// <returns></returns>
         private List<int> GetCsvHashCodes()
         {
+            //Put the file path in the appsettings and explan what it is for.
             var originalCsvFilesPath = _hostEnv.WebRootPath + @"\uploads\original\";
 
-            var files = Directory.GetFiles(originalCsvFilesPath);
+            string[] files = Directory.GetFiles(originalCsvFilesPath);
 
+            //Change to a dictionary to include file path to hashes. 
             List<int> hashCodes = new List<int>();
 
             if (files != null)

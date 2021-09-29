@@ -21,8 +21,4 @@
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Glip-Glop\Dropbox (Personal)\TrimYard\Mow\Notifications\Notifications.csproj" />
-  </ItemGroup>
-
 </Project>
