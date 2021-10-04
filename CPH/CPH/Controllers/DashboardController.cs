@@ -59,14 +59,25 @@ namespace CPH.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Get the hash codes of the csv files that are currently in the system directory
                 var hashCodes = GetCsvHashCodes();
 
                 var file = form.File;
                 var originalFile = form.OriginalFile;
 
-                var testHash = GetFileHash(originalFile);
+                // Get the hash code of the csv the user is uploading
+                var uploadingCsvHash = GetFileHash(originalFile);
 
+                // check if there are any matches
+                if (hashCodes.Contains(uploadingCsvHash))
+                    return View();
+
+                // Check if the year has already been uploaded.
                 var check = CheckIfYearExists(file.FileName);
+
+                // if it has inform the user
+                if (check)
+                    return View();
 
                 // Make sure the original file is not null
                 if (file != null && file.Length > 0)
