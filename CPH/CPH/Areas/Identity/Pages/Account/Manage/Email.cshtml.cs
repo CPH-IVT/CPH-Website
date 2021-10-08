@@ -1,24 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  SOLUTION NAME HERE
+//	File Name:         Email.cshtml.cs
+//	Description:       YOUR DESCRIPTION HERE
+//	Course:            CSCI 2210 - Data Structures	
+//	Author:           DESKTOP-FOTV38D\Joshua, trimmj@etsu.edu
+//	Created:           10/7/2021
+//	Copyright:         DESKTOP-FOTV38D\Joshua, 2021
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace CPH.Areas.Identity.Pages.Account.Manage
 {
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Identity.UI.Services;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.RazorPages;
+    using Microsoft.AspNetCore.WebUtilities;
+    using System.ComponentModel.DataAnnotations;
+    using System.Text;
+    using System.Text.Encodings.Web;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Defines the <see cref="EmailModel" />.
+    /// </summary>
     public partial class EmailModel : PageModel
     {
+        /// <summary>
+        /// Defines the _userManager.
+        /// </summary>
         private readonly UserManager<IdentityUser> _userManager;
+
+        /// <summary>
+        /// Defines the _signInManager.
+        /// </summary>
         private readonly SignInManager<IdentityUser> _signInManager;
+
+        /// <summary>
+        /// Defines the _emailSender.
+        /// </summary>
         private readonly IEmailSender _emailSender;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmailModel"/> class.
+        /// </summary>
+        /// <param name="userManager">The userManager<see cref="UserManager{IdentityUser}"/>.</param>
+        /// <param name="signInManager">The signInManager<see cref="SignInManager{IdentityUser}"/>.</param>
+        /// <param name="emailSender">The emailSender<see cref="IEmailSender"/>.</param>
         public EmailModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
@@ -29,26 +58,52 @@ namespace CPH.Areas.Identity.Pages.Account.Manage
             _emailSender = emailSender;
         }
 
+        /// <summary>
+        /// Gets or sets the Username.
+        /// </summary>
         public string Username { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Email.
+        /// </summary>
         public string Email { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether IsEmailConfirmed.
+        /// </summary>
         public bool IsEmailConfirmed { get; set; }
 
+        /// <summary>
+        /// Gets or sets the StatusMessage.
+        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Input.
+        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
+        /// <summary>
+        /// Defines the <see cref="InputModel" />.
+        /// </summary>
         public class InputModel
         {
+            /// <summary>
+            /// Gets or sets the NewEmail.
+            /// </summary>
             [Required]
             [EmailAddress]
             [Display(Name = "New email")]
             public string NewEmail { get; set; }
         }
 
+        /// <summary>
+        /// The LoadAsync.
+        /// </summary>
+        /// <param name="user">The user<see cref="IdentityUser"/>.</param>
+        /// <returns>The <see cref="Task"/>.</returns>
         private async Task LoadAsync(IdentityUser user)
         {
             var email = await _userManager.GetEmailAsync(user);
@@ -62,6 +117,10 @@ namespace CPH.Areas.Identity.Pages.Account.Manage
             IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
         }
 
+        /// <summary>
+        /// The OnGetAsync.
+        /// </summary>
+        /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -74,6 +133,10 @@ namespace CPH.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
+        /// <summary>
+        /// The OnPostChangeEmailAsync.
+        /// </summary>
+        /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         public async Task<IActionResult> OnPostChangeEmailAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -111,6 +174,10 @@ namespace CPH.Areas.Identity.Pages.Account.Manage
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// The OnPostSendVerificationEmailAsync.
+        /// </summary>
+        /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         public async Task<IActionResult> OnPostSendVerificationEmailAsync()
         {
             var user = await _userManager.GetUserAsync(User);

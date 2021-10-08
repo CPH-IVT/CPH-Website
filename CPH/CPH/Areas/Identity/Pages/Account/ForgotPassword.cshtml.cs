@@ -1,40 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  SOLUTION NAME HERE
+//	File Name:         ForgotPassword.cshtml.cs
+//	Description:       YOUR DESCRIPTION HERE
+//	Course:            CSCI 2210 - Data Structures	
+//	Author:           DESKTOP-FOTV38D\Joshua, trimmj@etsu.edu
+//	Created:           10/7/2021
+//	Copyright:         DESKTOP-FOTV38D\Joshua, 2021
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace CPH.Areas.Identity.Pages.Account
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Identity.UI.Services;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.RazorPages;
+    using Microsoft.AspNetCore.WebUtilities;
+    using System.ComponentModel.DataAnnotations;
+    using System.Text;
+    using System.Text.Encodings.Web;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Defines the <see cref="ForgotPasswordModel" />.
+    /// </summary>
     [AllowAnonymous]
     public class ForgotPasswordModel : PageModel
     {
+        /// <summary>
+        /// Defines the _userManager.
+        /// </summary>
         private readonly UserManager<IdentityUser> _userManager;
+
+        /// <summary>
+        /// Defines the _emailSender.
+        /// </summary>
         private readonly IEmailSender _emailSender;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ForgotPasswordModel"/> class.
+        /// </summary>
+        /// <param name="userManager">The userManager<see cref="UserManager{IdentityUser}"/>.</param>
+        /// <param name="emailSender">The emailSender<see cref="IEmailSender"/>.</param>
         public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;
         }
 
+        /// <summary>
+        /// Gets or sets the Input.
+        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
+        /// <summary>
+        /// Defines the <see cref="InputModel" />.
+        /// </summary>
         public class InputModel
         {
+            /// <summary>
+            /// Gets or sets the Email.
+            /// </summary>
             [Required]
             [EmailAddress]
             public string Email { get; set; }
         }
 
+        /// <summary>
+        /// The OnPostAsync.
+        /// </summary>
+        /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)

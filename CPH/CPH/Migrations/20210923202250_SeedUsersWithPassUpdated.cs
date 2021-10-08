@@ -1,9 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  SOLUTION NAME HERE
+//	File Name:         20210923202250_SeedUsersWithPassUpdated.cs
+//	Description:       YOUR DESCRIPTION HERE
+//	Course:            CSCI 2210 - Data Structures	
+//	Author:           DESKTOP-FOTV38D\Joshua, trimmj@etsu.edu
+//	Created:           10/7/2021
+//	Copyright:         DESKTOP-FOTV38D\Joshua, 2021
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace CPH.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
+    /// <summary>
+    /// Defines the <see cref="SeedUsersWithPassUpdated" />.
+    /// </summary>
     public partial class SeedUsersWithPassUpdated : Migration
     {
+        /// <summary>
+        /// The Up.
+        /// </summary>
+        /// <param name="migrationBuilder">The migrationBuilder<see cref="MigrationBuilder"/>.</param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.UpdateData(
@@ -21,6 +40,10 @@ namespace CPH.Migrations
                 values: new object[] { "b5e62fd5-6d94-4f2b-95da-24e2384b90ba", "AQAAAAEAACcQAAAAEOg42KSjPeRhqHcr7ws/pDfboXBgcSEXNiDfwsFU00b52jL+0RUDacKJ+/sRrOHxKQ==", "f32c362f-7926-4fe2-9a73-432d09ea664b" });
         }
 
+        /// <summary>
+        /// The Down.
+        /// </summary>
+        /// <param name="migrationBuilder">The migrationBuilder<see cref="MigrationBuilder"/>.</param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.UpdateData(

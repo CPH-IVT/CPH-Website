@@ -1,9 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  SOLUTION NAME HERE
+//	File Name:         20210923195558_SeedUsers.cs
+//	Description:       YOUR DESCRIPTION HERE
+//	Course:            CSCI 2210 - Data Structures	
+//	Author:           DESKTOP-FOTV38D\Joshua, trimmj@etsu.edu
+//	Created:           10/7/2021
+//	Copyright:         DESKTOP-FOTV38D\Joshua, 2021
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace CPH.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
+    /// <summary>
+    /// Defines the <see cref="SeedUsers" />.
+    /// </summary>
     public partial class SeedUsers : Migration
     {
+        /// <summary>
+        /// The Up.
+        /// </summary>
+        /// <param name="migrationBuilder">The migrationBuilder<see cref="MigrationBuilder"/>.</param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
@@ -51,6 +70,10 @@ namespace CPH.Migrations
                 values: new object[] { "af8ccf87-2ab5-4be3-9bf5-c422ee785e82", "0d8f650d-6c6c-4ace-b5b0-0af276006ea3" });
         }
 
+        /// <summary>
+        /// The Down.
+        /// </summary>
+        /// <param name="migrationBuilder">The migrationBuilder<see cref="MigrationBuilder"/>.</param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DeleteData(

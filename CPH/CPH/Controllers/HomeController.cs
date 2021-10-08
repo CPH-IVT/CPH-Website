@@ -1,34 +1,65 @@
-﻿using CPH.Models;
-using CPH.Models.ViewModels;
-using CPH.Services;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  College of Public Health (CPH) Capstone
+//	File Name:         HomeController.cs
+//	Description:       YOUR DESCRIPTION HERE
+//	Course:            Capstone
+//	Author:            Joshua Trimm, trimmj@etsu.edu
+//	Created:           10/7/2021
+//	Copyright:         Joshua Trimm, 2021
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace CPH.Controllers
 {
+    using CPH.Models;
+    using CPH.Models.ViewModels;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Defines the <see cref="HomeController" />.
+    /// </summary>
     public class HomeController : Controller
     {
+        /// <summary>
+        /// Defines the _logger.
+        /// </summary>
         private readonly ILogger<HomeController> _logger;
+
+        /// <summary>
+        /// Defines the _hostEnv.
+        /// </summary>
         private readonly IWebHostEnvironment _hostEnv;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomeController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger<see cref="ILogger{HomeController}"/>.</param>
+        /// <param name="hostEnv">The hostEnv<see cref="IWebHostEnvironment"/>.</param>
         public HomeController(ILogger<HomeController> logger, IWebHostEnvironment hostEnv)
         {
             _logger = logger;
             _hostEnv = hostEnv;
         }
 
+        /// <summary>
+        /// The Index.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Index()
         {
             return View();
         }
 
+        /// <summary>
+        /// The Chart.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Chart()
         {
             var filePath = _hostEnv.WebRootPath + "\\uploads\\";
@@ -36,7 +67,7 @@ namespace CPH.Controllers
 
             string[] fileNames = new string[files.Length];
 
-            for(var i = 0; i < files.Length; i++)
+            for (var i = 0; i < files.Length; i++)
             {
                 fileNames[i] = (Path.GetFileNameWithoutExtension(files[i]));
             }
@@ -46,16 +77,29 @@ namespace CPH.Controllers
             return View();
         }
 
+        /// <summary>
+        /// The Regions.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Regions()
         {
             return View();
         }
 
+        /// <summary>
+        /// The UploadCSV.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult UploadCSV()
         {
             return View();
         }
 
+        /// <summary>
+        /// The UploadCSVAsync.
+        /// </summary>
+        /// <param name="form">The form<see cref="UploadCSVModel"/>.</param>
+        /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         [HttpPost]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         public async Task<IActionResult> UploadCSVAsync(UploadCSVModel form)
@@ -65,7 +109,7 @@ namespace CPH.Controllers
                 var file = form.File;
                 var originalFile = form.OriginalFile;
 
-                if(file != null && file.Length > 0)
+                if (file != null && file.Length > 0)
                 {
                     var fileName = Path.GetFileName(file.FileName);
                     var originalFileName = Path.GetFileName(originalFile.FileName);
@@ -99,17 +143,23 @@ namespace CPH.Controllers
             return View();
         }
 
+        /// <summary>
+        /// The Privacy.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Privacy()
         {
             return View();
         }
 
+        /// <summary>
+        /// The Error.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-       
     }
 }

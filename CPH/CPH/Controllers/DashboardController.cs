@@ -1,58 +1,100 @@
-﻿using CPH.Models.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Http;
-
-/// <summary>
+﻿/// <summary>
 /// To Do:
 /// Comment Using Statements.
-/// What is the conrollers namespace for? 
+/// What is the controllers namespace for? 
 /// Note above about each page.
 /// Async timeouts defined and configured
 /// https://stackoverflow.com/questions/4238345/asynchronously-wait-for-taskt-to-complete-with-timeout
 /// 
 /// </summary>
+
 namespace CPH.Controllers
 {
+    using CPH.BusinessLogic.Interfaces;
+    using CPH.Models.ViewModels;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using System.IO;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Defines the <see cref="DashboardController" />.
+    /// </summary>
     [Authorize]
     public class DashboardController : Controller
     {
+        /// <summary>
+        /// Defines the _logger.
+        /// </summary>
         private readonly ILogger<DashboardController> _logger;
+
+        /// <summary>
+        /// Defines the _hostEnv.
+        /// </summary>
         private readonly IWebHostEnvironment _hostEnv;
-        public DashboardController(ILogger<DashboardController> logger, IWebHostEnvironment hostEnv)
+
+        /// <summary>
+        /// Defines the _csvManagement.
+        /// </summary>
+        private readonly ICSVManagement _csvManagement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DashboardController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger<see cref="ILogger{DashboardController}"/>.</param>
+        /// <param name="hostEnv">The hostEnv<see cref="IWebHostEnvironment"/>.</param>
+        /// <param name="csvManagement">The csvManagement<see cref="ICSVManagement"/>.</param>
+        public DashboardController(ILogger<DashboardController> logger, IWebHostEnvironment hostEnv, ICSVManagement csvManagement)
         {
             _logger = logger;
             _hostEnv = hostEnv;
+            _csvManagement = csvManagement;
         }
+
+        /// <summary>
+        /// The Home.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Home()
         {
             return View();
         }
 
+        /// <summary>
+        /// The Chart.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Chart()
         {
             return View();
         }
 
+        /// <summary>
+        /// The Account.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Account()
         {
             return View();
         }
 
+        /// <summary>
+        /// The UploadCSV.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult UploadCSV()
         {
             return View();
         }
 
+        /// <summary>
+        /// The UploadCSVAsync.
+        /// </summary>
+        /// <param name="form">The form<see cref="UploadCSVModel"/>.</param>
+        /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         [HttpPost]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         public async Task<IActionResult> UploadCSVAsync(UploadCSVModel form)
@@ -60,22 +102,22 @@ namespace CPH.Controllers
             if (ModelState.IsValid)
             {
                 // Get the hash codes of the csv files that are currently in the system directory
-                var hashCodes = GetCsvHashCodes();
+                var hashCodes = _csvManagement.GetCsvHashCodes();
 
                 var file = form.File;
                 var originalFile = form.OriginalFile;
 
                 // Get the hash code of the csv the user is uploading
-                var uploadingCsvHash = GetFileHash(originalFile);
+                var uploadingCsvHash = _csvManagement.GetFileHash(originalFile);
 
                 // check if there are any matches
                 if (hashCodes.Contains(uploadingCsvHash))
                     return View();
 
                 // Check if the year has already been uploaded.
-                var check = CheckIfYearExists(file.FileName);
+                var check = _csvManagement.CheckIfYearExists(file.FileName);
 
-                // if it has inform the user
+                // if the year has been uploaded inform the user
                 if (check)
                     return View();
 
@@ -115,70 +157,16 @@ namespace CPH.Controllers
             return View();
         }
 
+        /// <summary>
+        /// The CSVYearDuplicateCheck.
+        /// </summary>
+        /// <param name="csvYear">The csvYear<see cref="IFormFile"/>.</param>
+        /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         public async Task<IActionResult> CSVYearDuplicateCheck(IFormFile csvYear)
         {
-            var check = CheckIfYearExists(csvYear.FileName);
+            var check = _csvManagement.CheckIfYearExists(csvYear.FileName);
 
             return Json(check);
         }
-
-        private bool CheckIfYearExists(string fileName)
-        {
-            var csvFilesPath = _hostEnv.WebRootPath + @"\uploads\";
-
-            var files = Directory.GetFiles(csvFilesPath);
-
-            foreach(var file in files)
-            {
-                var testing = Path.GetFileName(file);
-                if (testing == fileName)
-                    return true;
-            }
-
-            return false;
-        }
-
-        private int GetFileHash(IFormFile file)
-        {
-            byte[] hash;
-            using ( var stream = file.OpenReadStream())
-            {
-                hash = MD5.Create().ComputeHash(stream);
-                
-            }
-
-            return BitConverter.ToInt32(hash);
-        }
-
-        /// <summary>
-        /// Put this into the CSV Managment class obj
-        /// </summary>
-        /// <returns></returns>
-        private List<int> GetCsvHashCodes()
-        {
-            //Put the file path in the appsettings and explan what it is for.
-            var originalCsvFilesPath = _hostEnv.WebRootPath + @"\uploads\original\";
-
-            string[] files = Directory.GetFiles(originalCsvFilesPath);
-
-            //Change to a dictionary to include file path to hashes. 
-            List<int> hashCodes = new List<int>();
-
-            if (files != null)
-            {
-                foreach(var file in files)
-                {
-                    using(FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    {
-                        var hash = MD5.Create().ComputeHash(stream);
-                        hashCodes.Add(BitConverter.ToInt32(hash));
-
-                        
-                    }
-                }
-            }
-            return hashCodes;
-        }
-
     }
 }
