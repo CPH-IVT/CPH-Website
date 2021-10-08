@@ -10,10 +10,12 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+using Microsoft.AspNetCore.Hosting;
+
 [assembly: HostingStartup(typeof(CPH.Areas.Identity.IdentityHostingStartup))]
 namespace CPH.Areas.Identity
 {
-    using Microsoft.AspNetCore.Hosting;
+
 
     /// <summary>
     /// Defines the <see cref="IdentityHostingStartup" />.

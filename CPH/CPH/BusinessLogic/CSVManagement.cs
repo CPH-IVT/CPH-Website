@@ -28,45 +28,29 @@ namespace CPH.BusinessLogic
     public class CSVManagement : ICSVManagement
     {
         /// <summary>
-        /// Defines the _csvPath.
-        /// </summary>
-        private string _csvPath;
-
-        /// <summary>
-        /// Gets the CSVPath.
-        /// </summary>
-        public string CSVPath
-        {
-            get { return _csvPath; }
-        }
-
-        /// <summary>
-        /// Gets the Folder.
-        /// </summary>
-        public string Folder
-        {
-            get { return _folder; }
-        }
-
-        /// <summary>
+        /// Gets the _uploadesFoler
         /// Defines the _folder.
         /// </summary>
-        private string _folder;
+        public string UploadesFolder
+        {
+            get
+            {
+                return $"{_hostEnvironment.WebRootPath}{_config.GetSection("CSVFilePaths").GetSection("Copied").Value}";
+            }
+        }
 
         /// <summary>
-        /// Defines the _originals.
+        /// Gets the path of the original CSV's that have been uploaded.
         /// </summary>
-        private string _originals;
+        public string OriginalsFolder
+        {
+            get
+            {
 
-        /// <summary>
-        /// Defines the FileName.
-        /// </summary>
-        public readonly string FileName;
 
-        /// <summary>
-        /// Defines the File.
-        /// </summary>
-        public readonly IFormFile File;
+                return $@"{_hostEnvironment.WebRootPath}{_config.GetSection("CSVFilePaths").GetSection("Original").Value}";
+            }
+        }
 
         /// <summary>
         /// Defines the _config.
@@ -89,83 +73,54 @@ namespace CPH.BusinessLogic
             _config = configuration;
             _hostEnvironment = hostEnvironment;
 
-            // 
-            BuildCSVUploadFolder();
-
-            // If the CSV directory doesn't exist it will be created here.
-            CreateDirectoryForCSV();
-        }
-
-        /// <summary>
-        /// The UploadCSVAsync.
-        /// </summary>
-        /// <returns>The <see cref="Task"/>.</returns>
-        public async Task UploadCSVAsync()
-        {
-            try
-            {
-                BuildCSVUploadFolder();
-                CreateDirectoryForCSV();
-                BuildCSVUploadPath();
-                await CopyCsvToDirectoryAsync();
-
-            }
-            catch (FileNotFoundException e)
-            {
-                Console.WriteLine($"The file was not found: '{e}'");
-            }
-            catch (DirectoryNotFoundException e)
-            {
-                Console.WriteLine($"The directory was not found: '{e}'");
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine($"The file could not be opened: '{e}'");
-            }
+            // Creates the directors for the CSV files to be stored if they do not exist.
+            CreateCSVUploadFolder();
         }
 
         /// <summary>
         /// The BuildCSVUploadFolder.
         /// </summary>
-        private void BuildCSVUploadFolder()
+        private void CreateCSVUploadFolder()
         {
-            _folder = $@"{_hostEnvironment.WebRootPath}{_config.GetSection("CSVFilePaths").GetSection("Copied").Value}";
-            _originals = $"{_hostEnvironment.WebRootPath}{_config.GetSection("CSVFilePaths").GetSection("Original").Value}";
-        }
-
-        /// <summary>
-        /// The CreateDirectoryForCSV.
-        /// </summary>
-        private void CreateDirectoryForCSV()
-        {
-            if (Folder != null)
-            {
-                Directory.CreateDirectory(_folder);
-            }
-        }
-
-        /// <summary>
-        /// The BuildCSVUploadPath.
-        /// </summary>
-        public void BuildCSVUploadPath()
-        {
-            if (_folder != null && FileName != null)
-            {
-                _csvPath = Path.Combine(_folder, FileName);
-            }
+            if (!Directory.Exists(UploadesFolder))
+                Directory.CreateDirectory(UploadesFolder);
+                Directory.CreateDirectory(OriginalsFolder);
         }
 
         /// <summary>
         /// The CopyCsvToDirectoryAsync.
         /// </summary>
+        /// <param name="file">The file<see cref="IFormFile"/>.</param>
         /// <returns>The <see cref="Task"/>.</returns>
-        public async Task CopyCsvToDirectoryAsync()
+        public async Task CopyAlteredCsvToUploadsDirAsync(IFormFile file)
         {
-            using (var stream = System.IO.File.Create(_csvPath))
+
+
+            using (var stream = System.IO.File.Create($@"{UploadesFolder}\{file.FileName}"))
             {
-                await File.CopyToAsync(stream);
+                await file.CopyToAsync(stream);
+
+            }
+            
+        }
+
+        /// <summary>
+        /// The CopyOriginalCsvToOriginalDirectoryAsync.
+        /// </summary>
+        /// <param name="file">The file<see cref="IFormFile"/>.</param>
+        /// <returns>The <see cref="Task"/>.</returns>
+        public async Task CopyOriginalCsvToOriginalDirAsync(IFormFile file)
+        {
+
+            using (var stream = System.IO.File.Create($@"{OriginalsFolder}\{file.FileName}"))
+            {
+                await file.CopyToAsync(stream);
+                stream.Close();
+
             }
         }
+
+        
 
         /// <summary>
         /// The CheckIfYearExists.
@@ -174,14 +129,13 @@ namespace CPH.BusinessLogic
         /// <returns>The <see cref="bool"/>.</returns>
         public bool CheckIfYearExists(string fileName)
         {
-            var csvFilesPath = _hostEnvironment.WebRootPath + @"\uploads\";
 
-            var files = Directory.GetFiles(csvFilesPath);
+            var files = Directory.GetFiles(UploadesFolder);
 
             foreach (var file in files)
             {
-                var testing = Path.GetFileName(file);
-                if (testing == fileName)
+                var fileInDirName = Path.GetFileName(file);
+                if (fileInDirName == fileName)
                     return true;
             }
 
@@ -189,11 +143,11 @@ namespace CPH.BusinessLogic
         }
 
         /// <summary>
-        /// The GetFileHash.
+        /// The GetFileHash generates the hash code for a single file.
         /// </summary>
-        /// <param name="file">The file<see cref="IFormFile"/>.</param>
-        /// <returns>The <see cref="int"/>.</returns>
-        public int GetFileHash(IFormFile file)
+        /// <param name="file">The file <see cref="IFormFile"/> .</param>
+        /// <returns>The an <see cref="int"/> hash code of the uploaded CSV file.</returns>
+        public int GetFileHashCode(IFormFile file)
         {
             byte[] hash;
             using (var stream = file.OpenReadStream())
@@ -206,33 +160,36 @@ namespace CPH.BusinessLogic
         }
 
         /// <summary>
-        /// Put this into the CSV Management class obj.
+        /// Generates a <see cref="List{int}"/> of hash code from the files that are located in the original CSV uploads folder (wwwroot\uploads\original).
         /// </summary>
-        /// <returns>.</returns>
+        /// <returns>Returns a <see cref="List{int}"/> of hash codes.</returns>
         public List<int> GetCsvHashCodes()
         {
-            //Put the file path in the app settings and explain what it is for.
-            var originalCsvFilesPath = _hostEnvironment.WebRootPath + @"\uploads\original\";
 
-            string[] files = Directory.GetFiles(originalCsvFilesPath);
+            // Get the files from the original CSV folder
+            string[] files = Directory.GetFiles(OriginalsFolder);
 
             //Change to a dictionary to include file path to hashes. 
             List<int> hashCodes = new List<int>();
 
+            // Check if there are files in the directory. If there are some there, proceed. 
             if (files != null)
             {
+                // For each file in the directory generate the HashCode and add it to the hashCodes list. 
                 foreach (var file in files)
                 {
                     using (FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
+                        // Convert the file into a hash code.
                         var hash = MD5.Create().ComputeHash(stream);
-                        hashCodes.Add(BitConverter.ToInt32(hash));
 
+                        // Add the hash code to the list.
+                        hashCodes.Add(BitConverter.ToInt32(hash));
 
                     }
                 }
             }
-            return hashCodes;
+            return hashCodes; // return the hash codes
         }
     }
 }

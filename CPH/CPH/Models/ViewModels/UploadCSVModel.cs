@@ -1,14 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Solution/Project:  SOLUTION NAME HERE
-//	File Name:         UploadCSVModel.cs
-//	Description:       YOUR DESCRIPTION HERE
-//	Course:            CSCI 2210 - Data Structures	
-//	Author:           DESKTOP-FOTV38D\Joshua, trimmj@etsu.edu
-//	Created:           10/7/2021
-//	Copyright:         DESKTOP-FOTV38D\Joshua, 2021
-//
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+﻿
 
 namespace CPH.Models.ViewModels
 {
@@ -38,6 +28,6 @@ namespace CPH.Models.ViewModels
         /// <summary>
         /// Gets or sets the UploadeDate.
         /// </summary>
-        public DateTime UploadeDate { get; set; }
+        public string UploadeDate { get; set; }
     }
 }

@@ -21,17 +21,11 @@ namespace CPH.BusinessLogic.Interfaces
     /// </summary>
     public interface ICSVManagement
     {
-        /// <summary>
-        /// The UploadCSVAsync.
-        /// </summary>
-        /// <returns>The <see cref="Task"/>.</returns>
-        Task UploadCSVAsync();
+        string UploadesFolder { get; }
+        string OriginalsFolder { get; }
+        Task CopyOriginalCsvToOriginalDirAsync(IFormFile file);
+        Task CopyAlteredCsvToUploadsDirAsync(IFormFile file);
 
-        /// <summary>
-        /// The CopyCsvToDirectoryAsync.
-        /// </summary>
-        /// <returns>The <see cref="Task"/>.</returns>
-        Task CopyCsvToDirectoryAsync();
 
         /// <summary>
         /// The CheckIfYearExists.
@@ -45,7 +39,7 @@ namespace CPH.BusinessLogic.Interfaces
         /// </summary>
         /// <param name="file">The file<see cref="IFormFile"/>.</param>
         /// <returns>The <see cref="int"/>.</returns>
-        int GetFileHash(IFormFile file);
+        int GetFileHashCode(IFormFile file);
 
         /// <summary>
         /// The GetCsvHashCodes.

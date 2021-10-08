@@ -43,16 +43,24 @@
         fileSelector.addEventListener('change', (event) => {
             const fileList = event.target.files;
             console.log(fileList);
-        })
+        });
 
         function checkIfYearIsInDirectory() {
+            
+
             var form = document.getElementById("upload-form");
 
+
+            console.log(form[1]);
+
+
+            
+
             $.ajax({
-                type: "GET",
-                url: "/Dashboard/CSVYearDuplicateCheck",
-                data: {},
-                dataType: 'json',
+                type: "POST",
+                url: "/Dashboard/UploadCsv",
+                data: form,
+                dataType: "json",
                 success: function (response) {
                     if (response["check"]) {
                         // prompt the user asking if they want to proceed. 
@@ -60,7 +68,7 @@
                         // save their response. 
                     }
                 }
-            })
+            });
 
         }
 
