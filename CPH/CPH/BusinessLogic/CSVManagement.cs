@@ -99,6 +99,7 @@ namespace CPH.BusinessLogic
             using (var stream = System.IO.File.Create($@"{UploadesFolder}\{file.FileName}"))
             {
                 await file.CopyToAsync(stream);
+                stream.Close();
 
             }
             

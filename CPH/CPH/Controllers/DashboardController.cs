@@ -96,8 +96,8 @@ namespace CPH.Controllers
         /// <param name="form">The form<see cref="UploadCSVModel"/>.</param>
         /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         [HttpPost]
-        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
-        public async Task<IActionResult> UploadCSVAsync(UploadCSVModel form)
+        [Route("Dashboard/ValidateAndUploadCSV")]
+        public async Task<IActionResult> ValidateAndUploadCSV(UploadCSVModel form)
         {
             if (ModelState.IsValid)
             {
@@ -107,8 +107,12 @@ namespace CPH.Controllers
                 var file = form.File;
                 var originalFile = form.OriginalFile;
 
-                // Get the hash code of the csv the user is uploading
-                var uploadingCsvHash = _csvManagement.GetFileHashCode(originalFile);
+                // Make sure the original file is not null
+                if (file != null && file.Length > 0 && originalFile != null && originalFile.Length > 0)
+                {
+
+                    // Get the hash code of the csv the user is uploading
+                    var uploadingCsvHash = _csvManagement.GetFileHashCode(originalFile);
 
                 // check if there are any matches
                 if (hashCodes.Contains(uploadingCsvHash))
@@ -121,17 +125,19 @@ namespace CPH.Controllers
                 if (check)
                     return Json("This Year already exists, would you like to continue to upload and override the document?");
 
-                // Make sure the original file is not null
-                if (file != null && file.Length > 0)
-                {
+
 
                     //copy the uploaded file to the directory
-                    //await _csvManagement.CopyAlteredCsvToUploadsDirAsync(file);
+                    await _csvManagement.CopyAlteredCsvToUploadsDirAsync(file);
 
                     // copy original csv to originals folder
-                    await _csvManagement.CopyOriginalCsvToOriginalDirAsync(file);
+                    await _csvManagement.CopyOriginalCsvToOriginalDirAsync(originalFile);
+
+                    return Json("Success!");
 
                 }
+
+                return BadRequest(form);
             }
 
             return BadRequest(ModelState);
