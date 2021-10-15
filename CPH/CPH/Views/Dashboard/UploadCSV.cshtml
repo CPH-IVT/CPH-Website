@@ -4,21 +4,22 @@
     ViewData["Title"] = "UploadCSV";
 }
 
-<h1>UploadCSV</h1>
+<h1>CSV Upload</h1>
 
-<h4>UploadCSVModel</h4>
+<h4>Upload yearly CSV's from the County Health Rankings website.</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form id="upload-form" asp-action="ValidateAndUploadCSV">
+        <div id="upload-form">
+            @*<form id="upload-form" method="POST" runat="server" enctype="multipart/form-data">*@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <input id="UserIdentity" hidden value="@User.Identity.Name" asp-for="UserIdentity" class="form-control" />
                 <span asp-validation-for="UserIdentity" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input hidden id="UploadDate" value="@DateTime.Now" asp-for="UploadeDate" class="form-control" />
-                <span asp-validation-for="UploadeDate" class="text-danger"></span>
+                <input hidden id="UploadDate" value="@DateTime.Now" asp-for="UploadDate" class="form-control" />
+                <span asp-validation-for="UploadDate" class="text-danger"></span>
             </div>
             <input id="OriginalFile" type="file" asp-for="OriginalFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" hidden />
             <div class="form-group">
@@ -30,7 +31,7 @@
             <div class="form-group">
                 <input id="upload-button" type="submit" value="Upload" class="btn btn-primary" />
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -46,23 +47,85 @@
         });
 
         function checkIfYearIsInDirectory() {
+            //event.preventDefault();
+            //var form = document.getElementById("upload-form");
+            var userId = document.getElementById("UserIdentity");
+            var uploadDate = document.getElementById("UploadDate");
+            var originalCsv = document.getElementById("OriginalFile");
+            var alteredCsv = document.getElementById("File");
+            console.log(`UserId: ${userId.value}\n Upload Date: ${uploadDate.value.toString()}\n OriginalCsv: ${originalCsv.files[0]}\n AlteredCsv: ${alteredCsv.files[0]}`);
 
-            var form = document.getElementById("upload-form");
-            //var userIdentity = document.getElementById("UserIdentity");
-            //var uploadDate = document.getElementById("UploadDate");
-            //var originalFile = document.getElementById("OriginalFile");
-            //var file = document.getElementById("File");
+            var formData = new FormData();
+            formData.append("File", alteredCsv.files[0]);
+            formData.append("OriginalFile", originalCsv.files[0]);
+            formData.append("UserIdentity", userId.value);
+            formData.append("UploadDate", uploadDate.value);
 
             $.ajax({
                 type: "POST",
                 url: "/Dashboard/ValidateAndUploadCSV",
+                data: formData,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    
+                    
+                    if (response["HashCodeMatch"]) {
+                        alert("File has already been uploaded.");
+
+                    }
+
+                    if (response["FileYearMatch"]) {
+
+                        if (confirm("There is a duplicate year. Do you want to override the file on the server?")) {
+                            ajaxSubmitForm(formData);
+                        }
+
+
+
+
+                    }
+
+                    if (response["UploadSuccessful"]) {
+                        alert("File upload sucessful.");
+
+                    }
+
+                    location.reload();
+
+                },
+                error: function (response) {
+                    console.warn(response);
+                }
+                
+            });
+        }
+
+        function ajaxSubmitForm(form) {
+            $.ajax({
+                type: "POST",
+                url: "/Dashboard/OverrideCsvYear",
                 data: form,
                 dataType: "json",
+                processData: false,
+                contentType: false,
                 success: function (response) {
-                    event.preventDefault();
-                    console.log(response);
+
+
+                    if (response["FileUploaded"]) {
+                        alert("File has been overriden.");
+                    }
+
+                    console.error(response)
+ 
+                },
+                error: function (response) {
+                    console.warn(response);
                 }
+
             });
+
         }
 
         function readAndCopyOriginalFile(event) {

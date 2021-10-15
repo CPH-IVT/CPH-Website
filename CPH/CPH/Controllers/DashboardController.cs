@@ -1,12 +1,14 @@
-﻿/// <summary>
-/// To Do:
-/// Comment Using Statements.
-/// What is the controllers namespace for? 
-/// Note above about each page.
-/// Async timeouts defined and configured
-/// https://stackoverflow.com/questions/4238345/asynchronously-wait-for-taskt-to-complete-with-timeout
-/// 
-/// </summary>
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  College of Public Health (CPH) Capstone
+//	File Name:         DashboardController.cs
+//	Description:       YOUR DESCRIPTION HERE
+//	Course:            Capstone
+//	Author:            Joshua Trimm, trimmj@etsu.edu
+//	Created:           10/15/2021
+//	Copyright:         Joshua Trimm, 2021
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace CPH.Controllers
 {
@@ -17,13 +19,21 @@ namespace CPH.Controllers
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using System.IO;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Defines the <see cref="DashboardController" />.
+    /// To Do:
+    /// Comment Using Statements.
+    /// What is the controllers namespace for? 
+    /// Note above about each page.
+    /// Async timeouts defined and configured
+    /// https://stackoverflow.com/questions/4238345/asynchronously-wait-for-taskt-to-complete-with-timeout
+    ///.
     /// </summary>
     [Authorize]
+
     public class DashboardController : Controller
     {
         /// <summary>
@@ -104,6 +114,8 @@ namespace CPH.Controllers
                 // Get the hash codes of the csv files that are currently in the system directory
                 var hashCodes = _csvManagement.GetCsvHashCodes();
 
+
+
                 var file = form.File;
                 var originalFile = form.OriginalFile;
 
@@ -114,16 +126,30 @@ namespace CPH.Controllers
                     // Get the hash code of the csv the user is uploading
                     var uploadingCsvHash = _csvManagement.GetFileHashCode(originalFile);
 
-                // check if there are any matches
-                if (hashCodes.Contains(uploadingCsvHash))
-                    return Json("This file already exists");
+                    Hashtable hashtable = new Hashtable();
 
-                // Check if the year has already been uploaded.
-                var check = _csvManagement.CheckIfYearExists(file.FileName);
+                    // check if there are any matches
+                    if (hashCodes.Contains(uploadingCsvHash))
+                    {
 
-                // if the year has been uploaded inform the user
-                if (check)
-                    return Json("This Year already exists, would you like to continue to upload and override the document?");
+                        hashtable.Add("HashCodeMatch", true);
+
+                        return Json(hashtable);
+                    }
+
+
+                    // Check if the year has already been uploaded.
+                    var check = _csvManagement.CheckIfYearExists(file.FileName);
+
+                    // if the year has been uploaded inform the user
+                    if (check)
+                    {
+
+                        hashtable.Add("FileYearMatch", true);
+
+                        return Json(hashtable);
+                    }
+
 
 
 
@@ -133,7 +159,10 @@ namespace CPH.Controllers
                     // copy original csv to originals folder
                     await _csvManagement.CopyOriginalCsvToOriginalDirAsync(originalFile);
 
-                    return Json("Success!");
+
+                   
+                    hashtable.Add("UploadSuccessful", true);
+                    return Json(hashtable);
 
                 }
 
@@ -141,6 +170,31 @@ namespace CPH.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+
+        [HttpPost]
+        [Route("Dashboard/OverrideCsvYear")]
+        public async Task<IActionResult> OverrideCsvYear(UploadCSVModel form)
+        {
+            var alteredFile = form.File;
+            var originalFile = form.OriginalFile;
+
+            // Make sure the original file is not null
+            if (alteredFile != null && alteredFile.Length > 0 && originalFile != null && originalFile.Length > 0)
+            {
+                //copy the uploaded file to the directory
+                await _csvManagement.CopyAlteredCsvToUploadsDirAsync(alteredFile);
+
+                // copy original csv to originals folder
+                await _csvManagement.CopyOriginalCsvToOriginalDirAsync(originalFile);
+
+                Hashtable hashtable = new Hashtable();
+                hashtable.Add("FileUploaded", true);
+
+                return Json(hashtable);
+            }
+
+            return BadRequest(form);
         }
 
         /// <summary>

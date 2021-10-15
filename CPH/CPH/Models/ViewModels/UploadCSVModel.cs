@@ -28,6 +28,6 @@ namespace CPH.Models.ViewModels
         /// <summary>
         /// Gets or sets the UploadeDate.
         /// </summary>
-        public string UploadeDate { get; set; }
+        public string UploadDate { get; set; }
     }
 }
