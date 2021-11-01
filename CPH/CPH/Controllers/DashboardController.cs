@@ -20,7 +20,6 @@ namespace CPH.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using System.Collections;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -33,21 +32,20 @@ namespace CPH.Controllers
     ///.
     /// </summary>
     [Authorize]
-
     public class DashboardController : Controller
     {
         /// <summary>
-        /// Defines the _logger.
+        /// References the _logger..
         /// </summary>
         private readonly ILogger<DashboardController> _logger;
 
         /// <summary>
-        /// Defines the _hostEnv.
+        /// References the _hostEnv..
         /// </summary>
         private readonly IWebHostEnvironment _hostEnv;
 
         /// <summary>
-        /// Defines the _csvManagement.
+        /// References the _csvManagement..
         /// </summary>
         private readonly ICSVManagement _csvManagement;
 
@@ -66,6 +64,7 @@ namespace CPH.Controllers
 
         /// <summary>
         /// The Home.
+        /// NEED TO DEFINE.
         /// </summary>
         /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Home()
@@ -75,6 +74,7 @@ namespace CPH.Controllers
 
         /// <summary>
         /// The Chart.
+        /// NEEDS TO BE DEFINED.
         /// </summary>
         /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Chart()
@@ -84,6 +84,7 @@ namespace CPH.Controllers
 
         /// <summary>
         /// The Account.
+        /// Allow user to view and manage account attributes.
         /// </summary>
         /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult Account()
@@ -93,6 +94,8 @@ namespace CPH.Controllers
 
         /// <summary>
         /// The UploadCSV.
+        /// Displays page for managing downloads of CHR data, i.e., user uploads.
+        /// Note: In absence of [Route], function name must mirror file name.
         /// </summary>
         /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult UploadCSV()
@@ -101,7 +104,9 @@ namespace CPH.Controllers
         }
 
         /// <summary>
-        /// The UploadCSVAsync.
+        /// The ValidateAndUploadCSV.
+        /// Retrieves CHR data checking its integrity. 
+        /// Note: Logic should be cleaned up and refactored.
         /// </summary>
         /// <param name="form">The form<see cref="UploadCSVModel"/>.</param>
         /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
@@ -109,69 +114,54 @@ namespace CPH.Controllers
         [Route("Dashboard/ValidateAndUploadCSV")]
         public async Task<IActionResult> ValidateAndUploadCSV(UploadCSVModel form)
         {
-            if (ModelState.IsValid)
-            {
-                // Get the hash codes of the csv files that are currently in the system directory
-                var hashCodes = _csvManagement.GetCsvHashCodes();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
 
+            // Get the hash codes of the csv files that are currently in the system directory
+            var hashCodes = _csvManagement.GetCsvHashCodes();
 
-                var file = form.File;
-                var originalFile = form.OriginalFile;
+            var file = form.File;
+            var originalFile = form.OriginalFile;
 
-                // Make sure the original file is not null
-                if (file != null && file.Length > 0 && originalFile != null && originalFile.Length > 0)
-                {
-
-                    // Get the hash code of the csv the user is uploading
-                    var uploadingCsvHash = _csvManagement.GetFileHashCode(originalFile);
-
-                    Hashtable hashtable = new Hashtable();
-
-                    // check if there are any matches
-                    if (hashCodes.Contains(uploadingCsvHash))
-                    {
-
-                        hashtable.Add("HashCodeMatch", true);
-
-                        return Json(hashtable);
-                    }
-
-
-                    // Check if the year has already been uploaded.
-                    var check = _csvManagement.CheckIfYearExists(file.FileName);
-
-                    // if the year has been uploaded inform the user
-                    if (check)
-                    {
-
-                        hashtable.Add("FileYearMatch", true);
-
-                        return Json(hashtable);
-                    }
-
-
-
-
-                    //copy the uploaded file to the directory
-                    await _csvManagement.CopyAlteredCsvToUploadsDirAsync(file);
-
-                    // copy original csv to originals folder
-                    await _csvManagement.CopyOriginalCsvToOriginalDirAsync(originalFile);
-
-
-                   
-                    hashtable.Add("UploadSuccessful", true);
-                    return Json(hashtable);
-
-                }
-
+            if (file == null || file.Length == 0 || originalFile == null || originalFile.Length == 0)
                 return BadRequest(form);
+
+            // Get the hash code of the csv the user is uploading
+            var uploadingCsvHash = _csvManagement.GetFileHashCode(originalFile);
+
+            Hashtable hashtable = new Hashtable();
+
+            // check if there are any matches
+            if (hashCodes.Contains(uploadingCsvHash))
+            {
+                hashtable.Add("HashCodeMatch", true);
+                return Json(hashtable);
             }
 
-            return BadRequest(ModelState);
+            // if the year has been uploaded inform the user
+            if (_csvManagement.CheckIfYearExists(file.FileName))
+            {
+                hashtable.Add("FileYearMatch", true);
+                return Json(hashtable);
+            }
+
+            //copy the uploaded file to the directory
+            await _csvManagement.CopyAlteredCsvToUploadsDirAsync(file);
+
+            // copy original csv to originals folder
+            await _csvManagement.CopyOriginalCsvToOriginalDirAsync(originalFile);
+
+            hashtable.Add("UploadSuccessful", true);
+            return Json(hashtable);
         }
 
+        /// <summary>
+        /// The OverrideCsvYear.
+        /// Give user the option to overwrite CHR data for specified year. 
+        /// </summary>
+        /// <param name="form">The form<see cref="UploadCSVModel"/>.</param>
+        /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         [HttpPost]
         [Route("Dashboard/OverrideCsvYear")]
         public async Task<IActionResult> OverrideCsvYear(UploadCSVModel form)
@@ -179,22 +169,20 @@ namespace CPH.Controllers
             var alteredFile = form.File;
             var originalFile = form.OriginalFile;
 
-            // Make sure the original file is not null
-            if (alteredFile != null && alteredFile.Length > 0 && originalFile != null && originalFile.Length > 0)
-            {
-                //copy the uploaded file to the directory
-                await _csvManagement.CopyAlteredCsvToUploadsDirAsync(alteredFile);
+            if (alteredFile == null || alteredFile.Length == 0 || originalFile == null || originalFile.Length == 0)
+                return BadRequest(form);
 
-                // copy original csv to originals folder
-                await _csvManagement.CopyOriginalCsvToOriginalDirAsync(originalFile);
 
-                Hashtable hashtable = new Hashtable();
-                hashtable.Add("FileUploaded", true);
+            //copy the uploaded file to the directory
+            await _csvManagement.CopyAlteredCsvToUploadsDirAsync(alteredFile);
 
-                return Json(hashtable);
-            }
+            // copy original csv to originals folder
+            await _csvManagement.CopyOriginalCsvToOriginalDirAsync(originalFile);
 
-            return BadRequest(form);
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("FileUploaded", true);
+
+            return Json(hashtable);
         }
 
         /// <summary>
@@ -204,9 +192,7 @@ namespace CPH.Controllers
         /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
         public async Task<IActionResult> CSVYearDuplicateCheck(IFormFile csvYear)
         {
-            var check = _csvManagement.CheckIfYearExists(csvYear.FileName);
-
-            return Json(check);
+            return Json(_csvManagement.CheckIfYearExists(csvYear.FileName));
         }
     }
 }

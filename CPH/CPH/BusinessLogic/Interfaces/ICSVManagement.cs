@@ -21,7 +21,7 @@ namespace CPH.BusinessLogic.Interfaces
     /// </summary>
     public interface ICSVManagement
     {
-        string UploadesFolder { get; }
+        string UploadsFolder { get; }
         string OriginalsFolder { get; }
         Task CopyOriginalCsvToOriginalDirAsync(IFormFile file);
         Task CopyAlteredCsvToUploadsDirAsync(IFormFile file);

@@ -37,7 +37,35 @@
 
 @section scripts{
     <script type="text/javascript">
+        const form = {
+            userId: document.getElementById("UserIdentity").value,
+            uploadDate: document.getElementById("UploadDate").value,
+            originalCsv: document.getElementById("OriginalFile"),
+            alteredCsv: document.getElementById("File"),
+            //formData: new FormData(),
+            get getUserId() {
+                return this.userId;
+            },
+            get getUploadDate() {
+                return this.uploadDate;
+            },
+            get getOriginalCsv() {
+                return this.originalCsv.files[0];
+            },
+            get getAlteredCsv() {
+                return this.alteredCsv.files[0];
+            },
+            get getForm() {
 
+                var formData = new FormData();
+                formData.append("File", this.getAlteredCsv);
+                formData.append("OriginalFile", this.getOriginalCsv);
+                formData.append("UserIdentity", this.getUserId);
+                formData.append("UploadDate", this.getUploadDate);
+
+                return formData;
+            }
+        };
         var uploadButton = document.getElementById("upload-button");
 
         const fileSelector = document.getElementById('File');
@@ -47,85 +75,76 @@
         });
 
         function checkIfYearIsInDirectory() {
-            //event.preventDefault();
-            //var form = document.getElementById("upload-form");
-            var userId = document.getElementById("UserIdentity");
-            var uploadDate = document.getElementById("UploadDate");
-            var originalCsv = document.getElementById("OriginalFile");
-            var alteredCsv = document.getElementById("File");
-            console.log(`UserId: ${userId.value}\n Upload Date: ${uploadDate.value.toString()}\n OriginalCsv: ${originalCsv.files[0]}\n AlteredCsv: ${alteredCsv.files[0]}`);
-
-            var formData = new FormData();
-            formData.append("File", alteredCsv.files[0]);
-            formData.append("OriginalFile", originalCsv.files[0]);
-            formData.append("UserIdentity", userId.value);
-            formData.append("UploadDate", uploadDate.value);
+           
 
             $.ajax({
                 type: "POST",
                 url: "/Dashboard/ValidateAndUploadCSV",
-                data: formData,
-                dataType: "json",
-                processData: false,
+                data: form.getForm,
                 contentType: false,
+                processData: false,
+                cache: false,
                 success: function (response) {
                     
-                    
+                    // if the server finds the same file in a directory.
                     if (response["HashCodeMatch"]) {
-                        alert("File has already been uploaded.");
-
+                        alert("File has already been uploaded");
                     }
 
+                    // if the server responds that there is a matched year
                     if (response["FileYearMatch"]) {
 
-                        if (confirm("There is a duplicate year. Do you want to override the file on the server?")) {
-                            ajaxSubmitForm(formData);
+                        // if the user agrees to override the current year, submit it to the server.
+                        var userAnswer = confirm("There is a duplicate year. Do you want to override the file on the server?");
+
+                        if (userAnswer) {
+                            ajaxSubmitForm();
+                            return;
                         }
-
-
-
-
                     }
 
+                    // Notify the user if the upload was successful.
                     if (response["UploadSuccessful"]) {
                         alert("File upload sucessful.");
-
                     }
 
+                    // reload the web page.
                     location.reload();
-
                 },
                 error: function (response) {
                     console.warn(response);
+                    console.warn(form.getForm);
                 }
-                
-            });
+            }).done(console.log("Check if year exists done."));
         }
 
-        function ajaxSubmitForm(form) {
+        async function ajaxSubmitForm() {
+           
             $.ajax({
                 type: "POST",
                 url: "/Dashboard/OverrideCsvYear",
-                data: form,
-                dataType: "json",
-                processData: false,
+                data: form.getForm,
                 contentType: false,
+                processData: false,
+                cache: false,
                 success: function (response) {
 
-
+                    // check the response to see if the file was uploaded correctly
                     if (response["FileUploaded"]) {
                         alert("File has been overriden.");
                     }
+                    else {
 
-                    console.error(response)
- 
+                        // if it was not, console log the errors.
+                        console.error(response);
+                        console.error(form.getForm);
+                    }
                 },
                 error: function (response) {
                     console.warn(response);
+                    console.error(form.getForm);
                 }
-
-            });
-
+            }).done(console.log("ajaxSubmitForm done."));
         }
 
         function readAndCopyOriginalFile(event) {
@@ -150,10 +169,6 @@
 
                 var year = rows[2].split(",")[5];
 
-                console.log("Year");
-                console.log(year);
-
-
                 // ORIGINAL CSV
                 let originalCsvData = new Blob([rows], { type: 'text/csv' });
 
@@ -167,14 +182,7 @@
                 var originalCSVInput = document.getElementById("OriginalFile");
 
                 originalCSVInput.files = containerOriginal.files;
-                // end ORIGINAL CSV
-
-
-
-                console.log(originalCSVInput.files[0]);
-
             }
-
             reader.readAsBinaryString(originalFile);
         }
 
@@ -201,19 +209,10 @@
                 // split the csv on \r rows
                 var rows = contents.split("\r");
 
-
-
-
                 // Remove the second row of the CSV
                 rows.splice(1, 1);
 
                 var year = rows[2].split(",")[5];
-
-                console.log("Year");
-                console.log(year);
-
-
-
 
                 let csvData = new Blob([rows], { type: 'text/csv' });
                 console.log(csvData);
@@ -228,14 +227,8 @@
 
                 // set the new CSV file to the input element
                 fileInputerElement.files = container.files;
-
-                console.log(fileInputerElement.files[0]);
-
             };
-
             reader.readAsBinaryString(file);
-
-
         }
 
         document.getElementById('File').addEventListener('change', readAndCopyOriginalFile, false);
