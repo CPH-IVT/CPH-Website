@@ -3,8 +3,16 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Ingnore Properties Folder. These a machine specific in most cases
+# Ignore Properties Folder. These a machine specific in most cases
 CPH/Properties
+
+# Ignore the migrations folder. These might conflic with other peoples database work. 
+CPH/Migrations
+
+# Ignore the commenting header file
+*.header
+
+
 
 # User-specific files
 *.rsuser
