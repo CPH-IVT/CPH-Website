@@ -1,6 +1,6 @@
-{
+{ // THIS IS A COPY OF THE APPSETTINGS.JSON FILE THAT IS NEEDED FOR THE APPLICATION TO RUN PROPERLY. PLEASE RENAME THIS FILE TO appsettings.json ON YOUR LOCAL MACHINE AND UPDATE YOUR DATABASE CONNECTION STRING.
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=CPH;Trusted_Connection=True;MultipleActiveResultSets=true"
+    "DefaultConnection": "YOU DATABASE CONNECTION STRING HERE"
   },
   "CSVFilePaths": { // used to set paths to upload the CHR data sets
     "Copied": "\\uploads",
