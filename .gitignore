@@ -13,8 +13,8 @@ CPH/Migrations
 *.header
 
 # Ignore the main appsettings.json file
-CPH/appsettings.json
-CPH/appsettings.Development.json
+appsettings.json
+appsettings.Development.json
 
 # User-specific files
 *.rsuser
