@@ -2,7 +2,7 @@
 Most technologies used in this project are Microsoft based. Below you will find location to the current files and communication mediums.
 
 # File Storage
-* <a href="https://teams.microsoft.com/_#/school/files/General?threadId=19%3A003bad19bc74453f9af3ac02ca464f49%40thread.skype&ctx=channel&context=General&rootfolder=%252Fsites%252FMiniPublicHealth%252FShared%2520Documents%252FGeneral">OneDrive</a> - This is the location of all the current a privous capstone documents. 
+* <a href="https://etsu365.sharepoint.com/:f:/s/MiniPublicHealth/Ei3dtt5JimNDjmsh_WfMtdUBhMsgdmyfq8t68mnmypQXQA?e=7NXbyk">OneDrive SharePoint</a> - This is the location of all the current a privous capstone documents. 
 * <a href="">Lucid Charts</a> - used to show 
 
 # Chat
