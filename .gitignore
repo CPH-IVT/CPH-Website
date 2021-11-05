@@ -12,7 +12,8 @@ CPH/Migrations
 # Ignore the commenting header file
 *.header
 
-
+# Ignore the main appsettings.json file
+CPH/appsettings.json
 
 # User-specific files
 *.rsuser
