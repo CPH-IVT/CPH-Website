@@ -1,7 +1,7 @@
 ﻿@model CPH.Models.ViewModels.UploadCSVModel
 
 @{
-    ViewData["Title"] = "UploadCSV";
+    ViewData["Title"] = "Upload CPH Data";
 }
 
 <h1>CSV Upload</h1>
@@ -37,12 +37,12 @@
 
 @section scripts{
     <script type="text/javascript">
+
         const form = {
             userId: document.getElementById("UserIdentity").value,
             uploadDate: document.getElementById("UploadDate").value,
             originalCsv: document.getElementById("OriginalFile"),
             alteredCsv: document.getElementById("File"),
-            //formData: new FormData(),
             get getUserId() {
                 return this.userId;
             },
@@ -99,7 +99,7 @@
 
                         if (userAnswer) {
                             ajaxSubmitForm();
-                            return;
+                            return; // return this promise so it stops running. 
                         }
                     }
 

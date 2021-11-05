@@ -13,6 +13,7 @@
 namespace CPH.Controllers
 {
     using CPH.BusinessLogic.Interfaces;
+    using CPH.Models;
     using CPH.Models.ViewModels;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,8 @@ namespace CPH.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using System.Collections;
+    using System.Diagnostics;
+    using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -77,20 +80,22 @@ namespace CPH.Controllers
         /// NEEDS TO BE DEFINED.
         /// </summary>
         /// <returns>The <see cref="IActionResult"/>.</returns>
-        public IActionResult Chart()
+        public IActionResult CreateChart()
         {
+            var filePath = _hostEnv.WebRootPath + "\\uploads\\";
+            string[] files = Directory.GetFiles(filePath);
+
+            string[] fileNames = new string[files.Length];
+
+            for (var i = 0; i < files.Length; i++)
+            {
+                fileNames[i] = (Path.GetFileNameWithoutExtension(files[i]));
+            }
+
+            ViewData["Files"] = fileNames;
             return View();
         }
 
-        /// <summary>
-        /// The Account.
-        /// Allow user to view and manage account attributes.
-        /// </summary>
-        /// <returns>The <see cref="IActionResult"/>.</returns>
-        public IActionResult Account()
-        {
-            return View();
-        }
 
         /// <summary>
         /// The UploadCSV.
@@ -193,6 +198,17 @@ namespace CPH.Controllers
         public async Task<IActionResult> CSVYearDuplicateCheck(IFormFile csvYear)
         {
             return Json(_csvManagement.CheckIfYearExists(csvYear.FileName));
+        }
+
+
+        /// <summary>
+        /// The Error.
+        /// </summary>
+        /// <returns>The <see cref="IActionResult"/>.</returns>
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
