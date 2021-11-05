@@ -2,7 +2,7 @@
 Most technologies used in this project are Microsoft based. Below you will find location to the current files and communication mediums.
 
 # File Storage
-* <a href="https://teams.microsoft.com/_#/school/files/General?threadId=19%3A003bad19bc74453f9af3ac02ca464f49%40thread.skype&ctx=channel&context=General&rootfolder=%252Fsites%252FMiniPublicHealth%252FShared%2520Documents%252FGeneral">OneDrive</a> - This is the location of all the current a privous capstone documents. 
+* <a href="https://etsu365.sharepoint.com/:f:/s/MiniPublicHealth/Ei3dtt5JimNDjmsh_WfMtdUBhMsgdmyfq8t68mnmypQXQA?e=7NXbyk">OneDrive SharePoint</a> - This is the location of all the current a privous capstone documents. 
 * <a href="">Lucid Charts</a> - used to show 
 
 # Chat
@@ -24,6 +24,8 @@ Most technologies used in this project are Microsoft based. Below you will find 
 *  Adding Properties to AspNetUser: https://www.youtube.com/watch?v=NV734cJdZts
 *  Seeding the db: https://jorgeramon.me/2015/how-to-seed-users-and-roles-in-an-asp-net-mvc-application/, http://www.binaryintellect.net/articles/5e180dfa-4438-45d8-ac78-c7cc11735791.aspx, https://docs.microsoft.com/en-us/ef/core/modeling/data-seeding
 *  Logging: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-5.0
+*  Twitter Boot Strap v4.6.x: https://getbootstrap.com/docs/4.6/getting-started/introduction/
+*  jQuery: https://jquery.com/
 
 # Interactive US Map (Future iterations of CPH)
 * <a href="https://www.google.com/maps/d/embed?mid=1LR2u1mms4-Nv8RlIVhvRZBcm8Q0&msa=0&ll=45.26966855666981%2C-122.70965409228255&spn=1.179884%2C2.469177&output=embed&z=9">Google Map Outline Example</a>
