@@ -14,6 +14,7 @@ CPH/Migrations
 
 # Ignore the main appsettings.json file
 CPH/appsettings.json
+CPH/appsettings.Development.json
 
 # User-specific files
 *.rsuser
