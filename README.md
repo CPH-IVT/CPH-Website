@@ -33,3 +33,15 @@ Most technologies used in this project are Microsoft based. Below you will find 
 * GeoJson Map: https://geojson.io/#map=7/34.235/-113.049
 * <a href="https://public.opendatasoft.com/explore/dataset/us-county-boundaries/table/?disjunctive.statefp&disjunctive.countyfp&disjunctive.name&disjunctive.namelsad&disjunctive.stusab&disjunctive.state_name&dataChart=eyJxdWVyaWVzIjpbeyJjb25maWciOnsiZGF0YXNldCI6InVzLWNvdW50eS1ib3VuZGFyaWVzIiwib3B0aW9ucyI6eyJkaXNqdW5jdGl2ZS5zdGF0ZWZwIjp0cnVlLCJkaXNqdW5jdGl2ZS5jb3VudHlmcCI6dHJ1ZSwiZGlzanVuY3RpdmUubmFtZSI6dHJ1ZSwiZGlzanVuY3RpdmUubmFtZWxzYWQiOnRydWUsImRpc2p1bmN0aXZlLnN0dXNhYiI6dHJ1ZSwiZGlzanVuY3RpdmUuc3RhdGVfbmFtZSI6dHJ1ZX19LCJjaGFydHMiOlt7ImFsaWduTW9udGgiOnRydWUsInR5cGUiOiJjb2x1bW4iLCJmdW5jIjoiQVZHIiwieUF4aXMiOiJhbGFuZCIsInNjaWVudGlmaWNEaXNwbGF5Ijp0cnVlLCJjb2xvciI6IiNGRjUxNUEifV0sInhBeGlzIjoic3RhdGVmcCIsIm1heHBvaW50cyI6NTAsInNvcnQiOiIifV0sInRpbWVzY2FsZSI6IiIsImRpc3BsYXlMZWdlbmQiOnRydWUsImFsaWduTW9udGgiOnRydWV9&location=5,34.92197,-79.56299&basemap=jawg.streets">County Dataset</a>
 * State GeoJson: https://eric.clst.org/tech/usgeojson/
+
+# Direct links to County Health Ranking CSVs
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2019.csv"
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2018_0.csv"
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2017.csv"
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2016.csv"
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2015.csv"
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2014.csv"
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2013.csv"
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2012.csv"
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2011.csv"
+* "https://www.countyhealthrankings.org/sites/default/files/analytic_data2010.csv"
