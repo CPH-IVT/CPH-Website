@@ -3,7 +3,12 @@
     ViewData["Title"] = "Chart";
 }
 
-<h1>Chart</h1>
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default">Chart Name</span>
+    </div>
+    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+</div>
 
 <div id="ChartArea"></div>
 
@@ -17,17 +22,18 @@
 </select>
 
 
-<div class="form-group">
-    <label for="columns">Health Attributes</label>
-    <ul style="list-style: none; height: 300px" id="columns" class="form-control overflow-auto col-5">
-    </ul>
+<div class="row">
+    <div class="col-6">
+        <label for="columns">Health Attributes</label>
+        <ul style="list-style: none; height: 300px" id="columns" class="form-control overflow-auto">
+        </ul>
+    </div>
+    <div class="col-6">
+        <label for="counties">Counties</label>
+        <ul style="list-style: none; height: 300px" id="counties" class="form-control overflow-auto">
+        </ul>
+    </div>
 </div>
-<div class="form-group">
-    <label for="counties">Counties</label>
-    <ul style="list-style: none; height: 300px" id="counties" class="form-control overflow-auto col-5">
-    </ul>
-</div>
-
 
 
 @section scripts{

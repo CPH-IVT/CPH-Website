@@ -82,7 +82,7 @@ namespace CPH.Controllers
         /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult CreateChart()
         {
-            var filePath = _hostEnv.WebRootPath + "\\uploads\\";
+            var filePath = _csvManagement.UploadsFolder;
             string[] files = Directory.GetFiles(filePath);
 
             string[] fileNames = new string[files.Length];
