@@ -64,19 +64,9 @@ namespace CPH
 
             services.AddSingleton<ICSVManagement, CSVManagement>();
 
-            services.AddScoped<ICounties, Counties>();
-            services.AddScoped<IDatapointColumns, DatapointColumns>();
-            services.AddScoped<IKeywords, Keywords>();
-            services.AddScoped<IRegion, Region>();
-            services.AddScoped<IRegionCounties, RegionCounties>();
-            services.AddScoped<ISavedChartCounties, SavedChartCounties>();
-            services.AddScoped<ISavedChartDatapoints, SavedChartDatapoints>();
-            services.AddScoped<ISavedChartKeywords, SavedChartKeywords>();
-            services.AddScoped<ISavedChartRegions, SavedChartRegions>();
-            services.AddScoped<ISavedCharts, SavedCharts>();
-            services.AddScoped<ISavedChartYear, SavedChartYear>();
-            services.AddScoped<IStates, States>();
-            services.AddScoped<IYears, Years>();
+            services.AddScoped<IChart, ChartRepo>();
+            services.AddScoped<IStates, StatesRepo>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

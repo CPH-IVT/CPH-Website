@@ -478,50 +478,7 @@ new States
 );
         }
 
-        /// <summary>
-        /// Gets or sets the Counties.
-        /// </summary>
-        public DbSet<Counties> Counties { get; set; }
-
-        /// <summary>
-        /// Gets or sets the DatapointColumns.
-        /// </summary>
-        public DbSet<DatapointColumns> DatapointColumns { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Region.
-        /// </summary>
-        public DbSet<Region> Region { get; set; }
-
-        /// <summary>
-        /// Gets or sets the RegionCounties.
-        /// </summary>
-        public DbSet<RegionCounties> RegionCounties { get; set; }
-
-        /// <summary>
-        /// Gets or sets the SavedChartCounties.
-        /// </summary>
-        public DbSet<SavedChartCounties> SavedChartCounties { get; set; }
-
-        /// <summary>
-        /// Gets or sets the SavedChartDatapoints.
-        /// </summary>
-        public DbSet<SavedChartDatapoints> SavedChartDatapoints { get; set; }
-
-        /// <summary>
-        /// Gets or sets the SavedChartRegions.
-        /// </summary>
-        public DbSet<SavedChartRegions> SavedChartRegions { get; set; }
-
-        /// <summary>
-        /// Gets or sets the SavedCharts.
-        /// </summary>
-        public DbSet<SavedCharts> SavedCharts { get; set; }
-
-        /// <summary>
-        /// Gets or sets the SavedChartYear.
-        /// </summary>
-        public DbSet<SavedChartYear> SavedChartYear { get; set; }
+        public DbSet<Chart> Chart { get; set; }
 
         /// <summary>
         /// Gets or sets the States.

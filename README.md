@@ -4,6 +4,9 @@ Most technologies used in this project are Microsoft based. Below you will find 
 # File Storage
 * <a href="https://etsu365.sharepoint.com/:f:/s/MiniPublicHealth/Ei3dtt5JimNDjmsh_WfMtdUBhMsgdmyfq8t68mnmypQXQA?e=7NXbyk">OneDrive SharePoint</a> - This is the location of all the current a privous capstone documents. 
 * <a href="">Lucid Charts</a> - used to show 
+# C# async await Timeouts
+* [Async await](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/async/cancel-async-tasks-after-a-period-of-time)
+* https://docs.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken?redirectedfrom=MSDN&view=net-5.0
 
 # Chat
 * <a href="https://teams.microsoft.com/l/channel/19%3a003bad19bc74453f9af3ac02ca464f49%40thread.skype/General?groupId=8ef819a1-36fd-49ba-bbad-dff7ce480ebb&tenantId=962441d5-5055-4349-bad3-baec43c3d741">Microsoft Teams</a> - Here capstone participents can also access the OneDrive files and communicate with there teammembers. 

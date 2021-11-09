@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Chart";
+    ViewData["Title"] = "Create Chart";
 }
 
 <div class="input-group mb-3">
@@ -10,6 +10,7 @@
     <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
 </div>
 
+@*Draw the chart below*@
 <div id="ChartArea"></div>
 
 @* The files are named the year that they represent. *@
@@ -38,15 +39,12 @@
 
 @section scripts{
     <script type="text/javascript" src="~/js/charts.js"></script>
-    @*<script type="text/javascript" src="~/js/map.js"></script>*@
+
     <script type="text/javascript">
         var dataHolder = [];
         var maxValue = 0;
         var minValue = 0;
         var domainInput = [];
-
-        //yAxis();
-
 
         function readYear(year) {
             console.log(year.target.value);
