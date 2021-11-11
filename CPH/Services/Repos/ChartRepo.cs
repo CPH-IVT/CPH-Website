@@ -1,9 +1,8 @@
 ﻿using CPH.Data;
 using CPH.Models;
 using CPH.Services.Interfaces;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CPH.Services.Repos
@@ -18,27 +17,48 @@ namespace CPH.Services.Repos
         }
         public async Task<Chart> Create(Chart item)
         {
-            throw new NotImplementedException();
+            var check = await Read(item.ChartId);
+
+            if (check != null)
+                return item;
+
+            await _db.Chart.AddAsync(item);
+            await _db.SaveChangesAsync();
+            return item;
         }
 
         public async Task Delete(Chart item)
         {
-            throw new NotImplementedException();
+            var check = await Read(item.ChartId);
+
+            if (check != null)
+            {
+                _db.Chart.Remove(item);
+                _db.SaveChanges();
+            }
         }
 
         public async Task<Chart> Read(string Id)
         {
-            return _db.Chart.FirstOrDefault(x => x.id == Id);
+            return await _db.Chart.FirstOrDefaultAsync(x => x.ChartId == Id);
         }
 
         public async Task<ICollection<Chart>> ReadAll()
         {
-            throw new NotImplementedException();
+            return await _db.Chart.ToListAsync();
         }
 
         public async Task<Chart> Update(Chart item)
         {
-            throw new NotImplementedException();
+            var check = await Read(item.ChartId);
+
+            if (check == null)
+                return null;
+
+            check = item;
+            _db.SaveChanges();
+
+            return check;
         }
     }
 }

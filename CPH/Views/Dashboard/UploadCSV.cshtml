@@ -1,4 +1,5 @@
-﻿@model CPH.Models.ViewModels.UploadCSVModel
+﻿<!--Note that the Ajax call has hard coded dependencies.-->
+@model CPH.Models.ViewModels.UploadCSVModel
 
 @{
     ViewData["Title"] = "Upload CPH Data";
@@ -8,10 +9,13 @@
 
 <h4>Upload yearly CSV's from the County Health Rankings website.</h4>
 <hr />
+
+@* Stylizing classes uses Twitter Bootstrap CSS library. Form-groups hold content for areas of the DOM. *@
 <div class="row">
     <div class="col-md-4">
+
+        @* JavaScript grabs the upload-form id and manipulates the uploaded file.*@
         <div id="upload-form">
-            @*<form id="upload-form" method="POST" runat="server" enctype="multipart/form-data">*@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <input id="UserIdentity" hidden value="@User.Identity.Name" asp-for="UserIdentity" class="form-control" />
@@ -50,14 +54,19 @@
                 return this.uploadDate;
             },
             get getOriginalCsv() {
+                // The input select file only uploads one file for this input specification.
                 return this.originalCsv.files[0];
             },
             get getAlteredCsv() {
+                // The input select file only uploads one file for this input specification.
                 return this.alteredCsv.files[0];
             },
             get getForm() {
 
+                // Creates the form dynamically from nodes in the upload-form div.
                 var formData = new FormData();
+
+                // Populate the form with uploaded data and other nodes within the upload-form div.
                 formData.append("File", this.getAlteredCsv);
                 formData.append("OriginalFile", this.getOriginalCsv);
                 formData.append("UserIdentity", this.getUserId);
@@ -66,20 +75,26 @@
                 return formData;
             }
         };
+
+        // Get the upload-button node for monitoring click events. See near the end of file. 
         var uploadButton = document.getElementById("upload-button");
 
+        // No functionality here, just used to validate that the altered CSV file was added to the input File node. 
         const fileSelector = document.getElementById('File');
         fileSelector.addEventListener('change', (event) => {
-            const fileList = event.target.files;
-            console.log(fileList);
+            const fileList = event.target.files[0];
+            console.log("File Manipulated: " + fileList.name);
         });
 
-        function checkIfYearIsInDirectory() {
-           
+        /**
+         * Ajax call to upload and validate the CHR CSV and user web page. 
+         * Screen refresh for over writing file with matching year and non-matching hash code is handled in function ajaxSubmitForm().
+         * */
+        function ensureYearIsInDirectory() {
 
             $.ajax({
                 type: "POST",
-                url: "/Dashboard/ValidateAndUploadCSV",
+                url: "/Dashboard/ValidateAndUploadCSV", 
                 data: form.getForm,
                 contentType: false,
                 processData: false,
@@ -99,7 +114,7 @@
 
                         if (userAnswer) {
                             ajaxSubmitForm();
-                            return; // return this promise so it stops running. 
+                            return; // make sure that the data is in the form before reloading the page. 
                         }
                     }
 
@@ -115,9 +130,12 @@
                     console.warn(response);
                     console.warn(form.getForm);
                 }
-            }).done(console.log("Check if year exists done."));
+            });
         }
 
+        /**
+         * Used to submit the form and CSV files if the year was found and the hash code did not match. 
+         * */
         async function ajaxSubmitForm() {
            
             $.ajax({
@@ -132,13 +150,13 @@
                     // check the response to see if the file was uploaded correctly
                     if (response["FileUploaded"]) {
                         alert("File has been overriden.");
+                        location.reload();
                     }
-                    else {
-
-                        // if it was not, console log the errors.
-                        console.error(response);
-                        console.error(form.getForm);
-                    }
+             
+                    // if it was not, console log the errors.
+                    console.error(response);
+                    console.error(form.getForm);
+                    
                 },
                 error: function (response) {
                     console.warn(response);
@@ -147,6 +165,13 @@
             }).done(console.log("ajaxSubmitForm done."));
         }
 
+        /**
+         * Routine assumes file names formatted as CHR-YYYY.csv where YYYY denotes year.
+         * Routine assumes Windows format text files. 
+         * Routine assumes that the file has two header rows, that year is located in column six, and that year is the same for all records.
+         * 
+         * @@param event
+         */
         function readAndCopyOriginalFile(event) {
 
             var originalFile = event.target.files[0];
@@ -167,7 +192,8 @@
                 // split the csv on \r rows
                 var rows = contents.split("\r");
 
-                var year = rows[2].split(",")[5];
+                // Get the year of the CSV file.
+                var year = rows[2].split(",")[5];  
 
                 // ORIGINAL CSV
                 let originalCsvData = new Blob([rows], { type: 'text/csv' });
@@ -233,6 +259,6 @@
 
         document.getElementById('File').addEventListener('change', readAndCopyOriginalFile, false);
         document.getElementById('File').addEventListener('change', readSingleFile, false);
-        uploadButton.addEventListener('click', checkIfYearIsInDirectory);
+        uploadButton.addEventListener('click', ensureYearIsInDirectory);
     </script>
 }
