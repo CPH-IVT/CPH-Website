@@ -1,15 +1,19 @@
 # CPH Capstone README
 Most technologies used in this project are Microsoft based. Below you will find location to the current files and communication mediums.
 
-# API Documentation
+# Nuget Packages
+## API Documentation
 To help with documenting the projects API a popular Nuget package has been installed - Swagger. Swagger automates the documentation process for API's. 
 * API Doc URL: https://YOUR LOCAL HOST PATH/swagger/index.html
 * [Swagger Documentation](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
-# Logging with Serilog
+## Logging with Serilog
 Serilog is a popular Nuget package that helps with the logging process. Serilog generates a new text file for each new day the applicaiton is used. 
 * Log files are located in the _logs_ file in the root directory.
 * [Serilog Documentation](https://github.com/serilog/serilog)
+
+## Package Considerations
+* [CSVHelper](https://github.com/JoshClose/CsvHelper)
 
 # File Storage
 * <a href="https://etsu365.sharepoint.com/:f:/s/MiniPublicHealth/Ei3dtt5JimNDjmsh_WfMtdUBhMsgdmyfq8t68mnmypQXQA?e=7NXbyk">OneDrive SharePoint</a> - This is the location of all the current a privous capstone documents. 
