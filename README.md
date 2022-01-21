@@ -42,7 +42,13 @@ Serilog is a popular Nuget package that helps with the logging process. Serilog 
 *  Seeding the db: https://jorgeramon.me/2015/how-to-seed-users-and-roles-in-an-asp-net-mvc-application/, http://www.binaryintellect.net/articles/5e180dfa-4438-45d8-ac78-c7cc11735791.aspx, https://docs.microsoft.com/en-us/ef/core/modeling/data-seeding
 *  Logging: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-5.0
 *  Twitter Boot Strap v4.6.x: https://getbootstrap.com/docs/4.6/getting-started/introduction/
-*  jQuery: https://jquery.com/
+*  jQuery: https://jquery.com/ - NEED TO PHASE OUT WHEN REFACTORING
+
+
+## Vuejs.org
+Vuejs is growing in popularity and jQuery is not. Vue isn't an "exact" replacement of jQuery because a lot of the functionality that used to be inportant is now baked into vinilia JavaScript. 
+https://vuejs.org/v2/guide/installation.html
+
 # Considerations for Future Iterations
 
 ## Interactive US Map (Future iterations of CPH)
