@@ -17,6 +17,7 @@ namespace CPH.Controllers
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Serilog;
     using System.Diagnostics;
     using System.IO;
     using System.Threading.Tasks;
@@ -27,11 +28,6 @@ namespace CPH.Controllers
     public class HomeController : Controller
     {
         /// <summary>
-        /// Defines the _logger.
-        /// </summary>
-        private readonly ILogger<HomeController> _logger;
-
-        /// <summary>
         /// Defines the _hostEnv.
         /// </summary>
         private readonly IWebHostEnvironment _hostEnv;
@@ -41,9 +37,9 @@ namespace CPH.Controllers
         /// </summary>
         /// <param name="logger">The logger<see cref="ILogger{HomeController}"/>.</param>
         /// <param name="hostEnv">The hostEnv<see cref="IWebHostEnvironment"/>.</param>
-        public HomeController(ILogger<HomeController> logger, IWebHostEnvironment hostEnv)
+        public HomeController(IWebHostEnvironment hostEnv)
         {
-            _logger = logger;
+            
             _hostEnv = hostEnv;
         }
 
@@ -72,6 +68,8 @@ namespace CPH.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            Log.Error( Activity.Current?.Id ?? HttpContext.TraceIdentifier , "The page ID was not found.");
+            Log.CloseAndFlush();
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

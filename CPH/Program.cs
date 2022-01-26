@@ -14,7 +14,6 @@ namespace CPH
 {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Defines the <see cref="Program" />.
@@ -37,16 +36,6 @@ namespace CPH
         /// <returns>The <see cref="IHostBuilder"/>.</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-            .ConfigureLogging(logging =>
-            {
-                logging.AddEventLog(eventLogSettings =>
-                {
-                    eventLogSettings.SourceName = "CPHLogs";
-                });
-
-                logging.SetMinimumLevel(LogLevel.Information);
-
-            })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

@@ -37,10 +37,6 @@ namespace CPH.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
-        /// <summary>
-        /// References the _logger..
-        /// </summary>
-        private readonly ILogger<DashboardController> _logger;
 
         /// <summary>
         /// References the _hostEnv..
@@ -58,9 +54,9 @@ namespace CPH.Controllers
         /// <param name="logger">The logger<see cref="ILogger{DashboardController}"/>.</param>
         /// <param name="hostEnv">The hostEnv<see cref="IWebHostEnvironment"/>.</param>
         /// <param name="csvManagement">The csvManagement<see cref="ICSVManagement"/>.</param>
-        public DashboardController(ILogger<DashboardController> logger, IWebHostEnvironment hostEnv, ICSVManagement csvManagement)
+        public DashboardController(IWebHostEnvironment hostEnv, ICSVManagement csvManagement)
         {
-            _logger = logger;
+           
             _hostEnv = hostEnv;
             _csvManagement = csvManagement;
         }

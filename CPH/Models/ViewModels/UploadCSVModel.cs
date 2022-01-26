@@ -18,7 +18,7 @@ namespace CPH.Models.ViewModels
         /// <summary>
         /// Gets or sets the File.
         /// </summary>
-        public IFormFile File { get; set; }
+        public IFormFile AlteredFile { get; set; }
 
         /// <summary>
         /// Gets or sets the OriginalFile.

@@ -43,7 +43,10 @@
     <script type="module">
         
         import { Chart } from '../js/charts.js';
-        Chart.setChartSizeProperties({ top: 10, right: 40, bottom: 30, left: 30 }, document.getElementById("ChartArea").offsetWidth, 400);
+
+        var chartOne = Chart;
+        chartOne.InitializeChart({ top: 10, right: 40, bottom: 30, left: 30 }, document.getElementById("ChartArea").offsetWidth, 40, "#ChartArea");
+
         var dataHolder = [];
         var maxValue = 0;
         var minValue = 0;

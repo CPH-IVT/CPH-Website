@@ -25,6 +25,8 @@ namespace CPH
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.OpenApi.Models;
+    using Serilog;
 
     /// <summary>
     /// Defines the <see cref="Startup" />.
@@ -38,6 +40,17 @@ namespace CPH
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Console()
+                .WriteTo.File("logs/CPH-logs.txt",
+                    rollingInterval: RollingInterval.Day,
+                    rollOnFileSizeLimit: true)
+                .CreateLogger();
+
+            Log.Information("Starting Application - Startup.cs Constructor");
+            Log.CloseAndFlush();
         }
 
         /// <summary>
@@ -59,6 +72,13 @@ namespace CPH
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -79,11 +99,13 @@ namespace CPH
         {
             if (env.IsDevelopment())
             {
+                Log.Information("Application is set to a development environment.");
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
             else
             {
+                Log.Error("Error - redirecting user to /Home/Error");
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -102,7 +124,15 @@ namespace CPH
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapSwagger();
             });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+            });
+
         }
     }
 }

@@ -27,9 +27,9 @@
             </div>
             <input id="OriginalFile" type="file" asp-for="OriginalFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" hidden />
             <div class="form-group">
-                <label asp-for="File" class="control-label"></label>
-                <input id="File" type="file" asp-for="File" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" />
-                <span asp-validation-for="File" class="text-danger"></span>
+                <label asp-for="AlteredFile" class="control-label"></label>
+                <input id="AlteredFile" type="file" asp-for="AlteredFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" />
+                <span asp-validation-for="AlteredFile" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -46,7 +46,7 @@
             userId: document.getElementById("UserIdentity").value,
             uploadDate: document.getElementById("UploadDate").value,
             originalCsv: document.getElementById("OriginalFile"),
-            alteredCsv: document.getElementById("File"),
+            alteredCsv: document.getElementById("AlteredFile"),
             get getUserId() {
                 return this.userId;
             },
@@ -90,7 +90,7 @@
          * Ajax call to upload and validate the CHR CSV and user web page. 
          * Screen refresh for over writing file with matching year and non-matching hash code is handled in function ajaxSubmitForm().
          * */
-        function ensureYearIsInDirectory() {
+        function ensureYearIsNotInDirectory() {
 
             $.ajax({
                 type: "POST",
@@ -123,14 +123,15 @@
                         alert("File upload sucessful.");
                     }
 
-                    // reload the web page.
-                    location.reload();
                 },
                 error: function (response) {
                     console.warn(response);
                     console.warn(form.getForm);
                 }
             });
+
+            // reload the web page.
+            location.reload(true);
         }
 
         /**
@@ -150,7 +151,7 @@
                     // check the response to see if the file was uploaded correctly
                     if (response["FileUploaded"]) {
                         alert("File has been overriden.");
-                        location.reload();
+                        
                     }
              
                     // if it was not, console log the errors.
@@ -163,13 +164,14 @@
                     console.error(form.getForm);
                 }
             }).done(console.log("ajaxSubmitForm done."));
+            location.reload();
         }
 
         /**
          * Routine assumes file names formatted as CHR-YYYY.csv where YYYY denotes year.
          * Routine assumes Windows format text files. 
          * Routine assumes that the file has two header rows, that year is located in column six, and that year is the same for all records.
-         * 
+         *  SEE READSINGLEFILE! YOU NEED TO ABSTRACT TO IMPLEMENT DRY METHODOLOGY. 
          * @@param event
          */
         function readAndCopyOriginalFile(event) {
@@ -212,10 +214,15 @@
             reader.readAsBinaryString(originalFile);
         }
 
-        function readSingleFile(e) {
+        /**
+         * 
+         * 
+         * @@param event
+         */
+        function readSingleFile(event) {
 
             // check if a file has been uploaded
-            var file = e.target.files[0];
+            var file = event.target.files[0];
 
             var originalFile;
 
@@ -259,6 +266,6 @@
 
         document.getElementById('File').addEventListener('change', readAndCopyOriginalFile, false);
         document.getElementById('File').addEventListener('change', readSingleFile, false);
-        uploadButton.addEventListener('click', ensureYearIsInDirectory);
+        uploadButton.addEventListener('click', ensureYearIsNotInDirectory);
     </script>
 }
