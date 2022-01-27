@@ -122,7 +122,7 @@ namespace CPH.Controllers
             // Get the hash codes of the csv files that are currently in the system directory
             var hashCodes = _csvManagement.GetCsvHashCodes();
 
-            var file = form.File;
+            var file = form.AlteredFile;
             var originalFile = form.OriginalFile;
 
             if (file == null || file.Length == 0 || originalFile == null || originalFile.Length == 0)
@@ -167,7 +167,7 @@ namespace CPH.Controllers
         [Route("Dashboard/OverrideCsvYear")]
         public async Task<IActionResult> OverrideCsvYear(UploadCSVModel form)
         {
-            var alteredFile = form.File;
+            var alteredFile = form.AlteredFile;
             var originalFile = form.OriginalFile;
 
             if (alteredFile == null || alteredFile.Length == 0 || originalFile == null || originalFile.Length == 0)
