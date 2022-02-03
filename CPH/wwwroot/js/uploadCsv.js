@@ -61,10 +61,10 @@
             this.formData.append("UserIdentity", this.userId);
             this.formData.append("UploadDate", this.uploadDate);
         },
-        validateAndUploadCsv() {
+        async validateAndUploadCsv() {
             this.createForm();
             console.log(this.formData);
-            fetch('/Dashboard/ValidateAndUploadCSV', {
+            await fetch('/Dashboard/ValidateAndUploadCSV', {
                 method: 'POST',
                 body: this.formData,
             })
@@ -82,7 +82,7 @@
             });
         },
         overrideCsvYear() {
-            fetch("/Dashboard/OverrideCsvYear", {
+           fetch("/Dashboard/OverrideCsvYear", {
                 method: 'POST',
                 body: this.formData
             })
@@ -90,6 +90,7 @@
             .then(data => {
                 if (data["FileUploaded"]) {
                     alert("File has been overridden.");
+                    location.reload();
                 }
             }).catch(error => {
                     console.error('Error: ', error)
@@ -113,7 +114,7 @@
         overrideDuplicate(value) {
             if (value) {
                 this.overrideCsvYear()
-                location.reload()
+
             }
         },
         uploadSuccess(value) {
