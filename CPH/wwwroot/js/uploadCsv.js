@@ -63,7 +63,6 @@
         },
         async validateAndUploadCsv() {
             this.createForm();
-            console.log(this.formData);
             await fetch('/Dashboard/ValidateAndUploadCSV', {
                 method: 'POST',
                 body: this.formData,
