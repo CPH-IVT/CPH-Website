@@ -1,7 +1,46 @@
-﻿/**
+﻿const CountyNode = {
+    stateName: '',
+    get getStateName() {
+        return this.stateName;
+    },
+    set setStateName(name) {
+        this.stateName = name;
+    },
+    countyName: '',
+    get getCountyName() {
+        return this.countyName;
+    },
+    set setCountyName(name) {
+        this.countyName = name;
+    },
+    healthAttribute: '',
+    get getHealthAttribute() {
+        return this.healthAttribute;
+    },
+    set setHealthAttribute(attributeName) {
+        this.healthAttribute = attributeName;
+    }
+
+}
+
+/**
  * A chart is an object with the following attributes: margin, width, height, lineData, percentileBottomAxisLine, tickSpacing, sVg, xScale, yScale, curveFunc.
  * */
 const Chart = {
+    isInitialized: false,
+    get getIsInitialized() {
+        return this.isInitialized;
+    },
+    set setIsInitialized(bool) {
+        this.isInitialized = bool;
+    },
+    countyNodes: undefined,
+    get getCountyNodes() {
+        return this.countyNodes;
+    },
+    set setCountyNodes(countyNodeArray) {
+        this.countyNodes = countyNodeArray;
+    },
     margin: {},
     get getMargin() {
         return this.margin;
@@ -46,6 +85,7 @@ const Chart = {
         return this.sVg;
     },
     set setSvg(chartAreaDiv) {
+
         this.sVg = d3.select(chartAreaDiv)
             .append("svg")
             .attr("width", this.getWidth + this.getMargin.left + this.getMargin.right)
@@ -64,12 +104,18 @@ const Chart = {
         }
         return this.xScale;
     },
-    yScale: undefined,
+    set setXScale(value) {
+
+    },
+    yScale: undefined, // Y axis is the vertical axis that as the numeric value that represents the health attribute. 
     get getYScale() {
+        if (this.yScale === undefined) {
+            this.yScale = d3.scaleLinear().domain([0, this.getHeight]).range([this.getHeight, 0]);
+        }
         return this.yScale;
     },
-    set setYScale(value) {
-        this.yScale = value;
+    set setYScale(data) {
+        this.yScale = d3.scaleLinear().domain([0, d3.max(data, (d) => d.height)]).range([this.getHeight, 0]);
     },
     curveFunc: undefined,
     get getCurveFunction() {
@@ -83,13 +129,22 @@ const Chart = {
         this.setChartSizeProperties(margin, width, height);
         this.defineTheAreaToDisplayChart(chartDivName);
         this.createTheBottomAxis();
-        this.setYScale
+        this.createYAxis();
+        this.setIsInitialized = true;
 
     },
+    yAxisCall(numberOfTicks) {
+        return d3.axisLeft(this.getYScale)
+            .ticks(numberOfTicks)
+            .tickFormat((d) => d);
+    },
+    createYAxis() {
+        this.getSvg.append("g").attr("class", "y axis").call(this.yAxisCall(3));
+    },
     createTheBottomAxis() {
-        var svg = this.getSvg;
+       
 
-        svg.append('g')
+        this.getSvg.append('g')
             .attr("transform", "translate(0," + this.getHeight + ")")
             .call(d3.axisBottom(this.getXScale));
     },
@@ -103,6 +158,7 @@ const Chart = {
         return [0, (this.width * 0.05), (this.width * 0.10), (this.width * 0.15), (this.width * 0.20), (this.width * 0.25), (this.width * 0.30), (this.width * 0.35), (this.width * 0.40), (this.width * 0.45), (this.width * 0.50), (this.width * 0.55), (this.width * 0.60), (this.width * 0.65), (this.width * 0.70), (this.width * 0.75), (this.width * 0.80), (this.width * 0.85), (this.width * 0.90), (this.width * 0.95), this.width];
     },
     defineTheAreaToDisplayChart(chartAreaDiv) {
+
         this.setSvg = chartAreaDiv;
     },
     csv() {
@@ -153,7 +209,8 @@ const ChartAttributes = new Vue({
         year: 0,
         healthAttribute: null,
         healthAttributeData: [],
-        selectedCounties: []
+        selectedCounties: [],
+        chart: Chart,
     },
     methods: {
         setChartAttributes(year) {
@@ -161,7 +218,6 @@ const ChartAttributes = new Vue({
             //Get the columns div
             let healthAttrs = document.getElementById("HealthAttrs");
             let countiesDiv = document.getElementById("Counties");
-
             let checkHealthAttrs = this.checkIfNodeIsEmpty(healthAttrs);
             let checkCounties = this.checkIfNodeIsEmpty(countiesDiv);
 
@@ -221,7 +277,7 @@ const ChartAttributes = new Vue({
             }
         },
         getCountyList(data) {
-            var listOfCounties = [];
+            let listOfCounties = [];
             for (var i = 0; i < data.length; i++) {
                 var countyWithState = `${data[i]["Name"]}, ${data[i]["State Abbreviation"]}`;
                 listOfCounties.push(countyWithState);
@@ -240,35 +296,53 @@ const ChartAttributes = new Vue({
             return true;
         },
         async readHealthAttribute(clickEvent) {
+ 
 
-            this.healthAttribute = clickEvent["target"].value;
-            let csvData = await d3.csv(`../uploads/${this.year}.csv`)
-                .then((data) => {
-                    return data.map((x) => x[this.healthAttribute]);
-                });
+            if (clickEvent["target"].nodeName === "LABEL") {
 
-            this.healthAttributeData = csvData.map(Number);
-            this.maxValue = Math.max(...this.healthAttributeData);
-            this.minValue = Math.min(...this.healthAttributeData);
-            this.healthAttributeData.sort((a, b) => a - b);
+                this.healthAttribute = clickEvent["target"].textContent;
 
+            } else if (clickEvent["target"].nodeName === "INPUT") {
 
+                this.healthAttribute = clickEvent["target"].value;
+
+            } else {
+
+                console.error("The click event did not have a health attribute. Check the readHealthAttribute method.");
+            }
+
+            if (this.healthAttribute !== null) {
+
+                let csvData = await d3.csv(`../uploads/${this.year}.csv`)
+                    .then((data) => {
+                        return data.map((x) => x[this.healthAttribute]);
+                    });
+
+                this.healthAttributeData = csvData.map(Number);
+                this.maxValue = Math.max(...this.healthAttributeData);
+                this.minValue = Math.min(...this.healthAttributeData);
+                this.healthAttributeData.sort((a, b) => a - b);
+            }
+  
         },
         readCountyCheckbox(clickEvent) {
 
             if (clickEvent["target"].checked) {
-                var countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
+                let countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
                 this.selectedCounties.push(clickEvent["target"].value);
             }
 
             if (!clickEvent["target"].checked) {
                 let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
-                console.log(indexOfItemToRemove);
-
+                
                 // as long as the item is found in the array, continue. 
                 if (indexOfItemToRemove > -1) {
                     // splice the item from the array to remove it. 
                     this.selectedCounties.splice(indexOfItemToRemove, indexOfItemToRemove);
+                }
+
+                if (indexOfItemToRemove === 0) {
+                    this.selectedCounties.shift();
                 }
             }
         },
@@ -280,7 +354,19 @@ const ChartAttributes = new Vue({
 
             return split;
         }
+    },
+    watch: {
+        healthAttribute() {
+            if (!this.chart.getIsInitialized) {
+                this.chart.InitializeChart({ top: 10, right: 40, bottom: 30, left: 30 }, document.getElementById("ChartArea").offsetWidth, 150, "#ChartArea");
+            }
+        },
+        selectedCounties() {
+            this.chart.setCountyNodes = this.selectedCounties;
+        }
     }
 })
+
+
 
 export { Chart };
