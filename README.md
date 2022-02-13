@@ -37,6 +37,7 @@ Serilog is a popular Nuget package that helps with the logging process. Serilog 
 *  ASP.NET - Server-side development in an MVC patteren. 
 *  JavaScript - used for frontend DOM manipulation
    *  (Fetch)[https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#supplying_request_options] - submitting a form using fetch api.
+   *  (ECMA Script Standards)[https://www.ecma-international.org/wp-content/uploads/ECMA-262_12th_edition_june_2021.pdf]
 *  Creating Roles: https://youtu.be/TuJd2Ez9i3I
 *  UserManager (adding users to roles): https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.usermanager-1?view=aspnetcore-5.0
 *  Adding Properties to AspNetUser: https://www.youtube.com/watch?v=NV734cJdZts
