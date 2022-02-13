@@ -36,8 +36,9 @@ Serilog is a popular Nuget package that helps with the logging process. Serilog 
 * <a href="https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation">D3</a> - the JavaScript library that manipulates SVG paths in the browser to display visually appealing graphs and charts.
 *  ASP.NET - Server-side development in an MVC patteren. 
 *  JavaScript - used for frontend DOM manipulation
-   *  (Fetch)[https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#supplying_request_options] - submitting a form using fetch api.
-   *  (ECMA Script Standards)[https://www.ecma-international.org/wp-content/uploads/ECMA-262_12th_edition_june_2021.pdf]
+   *  [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#supplying_request_options) - submitting a form using fetch api.
+   *  [ECMAScript Standards pdf](https://www.ecma-international.org/wp-content/uploads/ECMA-262_12th_edition_june_2021.pdf)
+   *  [ECMAScript Standards Website Doc](https://tc39.es/ecma262/)
 *  Creating Roles: https://youtu.be/TuJd2Ez9i3I
 *  UserManager (adding users to roles): https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.usermanager-1?view=aspnetcore-5.0
 *  Adding Properties to AspNetUser: https://www.youtube.com/watch?v=NV734cJdZts
