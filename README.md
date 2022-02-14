@@ -40,7 +40,7 @@ Serilog is a popular Nuget package that helps with the logging process. Serilog 
    *  [ECMAScript Standards pdf](https://www.ecma-international.org/wp-content/uploads/ECMA-262_12th_edition_june_2021.pdf)
    *  [ECMAScript Standards Website Doc](https://tc39.es/ecma262/)
 *  Commenting with JavaScript Intellisense
-  *  [Intellisense Docs](https://docs.microsoft.com/en-us/office/dev/add-ins/develop/get-javascript-intellisense-in-visual-studio)
+   *  [Intellisense Docs](https://docs.microsoft.com/en-us/office/dev/add-ins/develop/get-javascript-intellisense-in-visual-studio)
 *  Creating Roles: https://youtu.be/TuJd2Ez9i3I
 *  UserManager (adding users to roles): https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.usermanager-1?view=aspnetcore-5.0
 *  Adding Properties to AspNetUser: https://www.youtube.com/watch?v=NV734cJdZts
