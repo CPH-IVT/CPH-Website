@@ -12,6 +12,10 @@ Serilog is a popular Nuget package that helps with the logging process. Serilog 
 * Log files are located in the _logs_ file in the root directory.
 * [Serilog Documentation](https://github.com/serilog/serilog)
 
+## D3 Chart Referrences
+* [Line Chart, Percent Change](https://observablehq.com/@d3/change-line-chart)
+* [Boston-Area Rent Changes](https://observablehq.com/@harrislapiroff/boston-area-rent-changes)
+
 ## Package Considerations
 * [CSVHelper](https://github.com/JoshClose/CsvHelper)
 
