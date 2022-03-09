@@ -16,5 +16,5 @@ const PercentileChart = {
         this.yTickFormat = this.yAxis.tickFormat(dataArray);
     },
     xTickFormat: this.xAxis.tickFormat(["0", "5th", "10th", "15th", "20th", "25th", "30th", "35th", "40th", "45th", "50th", "55th", "60th", "65th", "70th", "75th", "80th", "85th", "90th", "95th", "100th"]),
-    line: d3.line().defined(i => D[i]).curve(this.curve).x(i => this.)
+    //line: d3.line().defined(i => D[i]).curve(this.curve).x(i => this.)
 }

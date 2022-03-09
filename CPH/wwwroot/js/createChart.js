@@ -135,12 +135,17 @@ const ChartAttributes = new Vue({
                 this.maxValue = Math.max(...this.healthAttributeData);
                 this.minValue = Math.min(...this.healthAttributeData);
                 this.healthAttributeData.sort((a, b) => a - b);
+
                 console.log(this.healthAttributeData.length);
-                let testData = this.healthAttributeData.map((element, index) => ({ x: element, y: (index / this.healthAttributeData.length * 100) }));
+
+                let testData = this.healthAttributeData.map((element, index) => ({ y: element, x: (index / this.healthAttributeData.length * 100) }));
+
+                //testData.sort((a, b) => b - a);
+
                 console.log(testData);
                 //this.chart.setYScale = this.healthAttributeData;
                 //this.chart.setLineData = testData;
-                //this.chart.createLine(this.healthAttributeData);
+                this.chart.createLine(testData);
             }
 
         },
@@ -175,9 +180,9 @@ const ChartAttributes = new Vue({
         }
     },
     watch: {
-        healthAttribute() {
+        maxValue() {
             if (!this.chart.getIsInitialized) {
-                this.chart.InitializeChart({ top: 10, right: 40, bottom: 30, left: 30 }, document.getElementById("ChartArea").offsetWidth, 150, "#ChartArea");
+                this.chart.InitializeChart({ top: 10, right: 40, bottom: 30, left: 40 }, document.getElementById("ChartArea").offsetWidth, this.maxValue, "#ChartArea");
             }
         },
         selectedCounties() {

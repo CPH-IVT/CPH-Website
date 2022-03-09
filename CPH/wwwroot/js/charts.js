@@ -103,7 +103,7 @@ const Chart = {
         this.sVg = d3.select(chartAreaDiv)
             .append("svg")
             .attr("width", this.getWidth + this.getMargin.left + this.getMargin.right)
-            .attr("height", this.getHeight + this.getMargin.top + this.getMargin.bottom)
+            .attr("height", 500 + this.getMargin.top + this.getMargin.bottom)
             // translate this svg element to leave some margin.
             .append("g")
             .attr("id", "InsideChart")
@@ -149,15 +149,15 @@ const Chart = {
 
             this.yScale = d3.scaleLinear()
                 .domain([0, this.getHeight])
-                .range([this.getHeight, 0]);
+                .range([500, 0]);
 
         }
         return this.yScale;
     },
     set setYScale(data) {
         this.yScale = d3.scaleLinear()
-            .domain([0, Math.max(...data)])
-            .range([this.getHeight, 0]);
+            .domain([0, 500])
+            .range([500, 0]);
     },
     curveFunc: undefined,
     get getCurveFunction() {
@@ -184,22 +184,28 @@ const Chart = {
     },
     yAxisCall(numberOfTicks) {
         return d3.axisLeft(this.getYScale)
-            .ticks(numberOfTicks)
+            //.ticks(numberOfTicks)
             .tickFormat((d) => d);
     },
     createYAxis() {
         this.getSvg.append("g").attr("class", "y axis").call(this.yAxisCall(3));
     },
     createLine(data) {
-        const line = d3.line().x(d => this.getXScaleLinear(d.x)).y(d => this.getYScale(d.y));
-
-        this.createLineData(data);
+        //const line = d3.line().x(d => this.getXScaleLinear(d.x)).y(d => this.getYScale(d.y));
+        const curve = d3.curveMonotoneX;
+        //this.createLineData(data);
+        const test = d3.line()
+            //.defined(i => data[i])
+            //.curve(curve)
+            .x(i => i.x)
+            .y(i => i.y);
 
         this.getSvg
             .append('path') // add a path to the existing svg
-            .attr('stroke', 'black')
-            .attr('fill', 'none')
-            .attr('d', line);
+            //.datum(this.getLineData)
+            .attr('d', test(data))
+            .attr("fill", "none")
+            .attr("stroke", "green");
     },
     calculatePercentile(indexOfitem, sizeOfArray) {
         return (indexOfitem + 1) / sizeOfArray * 100;
@@ -215,7 +221,7 @@ const Chart = {
        
 
         this.getSvg.append('g')
-            .attr("transform", "translate(0," + this.getHeight + ")")
+            .attr("transform", "translate(0," + 500 + ")") // defines the height of the chart in pixels to be displayed. 
             .call(d3.axisBottom(this.getXScale));
     },
     setChartSizeProperties(margin, width, height) {
