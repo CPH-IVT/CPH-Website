@@ -76,12 +76,52 @@ const Chart = {
     set setHeight(value) {
         this.height = value;
     },
+    X: undefined,
+    set setX(value) {
+        this.X = value;
+    },
+    get getX() {
+        return this.X;
+    },
+    Y: undefined,
+    set setY(value) {
+        this.Y = value;
+    },
+    get getY() {
+        return this.Y;
+    },
+    yDomain: undefined,
+    set setYDomain(value) {
+        this.yDomain = value;
+    },
+    get getYDomain() {
+        return this.yDomain;
+    },
+    xDomain: undefined,
+    set setXDomain(value) {
+        this.xDomain = value;
+    },
+    get getXDomain() {
+        return this.xDomain;
+    },
     lineData: [],
     get getLineData() {
         return this.lineData;
     },
     set setLineData(value) {
         this.lineData = value;
+
+        this.setX = value.map((element) => element.x);
+        this.setY = value.map((element) => element.y);
+
+        console.log(this.getX)
+        console.log(this.getY)
+
+        this.setXDomain = d3.extent(this.getX);
+        this.setYDomain = d3.extent(this.getY);
+
+        console.log(this.getXDomain)
+        console.log(this.getYDomain)
     },
     percentileBottomAxisLine: ["0", "5th", "10th", "15th", "20th", "25th", "30th", "35th", "40th", "45th", "50th", "55th", "60th", "65th", "70th", "75th", "80th", "85th", "90th", "95th", "100th"],
     get getPercentileBottomAxisLine() {
@@ -109,22 +149,23 @@ const Chart = {
             .attr("id", "InsideChart")
             .attr("transform", "translate(" + this.getMargin.left + "," + this.getMargin.top + ")");
     },
-    xScaleLinear: undefined,
-    get getXScaleLinear() {
-        if (this.xScaleLinear === undefined) {
-
-            this.xScaleLinear = d3.scaleLinear()
-                .domain([0, this.getHeight])
-                .range([0, this.getWidth]);
-
-        }
-        return this.xScaleLinear;
-    },
-    set setXScaleLinear(value) {
-        this.xScaleLinear = value;
-    },
     xScale: undefined, // x is the percentile
     get getXScale() {
+
+        //if (this.xScale === undefined) {
+        //    let length = this.getPercentileBottomAxisLine.length;
+        //    let lastIndex = this.getPercentileBottomAxisLine[length - 1];
+
+        //    this.xScale = d3.scaleLinear()
+        //        .domain([this.getPercentileBottomAxisLine[0], lastIndex])
+        //        .range([this.getMargin.left, this.getWidth - this.getMargin.right]);
+
+        //}
+        //return this.xScale;
+
+
+
+
         if (this.xScale === undefined) {
             this.xScale = d3.scaleOrdinal()
                 .domain(this.getPercentileBottomAxisLine)
@@ -146,10 +187,10 @@ const Chart = {
     get getYScale() {
         
         if (this.yScale === undefined) {
-
+            let lastIndex = this.getLineData - 1;
             this.yScale = d3.scaleLinear()
-                .domain([0, this.getHeight])
-                .range([500, 0]);
+                .domain(this.getYDomain)
+                .range([this.getHeight, this.getMargin.top]);
 
         }
         return this.yScale;
@@ -172,9 +213,18 @@ const Chart = {
      * @param {number} width
      * @param {number} height
      * @param {string} chartDivName
-     */
+    // */
     InitializeChart(margin, width, height, chartDivName) {
 
+        this.setChartSizeProperties(margin, width, height);
+        this.defineTheAreaToDisplayChart(chartDivName);
+        this.createTheBottomAxis();
+        this.createYAxis();
+        this.setIsInitialized = true;
+
+    },
+    InitializeChart(margin, width, height, chartDivName, lineData) {
+        this.setLineData = lineData;
         this.setChartSizeProperties(margin, width, height);
         this.defineTheAreaToDisplayChart(chartDivName);
         this.createTheBottomAxis();

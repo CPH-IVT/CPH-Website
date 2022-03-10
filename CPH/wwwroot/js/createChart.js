@@ -12,7 +12,7 @@ const ChartAttributes = new Vue({
         healthAttribute: null,
         healthAttributeData: [],
         selectedCounties: [],
-        chart: Chart,
+        chart: undefined,
     },
     methods: {
         /**
@@ -27,7 +27,7 @@ const ChartAttributes = new Vue({
             let checkHealthAttrs = this.checkIfNodeIsEmpty(healthAttrs);
             let checkCounties = this.checkIfNodeIsEmpty(countiesDiv);
 
-            Chart.InitializeChart
+            this.chart = Chart;
 
 
             if (checkCounties === false) {
@@ -119,35 +119,6 @@ const ChartAttributes = new Vue({
 
                 console.error("The click event did not have a health attribute. Check the readHealthAttribute method.");
             }
-
-            if (this.healthAttribute !== null) {
-
-                let csvData = await d3.csv(`../uploads/${this.year}.csv`)
-                    .then((data) => {
-                        return data.map((x) => x[this.healthAttribute]);
-                    });
-
-                this.healthAttributeData = csvData.map(Number);
-
-
-                //this.chart.setHealthIndicatorMax = Math.max(...this.healthAttributeData);
-                //this.chart.setHealthIndicatorMax = Math.min(...this.healthAttributeData);
-                this.maxValue = Math.max(...this.healthAttributeData);
-                this.minValue = Math.min(...this.healthAttributeData);
-                this.healthAttributeData.sort((a, b) => a - b);
-
-                console.log(this.healthAttributeData.length);
-
-                let testData = this.healthAttributeData.map((element, index) => ({ y: element, x: (index / this.healthAttributeData.length * 100) }));
-
-                //testData.sort((a, b) => b - a);
-
-                console.log(testData);
-                //this.chart.setYScale = this.healthAttributeData;
-                //this.chart.setLineData = testData;
-                this.chart.createLine(testData);
-            }
-
         },
         readCountyCheckbox(clickEvent) {
 
@@ -180,9 +151,41 @@ const ChartAttributes = new Vue({
         }
     },
     watch: {
-        maxValue() {
-            if (!this.chart.getIsInitialized) {
-                this.chart.InitializeChart({ top: 10, right: 40, bottom: 30, left: 40 }, document.getElementById("ChartArea").offsetWidth, this.maxValue, "#ChartArea");
+       async healthAttribute() {
+            //if (!this.chart.getIsInitialized) {
+            //    this.chart.InitializeChart({ top: 10, right: 40, bottom: 30, left: 40 }, document.getElementById("ChartArea").offsetWidth, 500, "#ChartArea");
+            //}
+            if (this.healthAttribute !== null) {
+
+                let csvData = await d3.csv(`../uploads/${this.year}.csv`)
+                    .then((data) => {
+                        return data.map((x) => x[this.healthAttribute]);
+                    });
+
+                this.healthAttributeData = csvData.map(Number);
+
+
+
+                //this.chart.setHealthIndicatorMax = Math.max(...this.healthAttributeData);
+                //this.chart.setHealthIndicatorMax = Math.min(...this.healthAttributeData);
+                //this.maxValue = Math.max(...this.healthAttributeData);
+                //this.minValue = Math.min(...this.healthAttributeData);
+                this.healthAttributeData.sort((a, b) => a - b);
+
+                console.log(this.healthAttributeData.length);
+
+                let testData = this.healthAttributeData.map((element, index) => ({ y: element, x: (index / this.healthAttributeData.length * 100) }));
+
+
+                this.chart.InitializeChart({ top: 10, right: 40, bottom: 30, left: 40 }, document.getElementById("ChartArea").offsetWidth, 500, "#ChartArea", testData);
+
+
+                //testData.sort((a, b) => b - a);
+
+                console.log(testData);
+                //this.chart.setYScale = this.healthAttributeData;
+                //this.chart.setLineData = testData;
+                this.chart.createLine(testData);
             }
         },
         selectedCounties() {
