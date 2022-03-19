@@ -1,4 +1,5 @@
-﻿const CountyNode = {
+﻿
+const CountyNode = {
     stateName: '',
     get getStateName() {
         return this.stateName;
@@ -20,13 +21,26 @@
     set setHealthAttribute(attributeName) {
         this.healthAttribute = attributeName;
     }
-
 }
 
 /**
  * A chart is an object with the following attributes: margin, width, height, lineData, percentileBottomAxisLine, tickSpacing, sVg, xScale, yScale, curveFunc.
  * */
 const Chart = {
+    healthIndicatorMax: 0,
+    get getHealthIndicatorMax() {
+        return this.healthIndicatorMax;
+    },
+    set setHealthIndicatorMax(value) {
+        this.healthIndicatorMax = value;
+    },
+    healthIndicatorMin: 0,
+    get getHealthIndicatorMin() {
+        return this.healthIndicatorMin;
+    },
+    set setHealthIndicatorMin(value) {
+        this.healthIndicatorMin = value;
+    },
     isInitialized: false,
     get getIsInitialized() {
         return this.isInitialized;
@@ -62,12 +76,52 @@ const Chart = {
     set setHeight(value) {
         this.height = value;
     },
+    X: undefined,
+    set setX(value) {
+        this.X = value;
+    },
+    get getX() {
+        return this.X;
+    },
+    Y: undefined,
+    set setY(value) {
+        this.Y = value;
+    },
+    get getY() {
+        return this.Y;
+    },
+    yDomain: undefined,
+    set setYDomain(value) {
+        this.yDomain = value;
+    },
+    get getYDomain() {
+        return this.yDomain;
+    },
+    xDomain: undefined,
+    set setXDomain(value) {
+        this.xDomain = value;
+    },
+    get getXDomain() {
+        return this.xDomain;
+    },
     lineData: [],
     get getLineData() {
         return this.lineData;
     },
     set setLineData(value) {
         this.lineData = value;
+
+        this.setX = value.map((element) => element.x);
+        this.setY = value.map((element) => element.y);
+
+        console.log(this.getX)
+        console.log(this.getY)
+
+        this.setXDomain = d3.extent(this.getX);
+        this.setYDomain = d3.extent(this.getY);
+
+        console.log(this.getXDomain)
+        console.log(this.getYDomain)
     },
     percentileBottomAxisLine: ["0", "5th", "10th", "15th", "20th", "25th", "30th", "35th", "40th", "45th", "50th", "55th", "60th", "65th", "70th", "75th", "80th", "85th", "90th", "95th", "100th"],
     get getPercentileBottomAxisLine() {
@@ -89,14 +143,29 @@ const Chart = {
         this.sVg = d3.select(chartAreaDiv)
             .append("svg")
             .attr("width", this.getWidth + this.getMargin.left + this.getMargin.right)
-            .attr("height", this.getHeight + this.getMargin.top + this.getMargin.bottom)
+            .attr("height", 500 + this.getMargin.top + this.getMargin.bottom)
             // translate this svg element to leave some margin.
             .append("g")
             .attr("id", "InsideChart")
             .attr("transform", "translate(" + this.getMargin.left + "," + this.getMargin.top + ")");
     },
-    xScale: undefined,
+    xScale: undefined, // x is the percentile
     get getXScale() {
+
+        //if (this.xScale === undefined) {
+        //    let length = this.getPercentileBottomAxisLine.length;
+        //    let lastIndex = this.getPercentileBottomAxisLine[length - 1];
+
+        //    this.xScale = d3.scaleLinear()
+        //        .domain([this.getPercentileBottomAxisLine[0], lastIndex])
+        //        .range([this.getMargin.left, this.getWidth - this.getMargin.right]);
+
+        //}
+        //return this.xScale;
+
+
+
+
         if (this.xScale === undefined) {
             this.xScale = d3.scaleOrdinal()
                 .domain(this.getPercentileBottomAxisLine)
@@ -107,15 +176,29 @@ const Chart = {
     set setXScale(value) {
 
     },
-    yScale: undefined, // Y axis is the vertical axis that as the numeric value that represents the health attribute. 
+    /** 
+     *  Y axis is the vertical axis that as the numeric value that represents the health attribute.
+     *  @type {d3.ScaleLinear}
+     ***/
+    yScale: undefined,
+    /**
+     * testing
+     **/
     get getYScale() {
+        
         if (this.yScale === undefined) {
-            this.yScale = d3.scaleLinear().domain([0, this.getHeight]).range([this.getHeight, 0]);
+            let lastIndex = this.getLineData - 1;
+            this.yScale = d3.scaleLinear()
+                .domain(this.getYDomain)
+                .range([this.getHeight, this.getMargin.top]);
+
         }
         return this.yScale;
     },
     set setYScale(data) {
-        this.yScale = d3.scaleLinear().domain([0, d3.max(data, (d) => d.height)]).range([this.getHeight, 0]);
+        this.yScale = d3.scaleLinear()
+            .domain([0, 500])
+            .range([500, 0]);
     },
     curveFunc: undefined,
     get getCurveFunction() {
@@ -124,6 +207,13 @@ const Chart = {
     set setCurveFunction(value) {
         this.curveFunc = value;
     },
+    /**
+     * This thing does something.
+     * @param {number} margin
+     * @param {number} width
+     * @param {number} height
+     * @param {string} chartDivName
+    // */
     InitializeChart(margin, width, height, chartDivName) {
 
         this.setChartSizeProperties(margin, width, height);
@@ -133,19 +223,55 @@ const Chart = {
         this.setIsInitialized = true;
 
     },
+    InitializeChart(margin, width, height, chartDivName, lineData) {
+        this.setLineData = lineData;
+        this.setChartSizeProperties(margin, width, height);
+        this.defineTheAreaToDisplayChart(chartDivName);
+        this.createTheBottomAxis();
+        this.createYAxis();
+        this.setIsInitialized = true;
+
+    },
     yAxisCall(numberOfTicks) {
         return d3.axisLeft(this.getYScale)
-            .ticks(numberOfTicks)
+            //.ticks(numberOfTicks)
             .tickFormat((d) => d);
     },
     createYAxis() {
         this.getSvg.append("g").attr("class", "y axis").call(this.yAxisCall(3));
     },
+    createLine(data) {
+        //const line = d3.line().x(d => this.getXScaleLinear(d.x)).y(d => this.getYScale(d.y));
+        const curve = d3.curveMonotoneX;
+        //this.createLineData(data);
+        const test = d3.line()
+            //.defined(i => data[i])
+            //.curve(curve)
+            .x(i => i.x)
+            .y(i => i.y);
+
+        this.getSvg
+            .append('path') // add a path to the existing svg
+            //.datum(this.getLineData)
+            .attr('d', test(data))
+            .attr("fill", "none")
+            .attr("stroke", "green");
+    },
+    calculatePercentile(indexOfitem, sizeOfArray) {
+        return (indexOfitem + 1) / sizeOfArray * 100;
+    },
+    createLineData(data) {
+        let length = data.length;
+
+        for (var x = 0; x < length; x++) {
+            this.getLineData.push({ x: this.calculatePercentile(x, length), y: data[x] });
+        }
+    },
     createTheBottomAxis() {
        
 
         this.getSvg.append('g')
-            .attr("transform", "translate(0," + this.getHeight + ")")
+            .attr("transform", "translate(0," + 500 + ")") // defines the height of the chart in pixels to be displayed. 
             .call(d3.axisBottom(this.getXScale));
     },
     setChartSizeProperties(margin, width, height) {
@@ -197,176 +323,5 @@ const Chart = {
         });
     }
 }
-
-const ChartAttributes = new Vue({
-    el: '#Chart',
-    data: {
-        countiesDiv: document.getElementById('Counties'),
-        chartName: null,
-        dataHolder: null,
-        maxValue: 0,
-        minValue: 0,
-        year: 0,
-        healthAttribute: null,
-        healthAttributeData: [],
-        selectedCounties: [],
-        chart: Chart,
-    },
-    methods: {
-        setChartAttributes(year) {
-            this.year = year.target.value;
-            //Get the columns div
-            let healthAttrs = document.getElementById("HealthAttrs");
-            let countiesDiv = document.getElementById("Counties");
-            let checkHealthAttrs = this.checkIfNodeIsEmpty(healthAttrs);
-            let checkCounties = this.checkIfNodeIsEmpty(countiesDiv);
-
-            if (checkCounties === false) {
-                this.removeAllChildNodes(countiesDiv);
-            }
-
-            if (checkHealthAttrs === false) {
-                this.removeAllChildNodes(healthAttrs);
-            }
-
-            d3.csv(`../uploads/${year.target.value}.csv`).then((data) => {
- 
-                let counties = this.getCountyList(data);
-
-                //Place the csv data into a holder for later consumption 
-               // this.dataHolder = data;
-
-                this.addDataToUL(data.columns, healthAttrs, "radio"); // data.columns are the health attributes from the csv file.
-
-                this.addDataToUL(counties, countiesDiv);
-            });
-        },
-        addDataToUL(data, ulId, inputType = "checkbox") {
-            for (let i = 0; i < data.length; i++) {
-
-                //Create list item for the input and label to be inserted into
-                let liNode = document.createElement("li");
-
-                liNode.classList = ["form-check"];
-
-                //Create input node
-                let nodeInput = document.createElement("input");
-
-                nodeInput.type = inputType;
-                nodeInput.value = data[i];
-                nodeInput.id = data[i];
-                nodeInput.classList = ["form-check-input"];
-                nodeInput.name = ulId;
-
-                //Label for the checkboxes
-                let label = document.createElement('label');
-
-                label.htmlFor = data[i];
-
-                // append the created text to the created label tag
-                label.appendChild(document.createTextNode(`${data[i]}`));
-
-                // append the li to the ul div
-                ulId.appendChild(liNode);
-
-                // append the checkbox and label to the li's
-                liNode.appendChild(nodeInput);
-                liNode.appendChild(label);
-
-
-            }
-        },
-        getCountyList(data) {
-            let listOfCounties = [];
-            for (var i = 0; i < data.length; i++) {
-                var countyWithState = `${data[i]["Name"]}, ${data[i]["State Abbreviation"]}`;
-                listOfCounties.push(countyWithState);
-            }
-            return listOfCounties;
-        },
-        removeAllChildNodes(parent) {
-            while (parent.firstChild) {
-                parent.removeChild(parent.firstChild);
-            }
-        },
-        checkIfNodeIsEmpty(node) {
-            if (node.childNodes.length > 0) {
-                return false;
-            }
-            return true;
-        },
-        async readHealthAttribute(clickEvent) {
- 
-
-            if (clickEvent["target"].nodeName === "LABEL") {
-
-                this.healthAttribute = clickEvent["target"].textContent;
-
-            } else if (clickEvent["target"].nodeName === "INPUT") {
-
-                this.healthAttribute = clickEvent["target"].value;
-
-            } else {
-
-                console.error("The click event did not have a health attribute. Check the readHealthAttribute method.");
-            }
-
-            if (this.healthAttribute !== null) {
-
-                let csvData = await d3.csv(`../uploads/${this.year}.csv`)
-                    .then((data) => {
-                        return data.map((x) => x[this.healthAttribute]);
-                    });
-
-                this.healthAttributeData = csvData.map(Number);
-                this.maxValue = Math.max(...this.healthAttributeData);
-                this.minValue = Math.min(...this.healthAttributeData);
-                this.healthAttributeData.sort((a, b) => a - b);
-            }
-  
-        },
-        readCountyCheckbox(clickEvent) {
-
-            if (clickEvent["target"].checked) {
-                let countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
-                this.selectedCounties.push(clickEvent["target"].value);
-            }
-
-            if (!clickEvent["target"].checked) {
-                let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
-                
-                // as long as the item is found in the array, continue. 
-                if (indexOfItemToRemove > -1) {
-                    // splice the item from the array to remove it. 
-                    this.selectedCounties.splice(indexOfItemToRemove, indexOfItemToRemove);
-                }
-
-                if (indexOfItemToRemove === 0) {
-                    this.selectedCounties.shift();
-                }
-            }
-        },
-        parseCountyAndStateName(countyState) {
-            var split = countyState.split(",");
-
-            split[0] = split[0].trim();
-            split[1] = split[1].trim();
-
-            return split;
-        }
-    },
-    watch: {
-        healthAttribute() {
-            if (!this.chart.getIsInitialized) {
-                this.chart.InitializeChart({ top: 10, right: 40, bottom: 30, left: 30 }, document.getElementById("ChartArea").offsetWidth, 150, "#ChartArea");
-            }
-        },
-        selectedCounties() {
-            this.chart.setCountyNodes = this.selectedCounties;
-        }
-    }
-})
-
-
 
 export { Chart };
