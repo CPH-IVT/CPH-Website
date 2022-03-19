@@ -16,6 +16,7 @@ Serilog is a popular Nuget package that helps with the logging process. Serilog 
 * [Line Chart, Percent Change](https://observablehq.com/@d3/change-line-chart)
 * [Boston-Area Rent Changes](https://observablehq.com/@harrislapiroff/boston-area-rent-changes)
 * [Plot](https://observablehq.com/collection/@observablehq/plot)
+* [Plot-github](https://github.com/observablehq/plot#curves)
 
 ## Package Considerations
 * [CSVHelper](https://github.com/JoshClose/CsvHelper)
