@@ -14,7 +14,8 @@ const ChartAttributes = new Vue({
 		healthAttribute: null,
 		healthAttributeData: [],
 		selectedCounties: [],
-		chart: undefined,
+		marks: [],
+		plot: undefined,
 	},
 	methods: {
 		/**
@@ -107,8 +108,6 @@ const ChartAttributes = new Vue({
 			return true;
 		},
 		async readHealthAttribute(clickEvent) {
-
-
 			if (clickEvent["target"].nodeName === "LABEL") {
 
 				this.healthAttribute = clickEvent["target"].textContent;
@@ -143,6 +142,21 @@ const ChartAttributes = new Vue({
 				}
 			}
 		},
+		getCountStateIndex() {
+			let test = this.dataHolder.filter(
+				function findCountState(row) {
+
+					if (row[1] == "Washington County" && row[2] == "TN") {
+						return row;
+					}
+
+				}
+			);
+			console.log(test);
+
+			let index = this.dataHolder.indexOf(test);
+			console.log(index);
+        },
 		parseCountyAndStateName(countyState) {
 			var split = countyState.split(",");
 
@@ -154,54 +168,48 @@ const ChartAttributes = new Vue({
 	},
 	watch: {
 	   async healthAttribute() {
-			//if (!this.chart.getIsInitialized) {
-			//    this.chart.InitializeChart({ top: 10, right: 40, bottom: 30, left: 40 }, document.getElementById("ChartArea").offsetWidth, 500, "#ChartArea");
-			//}
+
 			if (this.healthAttribute !== null) {
 
-				let csvData = await d3.csv(`../uploads/${this.year}.csv`)
+				this.dataHolder = await d3.csv(`../uploads/${this.year}.csv`)
 					.then((data) => {
-						return data.map((x) => x[this.healthAttribute]);
+						return data.map((x) => [Number(x[this.healthAttribute]), x["Name"], x["State Abbreviation"], x["5-digit FIPS Code"]]);
 					});
+				console.log(this.dataHolder);
 
-				this.healthAttributeData = csvData.map(Number);
+				//let index = this.dataHolder.indexOf((d) => d[1] == "Washington", d[2] == "TN");
 
+				this.dataHolder.sort((a, b) => a[0] - b[0]);
 
-
-				//this.chart.setHealthIndicatorMax = Math.max(...this.healthAttributeData);
-				//this.chart.setHealthIndicatorMax = Math.min(...this.healthAttributeData);
-				//this.maxValue = Math.max(...this.healthAttributeData);
-				//this.minValue = Math.min(...this.healthAttributeData);
-				this.healthAttributeData.sort((a, b) => a - b);
-
-				console.log(this.healthAttributeData.length);
-
-				let testData = this.healthAttributeData.map((element, index) => ([(index / this.healthAttributeData.length * 100), element]));
-
-				console.log(testData);
-
+				this.healthAttributeData = this.dataHolder.map((element, index) => ([(index / this.dataHolder.length * 100), element[0]]));
 
 				let chartArea = document.getElementById("ChartArea");
-				chartArea.appendChild(
 
-					Plot.plot({
-						x: {
-							label: "Percentile →"
-						},
-						y: {
-							label: `↑ ${this.healthAttribute}`
-                        },
-						marks: [
-							Plot.line(testData),
-							Plot.dot([3.131850923896023, 4037.62], { x: 3.131850923896023, y: 4037.62 }),
-							Plot.text([3.131850923896023, 4037.62], { x: 3.131850923896023, y: 4037.62 , text: ["testing"], dy: -8})
-						]
-					})
-				);
+				console.log(this.healthAttributeData);
+
+				this.plot = Plot.plot({
+					x: {
+						label: "Percentile →"
+					},
+					y: {
+						label: `↑ ${this.healthAttribute}`
+					},
+					marks: [
+						Plot.line(this.healthAttributeData),
+						Plot.dot([3.131850923896023, 4037.62], { x: 3.131850923896023, y: 4037.62 }),
+						Plot.dot([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33 }),
+						Plot.text([3.131850923896023, 4037.62], { x: 3.131850923896023, y: 4037.62, text: ["testing"], dy: -8 }),
+						Plot.text([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33, text: ["testing"], dy: -8 }),
+					]
+				});
+
+				chartArea.appendChild(this.plot);
 			}
 		},
 		selectedCounties() {
-			this.chart.setCountyNodes = this.selectedCounties;
+			console.log(this.selectedCounties);
+			this.getCountStateIndex();
+			
 		}
 	}
 })
