@@ -6,6 +6,7 @@ const ChartAttributes = new Vue({
 	el: '#Chart',
 	data: {
 		countiesDiv: document.getElementById('Counties'),
+		chartArea: document.getElementById("ChartArea"),
 		chartName: null,
 		dataHolder: null,
 		maxValue: 0,
@@ -14,7 +15,8 @@ const ChartAttributes = new Vue({
 		healthAttribute: null,
 		healthAttributeData: [],
 		selectedCounties: [],
-		chart: undefined,
+		marks: [],
+		plot: undefined,
 	},
 	methods: {
 		/**
@@ -52,6 +54,12 @@ const ChartAttributes = new Vue({
 				this.addDataToUL(counties, countiesDiv);
 			});
 		},
+		/**
+		 * 
+		 * @param {any} data
+		 * @param {any} ulId
+		 * @param {any} inputType
+		 */
 		addDataToUL(data, ulId, inputType = "checkbox") {
 			for (let i = 0; i < data.length; i++) {
 
@@ -87,6 +95,10 @@ const ChartAttributes = new Vue({
 
 			}
 		},
+		/**
+		 * 
+		 * @param {any} data
+		 */
 		getCountyList(data) {
 			let listOfCounties = [];
 			for (var i = 0; i < data.length; i++) {
@@ -95,6 +107,10 @@ const ChartAttributes = new Vue({
 			}
 			return listOfCounties;
 		},
+		/**
+		 * 
+		 * @param {any} parent
+		 */
 		removeAllChildNodes(parent) {
 			while (parent.firstChild) {
 				parent.removeChild(parent.firstChild);
@@ -107,8 +123,6 @@ const ChartAttributes = new Vue({
 			return true;
 		},
 		async readHealthAttribute(clickEvent) {
-
-
 			if (clickEvent["target"].nodeName === "LABEL") {
 
 				this.healthAttribute = clickEvent["target"].textContent;
@@ -143,6 +157,97 @@ const ChartAttributes = new Vue({
 				}
 			}
 		},
+		createInfoObjects(parsedCountStateArray) {
+
+			let countyStateArray = [];
+
+			// for each parsed county state
+			for (let a = 0; a < parsedCountStateArray.length; a++) {
+				//get the county state index
+				let index = this.getCountStateIndex(parsedCountStateArray[a][0]);
+
+				// get the county state information
+				let info = this.getCountyInformation(parsedCountStateArray[a][0]);
+
+				// get the county state percentile information
+				let percentileInfo = this.getCountyStateDatapointPercentile(index);
+
+				// create an object with collected information
+				let newObject = { info, percentileInfo };
+				console.log(newObject);
+
+				// push the object to an array
+				countyStateArray.push(newObject);
+				console.log(`countStateArrayObject:`, countyStateArray);
+            }
+
+
+			//return the array of count state object information. 
+			return countyStateArray;
+		},
+		creatPlotMarksArray(arrayOfObjects) {
+			let marksArray = [Plot.line(this.healthAttributeData)];
+			for (let a = 0; a < arrayOfObjects.length; a++) {
+				// push plot dots to marks array
+				marksArray.push(this.createPlotDots(arrayOfObjects[a]));
+				// push plot text to marks array
+				marksArray.push(this.createPlotText(arrayOfObjects[a]));
+			}
+
+			console.log("Marks Array: ", marksArray);
+			return marksArray;
+        },
+		createPlotDots(countyStateObject) {
+			// Plot.dot([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33 })
+			return Plot.dot([countyStateObject.percentileInfo[0], countyStateObject.percentileInfo[1]], { x: countyStateObject.percentileInfo[0], y: countyStateObject.percentileInfo[1] });
+		},
+		createPlotText(countyStateObject) {
+			// Plot text example: Plot.text([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33, text: ["testing"], dy: -8 })
+			return Plot.text([countyStateObject.percentileInfo[0], countyStateObject.percentileInfo[1]], { x: countyStateObject.percentileInfo[0], y: countyStateObject.percentileInfo[1], text: [`${countyStateObject.info[0][1]} ${countyStateObject.info[0][2]} ${countyStateObject.info[0][3]}`], dy: -8 });
+        },
+		getCountyInformation(countyStateArray) {
+			let countyStateInformation = this.dataHolder.filter(
+				function findCountState(row) {
+					
+					if (row[1] == countyStateArray[0] && row[2] == countyStateArray[1]) {
+						return row;
+					}
+				}
+			);
+			//console.log(countyStateInformation);
+			return countyStateInformation;
+        },
+		getCountStateIndex(countyStateArray) {
+			let index = this.dataHolder.findIndex(x => x[1] == countyStateArray[0] && x[2] == countyStateArray[1]);
+			return index;
+		},
+		parseSelectedCountyStateArray() {
+			let countyStateArray = [];
+			for (var i = 0; i < this.selectedCounties.length; i++) {
+				let parsed = this.parseCountyAndStateName(this.selectedCounties[i]);
+				countyStateArray.push([parsed]);
+			}
+
+			return countyStateArray;
+        },
+		redrawChart(plotMarksArray) {
+			this.removeAllChildNodes(this.chartArea);
+
+			this.plot = Plot.plot({
+				x: {
+					label: "Percentile →"
+				},
+				y: {
+					label: `↑ ${this.healthAttribute}`
+				},
+				marks: plotMarksArray
+			});
+
+			this.chartArea.appendChild(this.plot);
+		},
+		getCountyStateDatapointPercentile(indexOfCountyState) {
+			return this.healthAttributeData[indexOfCountyState];
+        },
 		parseCountyAndStateName(countyState) {
 			var split = countyState.split(",");
 
@@ -154,54 +259,57 @@ const ChartAttributes = new Vue({
 	},
 	watch: {
 	   async healthAttribute() {
-			//if (!this.chart.getIsInitialized) {
-			//    this.chart.InitializeChart({ top: 10, right: 40, bottom: 30, left: 40 }, document.getElementById("ChartArea").offsetWidth, 500, "#ChartArea");
-			//}
+			this.chartArea = document.getElementById("ChartArea");
+
+			this.removeAllChildNodes(this.chartArea);
 			if (this.healthAttribute !== null) {
 
-				let csvData = await d3.csv(`../uploads/${this.year}.csv`)
+				this.dataHolder = await d3.csv(`../uploads/${this.year}.csv`)
 					.then((data) => {
-						return data.map((x) => x[this.healthAttribute]);
+						return data.map((x) => [Number(x[this.healthAttribute]), x["Name"], x["State Abbreviation"], x["5-digit FIPS Code"]]);
 					});
+				//console.log(this.dataHolder);
 
-				this.healthAttributeData = csvData.map(Number);
+				//let index = this.dataHolder.indexOf((d) => d[1] == "Washington", d[2] == "TN");
 
+				this.dataHolder.sort((a, b) => a[0] - b[0]);
 
+				this.healthAttributeData = this.dataHolder.map((element, index) => ([(index / this.dataHolder.length * 100), element[0]]));
 
-				//this.chart.setHealthIndicatorMax = Math.max(...this.healthAttributeData);
-				//this.chart.setHealthIndicatorMax = Math.min(...this.healthAttributeData);
-				//this.maxValue = Math.max(...this.healthAttributeData);
-				//this.minValue = Math.min(...this.healthAttributeData);
-				this.healthAttributeData.sort((a, b) => a - b);
+				this.chartArea = document.getElementById("ChartArea");
 
-				console.log(this.healthAttributeData.length);
+				//console.log(this.healthAttributeData);
 
-				let testData = this.healthAttributeData.map((element, index) => ([(index / this.healthAttributeData.length * 100), element]));
+				this.plot = Plot.plot({
+					x: {
+						label: "Percentile →"
+					},
+					y: {
+						label: `↑ ${this.healthAttribute}`
+					},
+					marks: [
+						Plot.line(this.healthAttributeData),
+					]
+				});
 
-				console.log(testData);
-
-
-				let chartArea = document.getElementById("ChartArea");
-				chartArea.appendChild(
-
-					Plot.plot({
-						x: {
-							label: "Percentile →"
-						},
-						y: {
-							label: `↑ ${this.healthAttribute}`
-                        },
-						marks: [
-							Plot.line(testData),
-							Plot.dot([3.131850923896023, 4037.62], { x: 3.131850923896023, y: 4037.62 }),
-							Plot.text([3.131850923896023, 4037.62], { x: 3.131850923896023, y: 4037.62 , text: ["testing"], dy: -8})
-						]
-					})
-				);
+				this.chartArea.appendChild(this.plot);
 			}
 		},
 		selectedCounties() {
-			this.chart.setCountyNodes = this.selectedCounties;
+			//console.log(this.selectedCounties);
+			//let parsedArray = this.parseSelectedCountyStateArray();
+			//this.getCountStateIndex(parsedArray);
+
+			let parsedArray = this.parseSelectedCountyStateArray(); // loop through all the selected counties and split the county and state names into an array: [["Washington County", "TN"], ["Sullivan County", "TN"]];
+
+			//create object with information to be plotted. 
+			let arrayOfObjects = this.createInfoObjects(parsedArray);
+
+			// create the plot marks: Dots and Text.
+			let plotMarksArray = this.creatPlotMarksArray(arrayOfObjects);
+
+			// Redraw the chart
+			this.redrawChart(plotMarksArray);
 		}
 	}
 })
