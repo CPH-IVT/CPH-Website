@@ -1,7 +1,12 @@
 ﻿import { Chart } from '../js/charts.js';
 import * as Plot from "https://cdn.skypack.dev/@observablehq/plot@0.4";
 
-
+/**
+ * 
+ * Vue.js V2
+ * https://v2.vuejs.org/v2/api/
+ * 
+ * */
 const ChartAttributes = new Vue({
 	el: '#Chart',
 	data: {
@@ -21,38 +26,42 @@ const ChartAttributes = new Vue({
 	methods: {
 		/**
 		 * 
-		 * @param {number} year
+		 * @param {HtmlNode} year
 		 */
-		setChartAttributes(year) {
+		async setChartAttributes(year) {
 			this.year = year.target.value;
+
 			//Get the columns div
 			let healthAttrs = document.getElementById("HealthAttrs");
 			let countiesDiv = document.getElementById("Counties");
-			let checkHealthAttrs = this.checkIfNodeIsEmpty(healthAttrs);
-			let checkCounties = this.checkIfNodeIsEmpty(countiesDiv);
+			let healthAttrsFieldIsEmpty = this.checkIfNodeIsEmpty(healthAttrs);
+			let countiesFieldIsEmpty = this.checkIfNodeIsEmpty(countiesDiv);
 
-			this.chart = Chart;
+			// Might blowup but removing. 
+			//this.chart = Chart;
 
-
-			if (checkCounties === false) {
+			if (countiesFieldIsEmpty === false) {
 				this.removeAllChildNodes(countiesDiv);
 			}
 
-			if (checkHealthAttrs === false) {
+			if (healthAttrsFieldIsEmpty === false) {
 				this.removeAllChildNodes(healthAttrs);
 			}
 
-			d3.csv(`../uploads/${year.target.value}.csv`).then((data) => {
+			await d3.csv(`../uploads/${year.target.value}.csv`)
+				.then((data) => {
 
-				let counties = this.getCountyList(data);
+					let counties = this.getCountyList(data);
 
-				//Place the csv data into a holder for later consumption 
-				// this.dataHolder = data;
+					// Add to the html list.
+					this.addDataToUL(data.columns, healthAttrs, "radio"); // data.columns are the health attributes from the csv file.
 
-				this.addDataToUL(data.columns, healthAttrs, "radio"); // data.columns are the health attributes from the csv file.
-
-				this.addDataToUL(counties, countiesDiv);
-			});
+					this.addDataToUL(counties, countiesDiv);
+				})
+				.catch((error) => {
+					console.error("Getting selected year from the CSV directory failed.");
+					console.error(error);
+				});
 		},
 		/**
 		 * 
@@ -116,12 +125,20 @@ const ChartAttributes = new Vue({
 				parent.removeChild(parent.firstChild);
 			}
 		},
+		/**
+		 * 
+		 * @param {any} node
+		 */
 		checkIfNodeIsEmpty(node) {
 			if (node.childNodes.length > 0) {
 				return false;
 			}
 			return true;
 		},
+		/**
+		 * 
+		 * @param {any} clickEvent
+		 */
 		async readHealthAttribute(clickEvent) {
 			if (clickEvent["target"].nodeName === "LABEL") {
 
@@ -136,6 +153,10 @@ const ChartAttributes = new Vue({
 				console.error("The click event did not have a health attribute. Check the readHealthAttribute method.");
 			}
 		},
+		/**
+		 * 
+		 * @param {any} clickEvent
+		 */
 		readCountyCheckbox(clickEvent) {
 
 			if (clickEvent["target"].checked) {
@@ -157,6 +178,10 @@ const ChartAttributes = new Vue({
 				}
 			}
 		},
+		/**
+		 * 
+		 * @param {Array} parsedCountStateArray
+		 */
 		createInfoObjects(parsedCountStateArray) {
 
 			let countyStateArray = [];
@@ -185,6 +210,10 @@ const ChartAttributes = new Vue({
 			//return the array of count state object information. 
 			return countyStateArray;
 		},
+		/**
+		 * 
+		 * @param {any} arrayOfObjects
+		 */
 		creatPlotMarksArray(arrayOfObjects) {
 			let marksArray = [Plot.line(this.healthAttributeData)];
 			for (let a = 0; a < arrayOfObjects.length; a++) {
@@ -194,17 +223,28 @@ const ChartAttributes = new Vue({
 				marksArray.push(this.createPlotText(arrayOfObjects[a]));
 			}
 
-			console.log("Marks Array: ", marksArray);
 			return marksArray;
-        },
+		},
+		/**
+		 * 
+		 * @param {any} countyStateObject
+		 */
 		createPlotDots(countyStateObject) {
 			// Plot.dot([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33 })
 			return Plot.dot([countyStateObject.percentileInfo[0], countyStateObject.percentileInfo[1]], { x: countyStateObject.percentileInfo[0], y: countyStateObject.percentileInfo[1] });
 		},
+		/**
+		 * 
+		 * @param {any} countyStateObject
+		 */
 		createPlotText(countyStateObject) {
 			// Plot text example: Plot.text([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33, text: ["testing"], dy: -8 })
 			return Plot.text([countyStateObject.percentileInfo[0], countyStateObject.percentileInfo[1]], { x: countyStateObject.percentileInfo[0], y: countyStateObject.percentileInfo[1], text: [`${countyStateObject.info[0][1]} ${countyStateObject.info[0][2]} ${countyStateObject.info[0][3]}`], dy: -8 });
-        },
+		},
+		/**
+		 * 
+		 * @param {any} countyStateArray
+		 */
 		getCountyInformation(countyStateArray) {
 			let countyStateInformation = this.dataHolder.filter(
 				function findCountState(row) {
@@ -216,11 +256,19 @@ const ChartAttributes = new Vue({
 			);
 			//console.log(countyStateInformation);
 			return countyStateInformation;
-        },
+		},
+		/**
+		 * 
+		 * @param {any} countyStateArray
+		 */
 		getCountStateIndex(countyStateArray) {
 			let index = this.dataHolder.findIndex(x => x[1] == countyStateArray[0] && x[2] == countyStateArray[1]);
 			return index;
 		},
+		/**
+		 * 
+		 * 
+		 * */
 		parseSelectedCountyStateArray() {
 			let countyStateArray = [];
 			for (var i = 0; i < this.selectedCounties.length; i++) {
@@ -229,7 +277,11 @@ const ChartAttributes = new Vue({
 			}
 
 			return countyStateArray;
-        },
+		},
+		/**
+		 * 
+		 * @param {any} plotMarksArray
+		 */
 		redrawChart(plotMarksArray) {
 			this.removeAllChildNodes(this.chartArea);
 
@@ -245,9 +297,17 @@ const ChartAttributes = new Vue({
 
 			this.chartArea.appendChild(this.plot);
 		},
+		/**
+		 * 
+		 * @param {any} indexOfCountyState
+		 */
 		getCountyStateDatapointPercentile(indexOfCountyState) {
 			return this.healthAttributeData[indexOfCountyState];
-        },
+		},
+		/**
+		 * 
+		 * @param {any} countyState
+		 */
 		parseCountyAndStateName(countyState) {
 			var split = countyState.split(",");
 
@@ -258,48 +318,57 @@ const ChartAttributes = new Vue({
 		}
 	},
 	watch: {
-	   async healthAttribute() {
+		/**
+		 * Does await timeout and if so how long and can it be set? 
+		 * 
+		 * */
+		async healthAttribute() {
+
+			// needed to re-fetch the area to draw the chart - #ChartArea.
 			this.chartArea = document.getElementById("ChartArea");
 
 			this.removeAllChildNodes(this.chartArea);
-			if (this.healthAttribute !== null) {
 
-				this.dataHolder = await d3.csv(`../uploads/${this.year}.csv`)
-					.then((data) => {
-						return data.map((x) => [Number(x[this.healthAttribute]), x["Name"], x["State Abbreviation"], x["5-digit FIPS Code"]]);
-					});
-				//console.log(this.dataHolder);
+			if (this.healthAttribute === null) {
+				console.error("Health Attribute is null.");
+				return;
+            }
 
-				//let index = this.dataHolder.indexOf((d) => d[1] == "Washington", d[2] == "TN");
-
-				this.dataHolder.sort((a, b) => a[0] - b[0]);
-
-				this.healthAttributeData = this.dataHolder.map((element, index) => ([(index / this.dataHolder.length * 100), element[0]]));
-
-				this.chartArea = document.getElementById("ChartArea");
-
-				//console.log(this.healthAttributeData);
-
-				this.plot = Plot.plot({
-					x: {
-						label: "Percentile →"
-					},
-					y: {
-						label: `↑ ${this.healthAttribute}`
-					},
-					marks: [
-						Plot.line(this.healthAttributeData),
-					]
+			// read the health attribute from the csv correct year. 
+			this.dataHolder = await d3.csv(`../uploads/${this.year}.csv`)
+				.then((data) => {
+					return data.map((x) => [Number(x[this.healthAttribute]), x["Name"], x["State Abbreviation"], x["5-digit FIPS Code"]]);
+				})
+				.catch((error) => {
+					console.error("Data mapping failed.");
+					console.error(error);
 				});
 
-				this.chartArea.appendChild(this.plot);
-			}
+			this.dataHolder.sort((a, b) => a[0] - b[0]);
+
+			// element[0] is the health attribute number/data-point. This also serves as an index into a parallel array of the dataHolder property. 
+			this.healthAttributeData = this.dataHolder.map((element, index) => ([(index / this.dataHolder.length * 100), element[0]]));
+
+			// Need to remove this and hope it works! 
+			//this.chartArea = document.getElementById("ChartArea");
+
+			this.plot = Plot.plot({
+				x: {
+					label: "Percentile →"
+				},
+				y: {
+					label: `↑ ${this.healthAttribute}`
+				},
+				marks: [
+					Plot.line(this.healthAttributeData),
+				]
+			});
+
+			// Insert content into the #ChartArea Element.
+			this.chartArea.appendChild(this.plot);
+			
 		},
 		selectedCounties() {
-			//console.log(this.selectedCounties);
-			//let parsedArray = this.parseSelectedCountyStateArray();
-			//this.getCountStateIndex(parsedArray);
-
 			let parsedArray = this.parseSelectedCountyStateArray(); // loop through all the selected counties and split the county and state names into an array: [["Washington County", "TN"], ["Sullivan County", "TN"]];
 
 			//create object with information to be plotted. 
