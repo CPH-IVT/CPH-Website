@@ -5,11 +5,13 @@
 
 Welcome to CPH's documentation!
 ===============================
+This is the CPH :ref:`documentation <beforeyoubegin>` page. Use this youtube video https://youtu.be/DSIuLnoKLd8. 
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   beforeyoubegin
 
 
 Indices and tables

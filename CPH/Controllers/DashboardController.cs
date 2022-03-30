@@ -196,6 +196,11 @@ namespace CPH.Controllers
             return Json(_csvManagement.CheckIfYearExists(csvYear.FileName));
         }
 
+        public IActionResult CreateRegion()
+        {
+            return View();
+        }
+
 
         /// <summary>
         /// The Error.
