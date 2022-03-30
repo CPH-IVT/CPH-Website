@@ -327,7 +327,12 @@ const ChartAttributes = new Vue({
 			// needed to re-fetch the area to draw the chart - #ChartArea.
 			this.chartArea = document.getElementById("ChartArea");
 
+
 			this.removeAllChildNodes(this.chartArea);
+
+			// uncheck selected counties in the html
+
+			// set the selected counties array to empty
 
 			if (this.healthAttribute === null) {
 				console.error("Health Attribute is null.");
