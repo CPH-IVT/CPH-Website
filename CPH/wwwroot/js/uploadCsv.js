@@ -14,6 +14,151 @@
         overrideDuplicate: null
     },
     methods: {
+
+        /**
+        *
+        * @param {Array} rows
+        */
+        removeStates(rows) {
+
+            // Creates an arry of states that is used to remove rows from the dataset
+            let removeCountyListArray = [
+                "UNITED STATES",
+                "ALABAMA",
+                "ALASKA",
+                "ARIZONA",
+                "ARKANSAS",
+                "CALIFORNIA",
+                "COLORADO",
+                "CONNECTICUT",
+                "DELAWARE",
+                "DISTRICT OF COLUMBIA",
+                "FLORIDA",
+                "GEORGIA",
+                "HAWAII",
+                "IDAHO",
+                "ILLINOIS",
+                "INDIANA",
+                "IOWA",
+                "KANSAS",
+                "KENTUCKY",
+                "LOUISIANA",
+                "MAINE",
+                "MARSHALL ISLANDS",
+                "MARYLAND",
+                "MASSACHUSETTS",
+                "MICHIGAN",
+                "MINNESOTA",
+                "MISSISSIPPI",
+                "MISSOURI",
+                "MONTANA",
+                "NEBRASKA",
+                "NEVADA",
+                "NEW HAMPSHIRE",
+                "NEW JERSEY",
+                "NEW MEXICO",
+                "NEW YORK",
+                "NORTH CAROLINA",
+                "NORTH DAKOTA",
+                "OHIO",
+                "OKLAHOMA",
+                "OREGON",
+                "PENNSYLVANIA",
+                "RHODE ISLAND",
+                "SOUTH CAROLINA",
+                "SOUTH DAKOTA",
+                "TENNESSEE",
+                "TEXAS",
+                "UTAH",
+                "VERMONT",
+                "VIRGIN ISLANDS",
+                "VIRGINIA",
+                "WASHINGTON",
+                "WEST VIRGINIA",
+                "WISCONSIN",
+                "WYOMING"
+            ];
+
+            // Creates and populates an array with the indices of the rows to be removed
+            let countiesToRemove = [];
+            rows.forEach(function (row) {
+                removeCountyListArray.forEach(function (value) {
+                    if (row.split(",")[4].toUpperCase() === value) {
+                        //console.log(`Removed Row Index: ${rows.indexOf(row)} - County Value: ${row.split(",")[4]}`);
+                        countiesToRemove.push(rows.indexOf(row));
+                        //rows.splice(rows.indexOf(row), rows.indexOf(row));
+                        return
+                    }
+                })
+            });
+
+            // Removes the rows by indices
+            countiesToRemove.reverse().forEach(function (index) {
+                //console.log(`Removed Row Index: ${index} - County Value: ${rows[index].split(",")[4]}`);
+                rows.splice(index, 1);
+            });
+
+            // returns the array
+            return rows;
+        },
+        /**
+        *
+        * @param {Array} rows
+        */
+        removeBlankRows(rows) {
+            // Creates and populates an array with the indices of the rows to be removed
+            let blankToRemove = [];
+            rows.forEach(function (row) {
+                if (row.split(",")[7] == "") {
+                    //console.log(row.split(",")[7])
+                    blankToRemove.push(rows.indexOf(row));
+                }
+            });
+
+            // Removes the rows by indices
+            blankToRemove.reverse().forEach(function (index) {
+                //console.log(`Removed Row Index: ${index} - County Value: ${rows[index].split(",")[7]}`);
+                rows.splice(index, 1);
+            });
+            //console.log(`Total Blank Rows Removed: ${blankToRemove.length}`)
+        },
+        /**
+        *
+        * @param {Array} rows
+        */
+        rowMath(rows) {
+
+            //let dataRows = rows;
+            //dataRows = Array.from(rows);
+            //dataRows.shift();
+
+
+            let dataMean = 0;
+
+            //
+            let columnMean = [];
+            rows.forEach(function (row) {
+
+                //console.log(`Index: ${dataRows.indexOf(row)} - Value: ${dataRows.split(",")[8]}`)
+                //dataMean += parseFloat(dataRows.split(",")[8]);
+
+                columnMean.push(row.split(",")[8]);
+            });
+
+
+            columnMean.shift();
+            columnMean.forEach(function (value) {
+                dataMean += parseFloat(value);
+            })
+
+            //
+            console.log(dataMean);
+
+
+        },
+
+
+
         getSelectedCsv(event) {
             let csvFile = event.target.files[0];
             
@@ -35,6 +180,18 @@
 
                     // Remove the second row of the CSV
                     rows.splice(1, 1);
+
+                    // Removes the last row of the CSV
+                    rows.pop();
+
+                    // Removes the state totals from the dataset
+                    this.removeStates(rows);
+
+                    // Removes blank rows from the dataset
+                    this.removeBlankRows(rows);
+
+                    //
+                    //this.rowMath(rows);
 
                     // Get the year of the file
                     this.year = rows[2].split(",")[5];
