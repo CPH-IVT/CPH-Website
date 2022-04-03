@@ -111,8 +111,7 @@ namespace CPH.Controllers
         /// </summary>
         /// <param name="form">The form<see cref="UploadCSVModel"/>.</param>
         /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
-        [HttpPost]
-        [Route("Dashboard/ValidateAndUploadCSV")]
+        [HttpPost, Route("Dashboard/ValidateAndUploadCSV")]
         public async Task<IActionResult> ValidateAndUploadCSV(UploadCSVModel form)
         {
             if (!ModelState.IsValid)
@@ -163,8 +162,7 @@ namespace CPH.Controllers
         /// </summary>
         /// <param name="form">The form<see cref="UploadCSVModel"/>.</param>
         /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
-        [HttpPost]
-        [Route("Dashboard/OverrideCsvYear")]
+        [HttpPost, Route("Dashboard/OverrideCsvYear")]
         public async Task<IActionResult> OverrideCsvYear(UploadCSVModel form)
         {
             var alteredFile = form.AlteredFile;
@@ -198,6 +196,17 @@ namespace CPH.Controllers
 
         public IActionResult CreateRegion()
         {
+            var filePath = _csvManagement.UploadsFolder;
+            string[] files = Directory.GetFiles(filePath);
+
+            string[] fileNames = new string[files.Length];
+
+            for (var i = 0; i < files.Length; i++)
+            {
+                fileNames[i] = (Path.GetFileNameWithoutExtension(files[i]));
+            }
+
+            ViewData["Files"] = fileNames;
             return View();
         }
 

@@ -65,9 +65,9 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} data
-		 * @param {any} ulId
-		 * @param {any} inputType
+		 * @param {Array} data
+		 * @param {string} ulId UL = Unordered list in HTML
+		 * @param {string} inputType
 		 */
 		addDataToUL(data, ulId, inputType = "checkbox") {
 			for (let i = 0; i < data.length; i++) {
@@ -106,7 +106,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} data
+		 * @param {Array} data
 		 */
 		getCountyList(data) {
 			let listOfCounties = [];
@@ -118,7 +118,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} parent
+		 * @param {HtmlNode} parent
 		 */
 		removeAllChildNodes(parent) {
 			while (parent.firstChild) {
@@ -127,17 +127,20 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} node
+		 * @param {HtmlNode} node
 		 */
 		checkIfNodeIsEmpty(node) {
-			if (node.childNodes.length > 0) {
-				return false;
-			}
-			return true;
+			// if stuff blows up check
+			//if (node.childNodes.length > 0) {
+			//	return false;
+			//}
+			//return true;
+
+			return node.childNodes.length === 0;
 		},
 		/**
 		 * 
-		 * @param {any} clickEvent
+		 * @param {Event} clickEvent
 		 */
 		async readHealthAttribute(clickEvent) {
 			if (clickEvent["target"].nodeName === "LABEL") {
@@ -154,29 +157,32 @@ const ChartAttributes = new Vue({
 			}
 		},
 		/**
-		 * 
-		 * @param {any} clickEvent
+		 * This might need to be removed. 
+		 * @param {Event} clickEvent
 		 */
 		readCountyCheckbox(clickEvent) {
 
 			if (clickEvent["target"].checked) {
-				let countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
+
+				// Removing make sure this doesn't blow up.
+				//let countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
 				this.selectedCounties.push(clickEvent["target"].value);
+				return;
 			}
 
-			if (!clickEvent["target"].checked) {
-				let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
+			//if (!clickEvent["target"].checked) {
+			let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
 
-				// as long as the item is found in the array, continue. 
-				if (indexOfItemToRemove > -1) {
-					// splice the item from the array to remove it. 
-					this.selectedCounties.splice(indexOfItemToRemove, indexOfItemToRemove);
-				}
-
-				if (indexOfItemToRemove === 0) {
-					this.selectedCounties.shift();
-				}
+			// as long as the item is found in the array, continue. 
+			if (indexOfItemToRemove > -1) {
+				// splice the item from the array to remove it. 
+				this.selectedCounties.splice(indexOfItemToRemove, indexOfItemToRemove);
 			}
+
+			if (indexOfItemToRemove === 0) {
+				this.selectedCounties.shift();
+			}
+			//}
 		},
 		/**
 		 * 
@@ -212,9 +218,9 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} arrayOfObjects
+		 * @param {Array} arrayOfObjects
 		 */
-		creatPlotMarksArray(arrayOfObjects) {
+		createPlotMarksArray(arrayOfObjects) {
 			let marksArray = [Plot.line(this.healthAttributeData)];
 			for (let a = 0; a < arrayOfObjects.length; a++) {
 				// push plot dots to marks array
@@ -227,7 +233,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} countyStateObject
+		 * @param {Object} countyStateObject
 		 */
 		createPlotDots(countyStateObject) {
 			// Plot.dot([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33 })
@@ -235,7 +241,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} countyStateObject
+		 * @param {Object} countyStateObject
 		 */
 		createPlotText(countyStateObject) {
 			// Plot text example: Plot.text([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33, text: ["testing"], dy: -8 })
@@ -243,13 +249,12 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} countyStateArray
+		 * @param {Array} countyStateArray
 		 */
 		getCountyInformation(countyStateArray) {
 			let countyStateInformation = this.dataHolder.filter(
 				function findCountState(row) {
-					
-					if (row[1] == countyStateArray[0] && row[2] == countyStateArray[1]) {
+					if (row[1] === countyStateArray[0] && row[2] === countyStateArray[1]) {
 						return row;
 					}
 				}
@@ -259,7 +264,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} countyStateArray
+		 * @param {Array} countyStateArray
 		 */
 		getCountStateIndex(countyStateArray) {
 			let index = this.dataHolder.findIndex(x => x[1] == countyStateArray[0] && x[2] == countyStateArray[1]);
@@ -280,7 +285,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} plotMarksArray
+		 * @param {Array} plotMarksArray
 		 */
 		redrawChart(plotMarksArray) {
 			this.removeAllChildNodes(this.chartArea);
@@ -299,14 +304,14 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} indexOfCountyState
+		 * @param {Number} indexOfCountyState
 		 */
 		getCountyStateDatapointPercentile(indexOfCountyState) {
 			return this.healthAttributeData[indexOfCountyState];
 		},
 		/**
 		 * 
-		 * @param {any} countyState
+		 * @param {string} countyState
 		 */
 		parseCountyAndStateName(countyState) {
 			var split = countyState.split(",");
@@ -380,7 +385,7 @@ const ChartAttributes = new Vue({
 			let arrayOfObjects = this.createInfoObjects(parsedArray);
 
 			// create the plot marks: Dots and Text.
-			let plotMarksArray = this.creatPlotMarksArray(arrayOfObjects);
+			let plotMarksArray = this.createPlotMarksArray(arrayOfObjects);
 
 			// Redraw the chart
 			this.redrawChart(plotMarksArray);

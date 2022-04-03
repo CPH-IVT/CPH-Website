@@ -148,331 +148,331 @@ namespace CPH.Data
 new States
 {
     Id = 1,
-    Abbriviation = "AL",
+    Abbreviation = "AL",
     Name = "ALABAMA"
 },
 new States
 {
     Id = 2,
-    Abbriviation = "AK",
+    Abbreviation = "AK",
     Name = "ALASKA"
 },
 new States
 {
     Id = 4,
-    Abbriviation = "AZ",
+    Abbreviation = "AZ",
     Name = "ARIZONA"
 },
 new States
 {
     Id = 5,
-    Abbriviation = "AR",
+    Abbreviation = "AR",
     Name = "ARKANSAS"
 },
 new States
 {
     Id = 6,
-    Abbriviation = "CA",
+    Abbreviation = "CA",
     Name = "CALIFORNIA"
 },
 new States
 {
     Id = 8,
-    Abbriviation = "CO",
+    Abbreviation = "CO",
     Name = "COLORADO"
 },
 new States
 {
     Id = 9,
-    Abbriviation = "CT",
+    Abbreviation = "CT",
     Name = "CONNECTICUT"
 },
 new States
 {
     Id = 10,
-    Abbriviation = "DE",
+    Abbreviation = "DE",
     Name = "DELAWARE"
 },
 new States
 {
     Id = 12,
-    Abbriviation = "FL",
+    Abbreviation = "FL",
     Name = "FLORIDA"
 },
 new States
 {
     Id = 13,
-    Abbriviation = "GA",
+    Abbreviation = "GA",
     Name = "GEORGIA"
 },
 new States
 {
     Id = 15,
-    Abbriviation = "HI",
+    Abbreviation = "HI",
     Name = "HAWAII"
 },
 new States
 {
     Id = 16,
-    Abbriviation = "ID",
+    Abbreviation = "ID",
     Name = "IDAHO"
 },
 new States
 {
     Id = 17,
-    Abbriviation = "IL",
+    Abbreviation = "IL",
     Name = "ILLINOIS"
 },
 new States
 {
     Id = 18,
-    Abbriviation = "IN",
+    Abbreviation = "IN",
     Name = "INDIANA"
 },
 new States
 {
     Id = 19,
-    Abbriviation = "IA",
+    Abbreviation = "IA",
     Name = "IOWA"
 },
 new States
 {
     Id = 20,
-    Abbriviation = "KS",
+    Abbreviation = "KS",
     Name = "KANSAS"
 },
 new States
 {
     Id = 21,
-    Abbriviation = "KY",
+    Abbreviation = "KY",
     Name = "KENTUCKY"
 },
 new States
 {
     Id = 22,
-    Abbriviation = "LA",
+    Abbreviation = "LA",
     Name = "LOUISIANA"
 },
 new States
 {
     Id = 23,
-    Abbriviation = "ME",
+    Abbreviation = "ME",
     Name = "MAINE"
 },
 new States
 {
     Id = 24,
-    Abbriviation = "MD",
+    Abbreviation = "MD",
     Name = "MARYLAND"
 },
 new States
 {
     Id = 25,
-    Abbriviation = "MA",
+    Abbreviation = "MA",
     Name = "MASSACHUSETTS"
 },
 new States
 {
     Id = 26,
-    Abbriviation = "MI",
+    Abbreviation = "MI",
     Name = "MICHIGAN"
 },
 new States
 {
     Id = 27,
-    Abbriviation = "MN",
+    Abbreviation = "MN",
     Name = "MINNESOTA"
 },
 new States
 {
     Id = 28,
-    Abbriviation = "MS",
+    Abbreviation = "MS",
     Name = "MISSISSIPPI"
 },
 new States
 {
     Id = 29,
-    Abbriviation = "MO",
+    Abbreviation = "MO",
     Name = "MISSOURI"
 },
 new States
 {
     Id = 30,
-    Abbriviation = "MT",
+    Abbreviation = "MT",
     Name = "MONTANA"
 },
 new States
 {
     Id = 31,
-    Abbriviation = "NE",
+    Abbreviation = "NE",
     Name = "NEBRASKA"
 },
 new States
 {
     Id = 32,
-    Abbriviation = "NV",
+    Abbreviation = "NV",
     Name = "NEVADA"
 },
 new States
 {
     Id = 33,
-    Abbriviation = "NH",
+    Abbreviation = "NH",
     Name = "NEW HAMPSHIRE"
 },
 new States
 {
     Id = 34,
-    Abbriviation = "NJ",
+    Abbreviation = "NJ",
     Name = "NEW JERSEY"
 },
 new States
 {
     Id = 35,
-    Abbriviation = "NM",
+    Abbreviation = "NM",
     Name = "NEW MEXICO"
 },
 new States
 {
     Id = 36,
-    Abbriviation = "NY",
+    Abbreviation = "NY",
     Name = "NEW YORK"
 },
 new States
 {
     Id = 37,
-    Abbriviation = "NC",
+    Abbreviation = "NC",
     Name = "NORTH CAROLINA"
 },
 new States
 {
     Id = 38,
-    Abbriviation = "ND",
+    Abbreviation = "ND",
     Name = "NORTH DAKOTA"
 },
 new States
 {
     Id = 39,
-    Abbriviation = "OH",
+    Abbreviation = "OH",
     Name = "OHIO"
 },
 new States
 {
     Id = 40,
-    Abbriviation = "OK",
+    Abbreviation = "OK",
     Name = "OKLAHOMA"
 },
 new States
 {
     Id = 41,
-    Abbriviation = "OR",
+    Abbreviation = "OR",
     Name = "OREGON"
 },
 new States
 {
     Id = 42,
-    Abbriviation = "PA",
+    Abbreviation = "PA",
     Name = "PENNSYLVANIA"
 },
 new States
 {
     Id = 44,
-    Abbriviation = "RI",
+    Abbreviation = "RI",
     Name = "RHODE ISLAND"
 },
 new States
 {
     Id = 45,
-    Abbriviation = "SC",
+    Abbreviation = "SC",
     Name = "SOUTH CAROLINA"
 },
 new States
 {
     Id = 46,
-    Abbriviation = "SD",
+    Abbreviation = "SD",
     Name = "SOUTH DAKOTA"
 },
 new States
 {
     Id = 47,
-    Abbriviation = "TN",
+    Abbreviation = "TN",
     Name = "TENNESSEE"
 },
 new States
 {
     Id = 48,
-    Abbriviation = "TX",
+    Abbreviation = "TX",
     Name = "TEXAS"
 },
 new States
 {
     Id = 49,
-    Abbriviation = "UT",
+    Abbreviation = "UT",
     Name = "UTAH"
 },
 new States
 {
     Id = 50,
-    Abbriviation = "VT",
+    Abbreviation = "VT",
     Name = "VERMONT"
 },
 new States
 {
     Id = 51,
-    Abbriviation = "VA",
+    Abbreviation = "VA",
     Name = "VIRGINIA"
 },
 new States
 {
     Id = 53,
-    Abbriviation = "WA",
+    Abbreviation = "WA",
     Name = "WASHINGTON"
 },
 new States
 {
     Id = 54,
-    Abbriviation = "WV",
+    Abbreviation = "WV",
     Name = "WEST VIRGINIA"
 },
 new States
 {
     Id = 55,
-    Abbriviation = "WI",
+    Abbreviation = "WI",
     Name = "WISCONSIN"
 },
 new States
 {
     Id = 56,
-    Abbriviation = "WY",
+    Abbreviation = "WY",
     Name = "WYOMING"
 },
 new States
 {
     Id = 60,
-    Abbriviation = "AS",
+    Abbreviation = "AS",
     Name = "AMERICAN SAMOA"
 },
 new States
 {
     Id = 66,
-    Abbriviation = "GU",
+    Abbreviation = "GU",
     Name = "GUAM"
 },
 new States
 {
     Id = 69,
-    Abbriviation = "MP",
+    Abbreviation = "MP",
     Name = "NORTHERN MARIANA ISLANDS"
 },
 new States
 {
     Id = 72,
-    Abbriviation = "PR",
+    Abbreviation = "PR",
     Name = "PUERTO RICO"
 },
 new States
 {
     Id = 78,
-    Abbriviation = "VI",
+    Abbreviation = "VI",
     Name = "VIRGIN ISLANDS"
 }
 );
