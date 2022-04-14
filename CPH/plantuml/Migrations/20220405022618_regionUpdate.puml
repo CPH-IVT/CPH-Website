@@ -1,0 +1,5 @@
+@startuml
+class regionUpdate <<partial>> {
+}
+Migration <|-- regionUpdate
+@enduml

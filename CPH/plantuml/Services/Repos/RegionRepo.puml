@@ -1,0 +1,12 @@
+@startuml
+class RegionRepo {
+    + RegionRepo(db:ApplicationDbContext)
+    + <<async>> Create(item:Region) : Task<Region>
+    + Delete(item:Region) : Task
+    + Read(Id:string) : Task<Region>
+    + <<async>> ReadAll() : Task<ICollection<Region>>
+    + <<async>> ReadByName(regionName:string) : Task<Region>
+    + Update(item:Region) : Task<Region>
+}
+IRegion <|-- RegionRepo
+@enduml

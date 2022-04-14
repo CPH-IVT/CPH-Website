@@ -1,0 +1,7 @@
+@startuml
+class States {
+    + Id : int <<get>> <<set>>
+    + Abbreviation : string <<get>> <<set>>
+    + Name : string <<get>> <<set>>
+}
+@enduml

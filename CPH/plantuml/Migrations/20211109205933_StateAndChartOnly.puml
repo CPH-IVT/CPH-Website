@@ -1,0 +1,5 @@
+@startuml
+class StateAndChartOnly <<partial>> {
+}
+Migration <|-- StateAndChartOnly
+@enduml

@@ -1,0 +1,5 @@
+@startuml
+class yearIntToString <<partial>> {
+}
+Migration <|-- yearIntToString
+@enduml

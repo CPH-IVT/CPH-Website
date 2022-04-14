@@ -1,0 +1,7 @@
+@startuml
+interface IStates {
+}
+class "IReadOnly`1"<T> {
+}
+"IReadOnly`1" "<States>" <|-- IStates
+@enduml

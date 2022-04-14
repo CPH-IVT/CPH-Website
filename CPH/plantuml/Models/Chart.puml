@@ -1,0 +1,15 @@
+@startuml
+class Chart {
+    + ChartId : string <<get>> <<set>>
+    + ChartName : string <<get>> <<set>>
+    + DataYear : int <<get>> <<set>>
+    + HealthIndicator : string <<get>> <<set>>
+    + Counties : string <<get>> <<set>>
+    + RegionId : int? <<get>> <<set>>
+    + ChartDescription : string <<get>> <<set>>
+    + CreatedBy : string <<get>> <<set>>
+    + UpdatedBy : string <<get>> <<set>>
+}
+Chart --> "CreationDateTime" DateTime
+Chart --> "UpdatedDateTime" DateTime
+@enduml

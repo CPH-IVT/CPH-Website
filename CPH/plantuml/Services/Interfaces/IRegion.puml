@@ -1,0 +1,8 @@
+@startuml
+interface IRegion {
+    ReadByName(regionName:string) : Task<Region>
+}
+class "ICrud`1"<T> {
+}
+"ICrud`1" "<Region>" <|-- IRegion
+@enduml

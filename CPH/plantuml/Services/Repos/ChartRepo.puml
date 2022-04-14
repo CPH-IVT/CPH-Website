@@ -1,0 +1,11 @@
+@startuml
+class ChartRepo {
+    + ChartRepo(db:ApplicationDbContext)
+    + <<async>> Create(item:Chart) : Task<Chart>
+    + <<async>> Delete(item:Chart) : Task
+    + <<async>> Read(Id:string) : Task<Chart>
+    + <<async>> ReadAll() : Task<ICollection<Chart>>
+    + <<async>> Update(item:Chart) : Task<Chart>
+}
+IChart <|-- ChartRepo
+@enduml

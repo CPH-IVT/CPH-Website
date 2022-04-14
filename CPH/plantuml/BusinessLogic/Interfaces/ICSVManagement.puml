@@ -1,0 +1,11 @@
+@startuml
+interface ICSVManagement {
+    UploadsFolder : string <<get>>
+    OriginalsFolder : string <<get>>
+    CopyOriginalCsvToOriginalDirAsync(file:IFormFile) : Task
+    CopyAlteredCsvToUploadsDirAsync(file:IFormFile) : Task
+    CheckIfYearExists(fileName:string) : bool
+    GetFileHashCode(file:IFormFile) : int
+    GetCsvHashCodes() : List<int>
+}
+@enduml
