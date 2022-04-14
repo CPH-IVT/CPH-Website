@@ -18,6 +18,10 @@ Serilog is a popular Nuget package that helps with the logging process. Serilog 
 * [Plot](https://observablehq.com/collection/@observablehq/plot)
 * [Plot-github](https://github.com/observablehq/plot#curves)
 
+### Plot
+* https://github.com/observablehq/plot
+
+
 ### Plot Cheat Sheets
 * https://observablehq.com/collection/@observablehq/plot-cheatsheets
 * https://raw.githubusercontent.com/observablehq/plot-cheatsheets/main/plot-cheatsheets.pdf
