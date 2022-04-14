@@ -1,0 +1,4 @@
+@startuml
+class yearIntToString <<partial>> {
+}
+@enduml

@@ -23,9 +23,9 @@ namespace CPH.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the Abbriviation.
+        /// Gets or sets the Abbreviation.
         /// </summary>
-        public string Abbriviation { get; set; }
+        public string Abbreviation { get; set; }
 
         /// <summary>
         /// Gets or sets the Name.

@@ -1,45 +1,63 @@
 ﻿@model CPH.Models.Region
 
 @{
-    ViewData["Title"] = "CreateRegion";
+    ViewData["Title"] = "Create Region";
 }
 
-<h1>CreateRegion</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Region</h4>
 <hr />
-<div class="row">
+<div id="Region" class="row">
     <div class="col-md-4">
         <form asp-action="CreateRegion">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <input id="Name" v-model="name" asp-for="Name" class="form-control" required/>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
+            @* The files are named the year that they represent. *@
+            <select @@change="setRegionList($event)" id="Year" name="Year">
+                <option value="SelectYear">Select a Year</option>
+                @foreach (var file in (string[])ViewData["Files"])
+                {
+                    <option value="@file">@file</option>
+                }
+            </select>
+
             <div class="form-group">
-                <label asp-for="Year" class="control-label"></label>
-                <input asp-for="Year" class="form-control" />
+                <input asp-for="Year" class="form-control" hidden required />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Selected Counties</label>
+                <ul id="SelectedCounties"></ul>
                 <span asp-validation-for="Year" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FIPS" class="control-label"></label>
-                <input asp-for="FIPS" class="form-control" />
+               
+                <input asp-for="FIPS" class="form-control" hidden required />
                 <span asp-validation-for="FIPS" class="text-danger"></span>
             </div>
+            <div class="row">
+
+                <div class="col-6">
+                    <label for="counties">Counties</label>
+                    <ul @@click="readCountyCheckbox($event)" id="Counties" style="list-style: none; height: 300px" class="form-control overflow-auto">
+                    </ul>
+                </div>
+            </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input @@click="saveRegion($event)" type="submit" value="Save Region" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+@section scripts{
+    <script type="module" src="~/js/createRegion.js"></script>
+}

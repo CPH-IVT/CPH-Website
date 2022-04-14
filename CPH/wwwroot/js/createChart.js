@@ -22,6 +22,8 @@ const ChartAttributes = new Vue({
 		selectedCounties: [],
 		marks: [],
 		plot: undefined,
+		regionData: undefined,
+		selectedRegions: []
 	},
 	methods: {
 		/**
@@ -30,12 +32,17 @@ const ChartAttributes = new Vue({
 		 */
 		async setChartAttributes(year) {
 			this.year = year.target.value;
+			await this.setRegionData(this.year);
+
+			console.log(this.regionData);
 
 			//Get the columns div
 			let healthAttrs = document.getElementById("HealthAttrs");
 			let countiesDiv = document.getElementById("Counties");
+			let regionsDiv = document.getElementById("Regions");
 			let healthAttrsFieldIsEmpty = this.checkIfNodeIsEmpty(healthAttrs);
 			let countiesFieldIsEmpty = this.checkIfNodeIsEmpty(countiesDiv);
+			let regionsFieldIsEmpty = this.checkIfNodeIsEmpty(regionsDiv);
 
 			// Might blowup but removing. 
 			//this.chart = Chart;
@@ -48,14 +55,23 @@ const ChartAttributes = new Vue({
 				this.removeAllChildNodes(healthAttrs);
 			}
 
+			if (regionsFieldIsEmpty === false) {
+				this.removeAllChildNodes(regionsDiv);
+			}
+
+			let regionNames = await this.getRegionNames(this.year);
+
+			console.log(regionNames);
+
 			await d3.csv(`../uploads/${year.target.value}.csv`)
 				.then((data) => {
 
 					let counties = this.getCountyList(data);
+					
 
 					// Add to the html list.
 					this.addDataToUL(data.columns, healthAttrs, "radio"); // data.columns are the health attributes from the csv file.
-
+					this.addDataToUL(regionNames, regionsDiv);
 					this.addDataToUL(counties, countiesDiv);
 				})
 				.catch((error) => {
@@ -63,11 +79,32 @@ const ChartAttributes = new Vue({
 					console.error(error);
 				});
 		},
+		async setRegionData() {
+			let regionData = await fetch('/Dashboard/ReadAllRegions')
+				.then((response) => { return response.json(); })
+				.then(data => { return data.filter(each => each.year === this.year) })
+				.catch(error => {
+					console.error(error);
+				});
+
+			this.regionData = regionData;
+        },
+		async getRegionNames(year) {
+			let regionNames = await fetch('/Dashboard/ReadAllRegions')
+				.then((response) => { return response.json(); })// handle the response
+				.then(data => { return data.filter(each => each.year === this.year).map(x => x.name) })// then read the data
+				.catch(error => {
+					console.error(error);
+				});
+
+			
+			return regionNames;
+        },
 		/**
 		 * 
-		 * @param {any} data
-		 * @param {any} ulId
-		 * @param {any} inputType
+		 * @param {Array} data
+		 * @param {string} ulId UL = Unordered list in HTML
+		 * @param {string} inputType
 		 */
 		addDataToUL(data, ulId, inputType = "checkbox") {
 			for (let i = 0; i < data.length; i++) {
@@ -100,13 +137,11 @@ const ChartAttributes = new Vue({
 				// append the checkbox and label to the li's
 				liNode.appendChild(nodeInput);
 				liNode.appendChild(label);
-
-
 			}
 		},
 		/**
 		 * 
-		 * @param {any} data
+		 * @param {Array} data
 		 */
 		getCountyList(data) {
 			let listOfCounties = [];
@@ -118,7 +153,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} parent
+		 * @param {HtmlNode} parent
 		 */
 		removeAllChildNodes(parent) {
 			while (parent.firstChild) {
@@ -127,17 +162,37 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} node
+		 * @param {HtmlNode} node
 		 */
 		checkIfNodeIsEmpty(node) {
-			if (node.childNodes.length > 0) {
-				return false;
-			}
-			return true;
+			return node.childNodes.length === 0;
 		},
+		readRegionCheckbox(event) {
+			if (clickEvent["target"].checked) {
+
+				// Removing make sure this doesn't blow up.
+				//let countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
+				this.selectedRegions.push(clickEvent["target"].value);
+				return;
+			}
+
+			//if (!clickEvent["target"].checked) {
+			let indexOfItemToRemove = this.selectedRegions.indexOf(clickEvent["target"].value);
+
+			// as long as the item is found in the array, continue. 
+			if (indexOfItemToRemove > -1) {
+				// splice the item from the array to remove it. 
+				this.selectedRegions.splice(indexOfItemToRemove, indexOfItemToRemove);
+			}
+
+			if (indexOfItemToRemove === 0) {
+				this.selectedRegions.shift();
+			}
+			//}
+        },
 		/**
 		 * 
-		 * @param {any} clickEvent
+		 * @param {Event} clickEvent
 		 */
 		async readHealthAttribute(clickEvent) {
 			if (clickEvent["target"].nodeName === "LABEL") {
@@ -154,29 +209,32 @@ const ChartAttributes = new Vue({
 			}
 		},
 		/**
-		 * 
-		 * @param {any} clickEvent
+		 * This might need to be removed. 
+		 * @param {Event} clickEvent
 		 */
 		readCountyCheckbox(clickEvent) {
 
 			if (clickEvent["target"].checked) {
-				let countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
+
+				// Removing make sure this doesn't blow up.
+				//let countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
 				this.selectedCounties.push(clickEvent["target"].value);
+				return;
 			}
 
-			if (!clickEvent["target"].checked) {
-				let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
+			//if (!clickEvent["target"].checked) {
+			let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
 
-				// as long as the item is found in the array, continue. 
-				if (indexOfItemToRemove > -1) {
-					// splice the item from the array to remove it. 
-					this.selectedCounties.splice(indexOfItemToRemove, indexOfItemToRemove);
-				}
-
-				if (indexOfItemToRemove === 0) {
-					this.selectedCounties.shift();
-				}
+			// as long as the item is found in the array, continue. 
+			if (indexOfItemToRemove > -1) {
+				// splice the item from the array to remove it. 
+				this.selectedCounties.splice(indexOfItemToRemove, indexOfItemToRemove);
 			}
+
+			if (indexOfItemToRemove === 0) {
+				this.selectedCounties.shift();
+			}
+			//}
 		},
 		/**
 		 * 
@@ -212,10 +270,11 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} arrayOfObjects
+		 * @param {Array} arrayOfObjects
+		 * Returns a marks array for the Plot object
 		 */
-		creatPlotMarksArray(arrayOfObjects) {
-			let marksArray = [Plot.line(this.healthAttributeData)];
+		createPlotMarksArray(arrayOfObjects) {
+			let marksArray = [Plot.ruleY([0]),Plot.ruleX([0]),Plot.line(this.healthAttributeData)];
 			for (let a = 0; a < arrayOfObjects.length; a++) {
 				// push plot dots to marks array
 				marksArray.push(this.createPlotDots(arrayOfObjects[a]));
@@ -227,7 +286,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} countyStateObject
+		 * @param {Object} countyStateObject
 		 */
 		createPlotDots(countyStateObject) {
 			// Plot.dot([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33 })
@@ -235,7 +294,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} countyStateObject
+		 * @param {Object} countyStateObject
 		 */
 		createPlotText(countyStateObject) {
 			// Plot text example: Plot.text([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33, text: ["testing"], dy: -8 })
@@ -243,13 +302,12 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} countyStateArray
+		 * @param {Array} countyStateArray
 		 */
 		getCountyInformation(countyStateArray) {
 			let countyStateInformation = this.dataHolder.filter(
 				function findCountState(row) {
-					
-					if (row[1] == countyStateArray[0] && row[2] == countyStateArray[1]) {
+					if (row[1] === countyStateArray[0] && row[2] === countyStateArray[1]) {
 						return row;
 					}
 				}
@@ -259,7 +317,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} countyStateArray
+		 * @param {Array} countyStateArray
 		 */
 		getCountStateIndex(countyStateArray) {
 			let index = this.dataHolder.findIndex(x => x[1] == countyStateArray[0] && x[2] == countyStateArray[1]);
@@ -280,33 +338,25 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * 
-		 * @param {any} plotMarksArray
+		 * @param {Array} plotMarksArray
 		 */
 		redrawChart(plotMarksArray) {
 			this.removeAllChildNodes(this.chartArea);
-
-			this.plot = Plot.plot({
-				x: {
-					label: "Percentile →"
-				},
-				y: {
-					label: `↑ ${this.healthAttribute}`
-				},
-				marks: plotMarksArray
-			});
+			this.plot = this.createPlot(plotMarksArray);
+			
 
 			this.chartArea.appendChild(this.plot);
 		},
 		/**
 		 * 
-		 * @param {any} indexOfCountyState
+		 * @param {Number} indexOfCountyState
 		 */
 		getCountyStateDatapointPercentile(indexOfCountyState) {
 			return this.healthAttributeData[indexOfCountyState];
 		},
 		/**
 		 * 
-		 * @param {any} countyState
+		 * @param {string} countyState
 		 */
 		parseCountyAndStateName(countyState) {
 			var split = countyState.split(",");
@@ -315,8 +365,29 @@ const ChartAttributes = new Vue({
 			split[1] = split[1].trim();
 
 			return split;
-		}
+		},
+		createPlot(plotMarksArray = []) {
+			return Plot.plot({
+				margin: 80,
+				grid: true,
+				height: 700,
+				style: {
+					fontSize: "16px"
+                },
+				x: {
+					ticks: 10,
+					label: "Percentile →",
+				},
+				y: {
+					label: `↑ ${this.healthAttribute}`
+				},
+				marks: plotMarksArray
+			});
+        }
 	},
+	compute: {
+
+    },
 	watch: {
 		/**
 		 * Does await timeout and if so how long and can it be set? 
@@ -357,18 +428,30 @@ const ChartAttributes = new Vue({
 			// Need to remove this and hope it works! 
 			//this.chartArea = document.getElementById("ChartArea");
 
-			this.plot = Plot.plot({
-				x: {
-					label: "Percentile →"
-				},
-				y: {
-					label: `↑ ${this.healthAttribute}`
-				},
-				marks: [
-					Plot.line(this.healthAttributeData),
-				]
-			});
+			this.plot = this.createPlot([
+				Plot.ruleY([0]),
+				Plot.ruleX([0]),
+				Plot.line(this.healthAttributeData),
+			]);
 
+			// old way of creating plot. It needed to be abstracted. 
+			//this.plot = Plot.plot({
+			//	grid: true,
+			//	height: 600,
+			//	x: {
+			//		label: "Percentile →"
+			//	},
+			//	y: {
+			//		label: `↑ ${this.healthAttribute}`
+			//	},
+			//	marks: [
+			//		Plot.ruleY([0]),
+			//		Plot.ruleX([0]),
+			//		Plot.line(this.healthAttributeData),
+			//	]
+			//});
+
+			//this.plot.style({fontSize: 25});
 			// Insert content into the #ChartArea Element.
 			this.chartArea.appendChild(this.plot);
 			
@@ -380,7 +463,7 @@ const ChartAttributes = new Vue({
 			let arrayOfObjects = this.createInfoObjects(parsedArray);
 
 			// create the plot marks: Dots and Text.
-			let plotMarksArray = this.creatPlotMarksArray(arrayOfObjects);
+			let plotMarksArray = this.createPlotMarksArray(arrayOfObjects);
 
 			// Redraw the chart
 			this.redrawChart(plotMarksArray);

@@ -1,0 +1,4 @@
+@startuml
+class regionUpdate <<partial>> {
+}
+@enduml

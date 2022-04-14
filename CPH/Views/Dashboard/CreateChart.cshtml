@@ -10,9 +10,10 @@
         </div>
         <input v-model="chartName" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
     </div>
-
-    @*Draw the chart below*@
-    <div id="ChartArea"></div>
+    <div class="row">
+            @*Draw the chart below*@
+            <div id="ChartArea" class="col-12"></div>
+    </div>
 
     @* The files are named the year that they represent. *@
     <select @@change="setChartAttributes($event)" id="Year" name="Year">
@@ -25,14 +26,19 @@
 
 
     <div class="row">
-        <div class="col-6">
+        <div class="col-4">
             <label for="columns">Health Attributes</label>
             <ul @@click="readHealthAttribute($event)" id="HealthAttrs" style="list-style: none; height: 300px" class="form-control overflow-auto">
             </ul>
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <label for="counties">Counties</label>
             <ul @@click="readCountyCheckbox($event)" id="Counties" style="list-style: none; height: 300px" class="form-control overflow-auto">
+            </ul>
+        </div>
+        <div class="col-4">
+            <label for="regions">Regions</label>
+            <ul @@click="readRegionCheckbox($event)" id="Regions" style="list-style: none; height: 300px" class="form-control overflow-auto">
             </ul>
         </div>
     </div>

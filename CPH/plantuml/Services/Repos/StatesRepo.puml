@@ -1,0 +1,7 @@
+@startuml
+class StatesRepo {
+    + Read(id:string) : Task<Models.States>
+    + ReadAll() : Task<ICollection<Models.States>>
+}
+IStates <|-- StatesRepo
+@enduml

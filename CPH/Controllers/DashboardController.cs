@@ -15,6 +15,7 @@ namespace CPH.Controllers
     using CPH.BusinessLogic.Interfaces;
     using CPH.Models;
     using CPH.Models.ViewModels;
+    using CPH.Services.Interfaces;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -37,6 +38,7 @@ namespace CPH.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
+        private readonly IRegion _region;
 
         /// <summary>
         /// References the _hostEnv..
@@ -54,9 +56,9 @@ namespace CPH.Controllers
         /// <param name="logger">The logger<see cref="ILogger{DashboardController}"/>.</param>
         /// <param name="hostEnv">The hostEnv<see cref="IWebHostEnvironment"/>.</param>
         /// <param name="csvManagement">The csvManagement<see cref="ICSVManagement"/>.</param>
-        public DashboardController(IWebHostEnvironment hostEnv, ICSVManagement csvManagement)
+        public DashboardController(IWebHostEnvironment hostEnv, ICSVManagement csvManagement, IRegion region)
         {
-           
+            _region = region;
             _hostEnv = hostEnv;
             _csvManagement = csvManagement;
         }
@@ -111,8 +113,7 @@ namespace CPH.Controllers
         /// </summary>
         /// <param name="form">The form<see cref="UploadCSVModel"/>.</param>
         /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
-        [HttpPost]
-        [Route("Dashboard/ValidateAndUploadCSV")]
+        [HttpPost, Route("Dashboard/ValidateAndUploadCSV")]
         public async Task<IActionResult> ValidateAndUploadCSV(UploadCSVModel form)
         {
             if (!ModelState.IsValid)
@@ -163,8 +164,7 @@ namespace CPH.Controllers
         /// </summary>
         /// <param name="form">The form<see cref="UploadCSVModel"/>.</param>
         /// <returns>The <see cref="Task{IActionResult}"/>.</returns>
-        [HttpPost]
-        [Route("Dashboard/OverrideCsvYear")]
+        [HttpPost, Route("Dashboard/OverrideCsvYear")]
         public async Task<IActionResult> OverrideCsvYear(UploadCSVModel form)
         {
             var alteredFile = form.AlteredFile;
@@ -198,9 +198,37 @@ namespace CPH.Controllers
 
         public IActionResult CreateRegion()
         {
+            var filePath = _csvManagement.UploadsFolder;
+            string[] files = Directory.GetFiles(filePath);
+
+            string[] fileNames = new string[files.Length];
+
+            for (var i = 0; i < files.Length; i++)
+            {
+                fileNames[i] = (Path.GetFileNameWithoutExtension(files[i]));
+            }
+
+            ViewData["Files"] = fileNames;
             return View();
         }
 
+        [HttpPost, Route("Dashboard/SaveRegion")]
+        public async Task<IActionResult> SaveRegion([FromBody] Region region)
+        {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var newRegion = await _region.Create(region);
+
+            return Ok(newRegion);
+        }
+
+        [HttpGet, Route("Dashboard/ReadAllRegions")]
+        public async Task<IActionResult> ReadAllRegions()
+        {
+            return Ok(await _region.ReadAll());
+        }
 
         /// <summary>
         /// The Error.

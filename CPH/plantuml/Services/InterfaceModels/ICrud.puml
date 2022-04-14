@@ -1,0 +1,9 @@
+@startuml
+interface "ICrud`1"<T> {
+    Read(Id:string) : Task<T>
+    ReadAll() : Task<ICollection<T>>
+    Update(item:T) : Task<T>
+    Delete(item:T) : Task
+    Create(item:T) : Task<T>
+}
+@enduml

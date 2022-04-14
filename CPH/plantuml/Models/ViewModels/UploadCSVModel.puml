@@ -1,0 +1,8 @@
+@startuml
+class UploadCSVModel {
+    + UserIdentity : string <<get>> <<set>>
+    + UploadDate : string <<get>> <<set>>
+}
+UploadCSVModel --> "AlteredFile" IFormFile
+UploadCSVModel --> "OriginalFile" IFormFile
+@enduml

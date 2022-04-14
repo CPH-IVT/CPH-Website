@@ -1,0 +1,13 @@
+@startuml
+class CSVManagement {
+    + UploadsFolder : string <<get>>
+    + OriginalsFolder : string <<get>>
+    + CSVManagement(hostEnvironment:IWebHostEnvironment, configuration:IConfiguration)
+    + <<async>> CopyAlteredCsvToUploadsDirAsync(file:IFormFile) : Task
+    + <<async>> CopyOriginalCsvToOriginalDirAsync(file:IFormFile) : Task
+    + CheckIfYearExists(fileName:string) : bool
+    + GetFileHashCode(file:IFormFile) : int
+    + GetCsvHashCodes() : List<int>
+}
+ICSVManagement <|-- CSVManagement
+@enduml
