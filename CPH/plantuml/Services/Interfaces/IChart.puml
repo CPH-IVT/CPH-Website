@@ -1,0 +1,7 @@
+@startuml
+interface IChart {
+}
+class "ICrud`1"<T> {
+}
+"ICrud`1" "<Chart>" <|-- IChart
+@enduml

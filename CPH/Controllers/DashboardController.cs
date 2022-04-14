@@ -15,6 +15,7 @@ namespace CPH.Controllers
     using CPH.BusinessLogic.Interfaces;
     using CPH.Models;
     using CPH.Models.ViewModels;
+    using CPH.Services.Interfaces;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -37,6 +38,7 @@ namespace CPH.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
+        private readonly IRegion _region;
 
         /// <summary>
         /// References the _hostEnv..
@@ -54,9 +56,9 @@ namespace CPH.Controllers
         /// <param name="logger">The logger<see cref="ILogger{DashboardController}"/>.</param>
         /// <param name="hostEnv">The hostEnv<see cref="IWebHostEnvironment"/>.</param>
         /// <param name="csvManagement">The csvManagement<see cref="ICSVManagement"/>.</param>
-        public DashboardController(IWebHostEnvironment hostEnv, ICSVManagement csvManagement)
+        public DashboardController(IWebHostEnvironment hostEnv, ICSVManagement csvManagement, IRegion region)
         {
-           
+            _region = region;
             _hostEnv = hostEnv;
             _csvManagement = csvManagement;
         }
@@ -210,6 +212,23 @@ namespace CPH.Controllers
             return View();
         }
 
+        [HttpPost, Route("Dashboard/SaveRegion")]
+        public async Task<IActionResult> SaveRegion([FromBody] Region region)
+        {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var newRegion = await _region.Create(region);
+
+            return Ok(newRegion);
+        }
+
+        [HttpGet, Route("Dashboard/ReadAllRegions")]
+        public async Task<IActionResult> ReadAllRegions()
+        {
+            return Ok(await _region.ReadAll());
+        }
 
         /// <summary>
         /// The Error.

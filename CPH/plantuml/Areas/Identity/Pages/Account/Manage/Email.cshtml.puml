@@ -1,0 +1,18 @@
+@startuml
+class EmailModel <<partial>> {
+    + EmailModel(userManager:UserManager<IdentityUser>, signInManager:SignInManager<IdentityUser>, emailSender:IEmailSender)
+    + Username : string <<get>> <<set>>
+    + Email : string <<get>> <<set>>
+    + IsEmailConfirmed : bool <<get>> <<set>>
+    + StatusMessage : string <<get>> <<set>>
+    + <<async>> OnGetAsync() : Task<IActionResult>
+    + <<async>> OnPostChangeEmailAsync() : Task<IActionResult>
+    + <<async>> OnPostSendVerificationEmailAsync() : Task<IActionResult>
+}
+class InputModel {
+    + NewEmail : string <<get>> <<set>>
+}
+PageModel <|-- EmailModel
+EmailModel --> "Input" InputModel
+EmailModel +-- InputModel
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+class HomeController {
+    + HomeController(hostEnv:IWebHostEnvironment)
+    + Index() : IActionResult
+    + Privacy() : IActionResult
+    + Error() : IActionResult
+}
+Controller <|-- HomeController
+@enduml

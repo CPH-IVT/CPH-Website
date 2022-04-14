@@ -74,6 +74,8 @@ namespace CPH
 
             services.AddMvc();
 
+            services.AddSession();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
@@ -86,6 +88,7 @@ namespace CPH
 
             services.AddScoped<IChart, ChartRepo>();
             services.AddScoped<IStates, StatesRepo>();
+            services.AddScoped<IRegion, RegionRepo>();
 
         }
 
@@ -110,7 +113,10 @@ namespace CPH
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseSession();
+            //app.UseMvc();
             app.UseHttpsRedirection();
+            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             app.UseRouting();

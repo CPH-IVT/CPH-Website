@@ -9,7 +9,7 @@ namespace CPH.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Year { get; set; }
+        public string Year { get; set; }
         public string FIPS { get; set; } // a string list of county FIPS codes. Ex: 1000,1001,1002,1003.
     }
 }

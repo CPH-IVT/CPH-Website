@@ -1,0 +1,19 @@
+@startuml
+class RegisterModel {
+    + RegisterModel(userManager:UserManager<IdentityUser>, signInManager:SignInManager<IdentityUser>, logger:ILogger<RegisterModel>, emailSender:IEmailSender)
+    + ReturnUrl : string <<get>> <<set>>
+    + <<async>> OnGetAsync(returnUrl:string) : Task
+    + <<async>> OnPostAsync(returnUrl:string) : Task<IActionResult>
+}
+class "IList`1"<T> {
+}
+class InputModel {
+    + Email : string <<get>> <<set>>
+    + Password : string <<get>> <<set>>
+    + ConfirmPassword : string <<get>> <<set>>
+}
+PageModel <|-- RegisterModel
+RegisterModel --> "Input" InputModel
+RegisterModel --> "ExternalLogins<AuthenticationScheme>" "IList`1"
+RegisterModel +-- InputModel
+@enduml

@@ -1,0 +1,8 @@
+@startuml
+class Region {
+    + Id : int <<get>> <<set>>
+    + Name : string <<get>> <<set>>
+    + Year : string <<get>> <<set>>
+    + FIPS : string <<get>> <<set>>
+}
+@enduml

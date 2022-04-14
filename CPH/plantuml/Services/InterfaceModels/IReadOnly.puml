@@ -1,0 +1,6 @@
+@startuml
+interface "IReadOnly`1"<T> {
+    Read(id:string) : Task<T>
+    ReadAll() : Task<ICollection<T>>
+}
+@enduml

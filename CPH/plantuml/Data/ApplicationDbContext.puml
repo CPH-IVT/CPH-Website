@@ -1,0 +1,13 @@
+@startuml
+class ApplicationDbContext {
+    + ApplicationDbContext(options:DbContextOptions<ApplicationDbContext>)
+}
+class "IdentityDbContext`1"<T> {
+}
+class "DbSet`1"<T> {
+}
+"IdentityDbContext`1" "<IdentityUser>" <|-- ApplicationDbContext
+ApplicationDbContext --> "Chart<Chart>" "DbSet`1"
+ApplicationDbContext --> "States<States>" "DbSet`1"
+ApplicationDbContext --> "Region<Region>" "DbSet`1"
+@enduml

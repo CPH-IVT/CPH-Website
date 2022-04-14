@@ -484,5 +484,7 @@ new States
         /// Gets or sets the States.
         /// </summary>
         public DbSet<States> States { get; set; }
+
+        public DbSet<Region> Region { get; set; }
     }
 }

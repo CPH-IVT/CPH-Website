@@ -1,0 +1,15 @@
+@startuml
+class IndexModel <<partial>> {
+    + IndexModel(userManager:UserManager<IdentityUser>, signInManager:SignInManager<IdentityUser>)
+    + Username : string <<get>> <<set>>
+    + StatusMessage : string <<get>> <<set>>
+    + <<async>> OnGetAsync() : Task<IActionResult>
+    + <<async>> OnPostAsync() : Task<IActionResult>
+}
+class InputModel {
+    + PhoneNumber : string <<get>> <<set>>
+}
+PageModel <|-- IndexModel
+IndexModel --> "Input" InputModel
+IndexModel +-- InputModel
+@enduml

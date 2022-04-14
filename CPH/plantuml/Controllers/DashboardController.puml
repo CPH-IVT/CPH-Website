@@ -1,0 +1,16 @@
+@startuml
+class DashboardController {
+    + DashboardController(hostEnv:IWebHostEnvironment, csvManagement:ICSVManagement, region:IRegion)
+    + Home() : IActionResult
+    + CreateChart() : IActionResult
+    + UploadCSV() : IActionResult
+    + <<async>> ValidateAndUploadCSV(form:UploadCSVModel) : Task<IActionResult>
+    + <<async>> OverrideCsvYear(form:UploadCSVModel) : Task<IActionResult>
+    + <<async>> CSVYearDuplicateCheck(csvYear:IFormFile) : Task<IActionResult>
+    + CreateRegion() : IActionResult
+    + <<async>> SaveRegion(region:Region) : Task<IActionResult>
+    + <<async>> ReadAllRegions() : Task<IActionResult>
+    + Error() : IActionResult
+}
+Controller <|-- DashboardController
+@enduml
