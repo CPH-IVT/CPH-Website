@@ -1,5 +1,19 @@
 ﻿const csvSelector = new Vue({
     el: '#upload-form',
+    // ****
+    // driver variables for pocessing uploads
+    // originalCsv - what's obtained from CHR
+    // alteredCsv - original, minus internal table header, redundant content
+    // fileReader - method for uploading file from CHR
+    // year - year for CHR health data - CHR collects data annually
+    // formData - 
+    // userId - 
+    // uploadDate - when originalCsv was originally uploaded
+    // hashCodeMatch - a hack - result of a test that checks if a newly uploaded file is the same as the previous; REALLY should be a character-by-character comparison
+    // fileYearMatch - 
+    // overrideDuplicate - something to do with tracking whether user has said to overwrite an existing CHR data file??
+    // nonCountyBlacklist - keys for items in a CHR dataset that aggregate data from multiple counties: i.e., states and the overall US data
+    // ****
     data: {
         originalCsv: {},
         alteredCsv: {},
@@ -12,6 +26,7 @@
         fileYearMatch: null,
         uploadSuccess: null,
         overrideDuplicate: null,
+        // TODO: probably better to upload this 'blacklist' data from an authority like the ISO lists of state codes
         nonCountyBlacklist: [
             "UNITED STATES",
             "ALABAMA",
@@ -70,74 +85,54 @@
         ]
     },
     methods: {
-
         /**
         *
         * @param {Array} rows
         */
         removeNonCountyEntriesInDataset(rows) {
-            // Creates an expendable array of state names that is used to identify non-county entries in the dataset
-            let nonCountyBlacklistArray = this.nonCountyBlacklist;
+            // Create a temporary array of keys for rows that aggregate data from multiple counties - i.e., states and the U.S. as a whole
+            let nonCountyBlacklistArray = this.nonCountyBlacklist.slice();
 
-            // Creates and populates an array with the indices of the rows containing state namnes
-            let indicesOfNonCountiesToRemove = [];
-            rows.forEach(function (row) {
+            // Create an index that is decremented from within the following loop
+            let rowIndex = rows.length;
+            while (rowIndex-- > 0) {
+                // Holds the iterated row data
+                let row = rows[rowIndex];
+                // Holds iterated county column value data
+                let thisKey = row.split(",")[4] === undefined ? undefined : row.split(",")[4].toUpperCase();
+                // Loops through nonCountyBlacklistArray looking for matching values with the iterated column value
                 nonCountyBlacklistArray.forEach(function (value) {
-                    if (row.split(",")[4].toUpperCase() === value) {
-                        //console.log(`Removed Row Index: ${rows.indexOf(row)} - County Value: ${row.split(",")[4]}`); //Debug Code: Consoles out the indices and values of the rows to be removed.
-                        indicesOfNonCountiesToRemove.push(rows.indexOf(row));
-                        nonCountyBlacklistArray.splice(value, 1);
+                    if (thisKey == value) {
+                        //console.log(`Removed Row Index: ${rowIndex} - Non-county Value: ${thisKey}`); ////Debug Code: Consoles out the indices and values of the rows that were removed.
+                        // Removes the matched non-county data from the CSV array
+                        rows.splice(rowIndex, 1);
+                        // Removes the item from the blacklist, assuming that items key this list
+                        if (thisKey !== undefined) nonCountyBlacklistArray.splice(nonCountyBlacklistArray.indexOf(value), 1);
                         return;
                     }
                 })
-            });
-
-            // Removes the rows by indices
-            indicesOfNonCountiesToRemove.reverse().forEach(function (index) {
-                //console.log(`Removed Row Index: ${index} - County Value: ${rows[index].split(",")[4]}`); ////Debug Code: Consoles out the indices and values of the rows that were removed.
-                rows.splice(index, 1);
-            });
+            };
             // returns the array
             console.log("State data removed from the county column");
             return rows;
-        },
-        /**       
-        *NOTE: Unused at the moment
-        * @param {Array} rows       
-        */
-        removeBlankRows(rows) {
-            // Creates and populates an array with the indices of the rows to be removed
-            let blankToRemove = [];
-            rows.forEach(function (row) {
-                if (row.split(",")[7] == "") {
-                    blankToRemove.push(rows.indexOf(row));
-                }
-            });
-            // Removes the rows by indices
-            blankToRemove.reverse().forEach(function (index) {
-                //console.log(`Removed Row Index: ${index} - County Value: ${rows[index].split(",")[4]}`); //Debug Code: Shows the removed index and county.
-                rows.splice(index, 1);
-            });
-            //console.log(`Total Blank Rows Removed: ${blankToRemove.length}`) //Debug Code: Shows the amount of rows removed
         },
         /**
         *NOTE: Unused at the moment
         * @param {Array} rows
         */
         columnMath(rows) {      
-            // Creates and populates a numeric array from a cloumn within the dataset
+            // Populate a numeric array from a cloumn within the dataset and sum its values
+            let columnSum = 0;
             let columnNumericDataArray = [];
             rows.forEach(function (row) {
-                if (!isNaN(parseFloat(row.split(",")[8]))) {
-                columnNumericDataArray.push(parseFloat(row.split(",")[8]));
+                let rowValue = parseFloat(row.split(",")[8]);
+                if (!isNaN(rowValue)) {
+                    columnNumericDataArray.push(rowValue);
+                    columnSum += rowValue
                 }              
             });
-            // Sums the data within the array
-            let columnSum = 0;
-            columnNumericDataArray.forEach(function (value) {
-                columnSum += value;
-            })
-            // Consoles out the data results
+
+            // console the results
             console.log(`Column: ${rows[0].split(",")[8]}\nTotal: ${columnSum}\nMean: ${Math.round((columnSum / columnNumericDataArray.length) * 100) / 100}\nMin: ${Math.min(...columnNumericDataArray)}\nMax: ${Math.max(...columnNumericDataArray)}\nRange: ${Math.max(...columnNumericDataArray) - Math.min(...columnNumericDataArray)}`);
         },
         getSelectedCsv(event) {
@@ -151,8 +146,9 @@
         },
         createNewCsv() {
             if (this.originalCsv === undefined) {
-                console.log("Internal Error: createNewCsv Failed to load")
-            }
+                console.log("Internal Error: createNewCsv Failed to load");
+                return;
+            }               
             this.fileReader.onload = (csvToRead) => {
                 // get the content of the original csv that the user selected
                 let contents = csvToRead.target.result;
@@ -162,9 +158,6 @@
 
                 // Remove the second row of the CSV
                 rows.splice(1, 1);
-
-                // Removes the last row of the CSV
-                rows.pop();
 
                 // Removes the state totals from the dataset
                 this.removeNonCountyEntriesInDataset(rows);
@@ -205,6 +198,7 @@
                 } else if (data["UploadSuccessful"]) {
                     this.uploadSuccess = true
                 } else {
+                    // should try harder to diagnose the error!
                     console.error("Bad server response!")
                 }
             });
