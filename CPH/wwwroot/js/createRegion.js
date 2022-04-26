@@ -6,7 +6,6 @@
         selectedCounties: [],
         name: '',
         year: 0,
-
     },
 	methods: {
 		async saveRegion(event) {
@@ -18,11 +17,13 @@
 
 			// check to make sure that at least two counties have been selected
 			if (this.selectedCounties.length <= 2 || regionName === "" || this.year === 0) {
-				alert("Please complete the form before submitting.");
+				alert("Please complete the form before submitting. Please select a year, select three or more counties, and name the region.");
 				return;
-            }
-			// if all check are ok, async call the server and attempt to save the region
+			}
+
+			// if all checks are ok, async call the server and attempt to save the region
 			this.FIPS = this.getFIPSOfSelectedCounties();
+			// TO DO: NEED TO CHECK FOR PRE-EXISTING NAMES! 
 			let region = {Name: this.name, Year: this.year, FIPS: this.FIPS.toString() };
 
 			let stringifyRegion = JSON.stringify(region);
@@ -97,20 +98,26 @@
 				return;
 			}
 
-			//if (!clickEvent["target"].checked) {
+
 			let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
 
 			// as long as the item is found in the array, continue. 
-			if (indexOfItemToRemove > -1) {
+			if (indexOfItemToRemove > 0) {
+
 				// splice the item from the array to remove it. 
+				// Splice does not work for the 0 index. 
 				this.selectedCounties.splice(indexOfItemToRemove, indexOfItemToRemove);
 			}
 
 			if (indexOfItemToRemove === 0) {
 				this.selectedCounties.shift();
 			}
-			//}
+
 		},
+		/**
+		 * 
+		 * @param {Array} data
+		 */
 		getCountyList(data) {
 			let listOfCounties = [];
 			for (var i = 0; i < data.length; i++) {
@@ -119,6 +126,11 @@
 			}
 			return listOfCounties;
 		},
+		/**
+		 * 
+		 * 
+		 * @param {Array} data
+		 */
 		getFIPSCodesList(data) {
 			let listOfFIPS = [];
 			for (var i = 0; i < data.length; i++) {

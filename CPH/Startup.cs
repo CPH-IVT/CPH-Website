@@ -37,9 +37,10 @@ namespace CPH
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
         /// <param name="configuration">The configuration<see cref="IConfiguration"/>.</param>
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             Configuration = configuration;
+            WebHostEnvironment = webHostEnvironment;
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
@@ -57,6 +58,7 @@ namespace CPH
         /// Gets the Configuration.
         /// </summary>
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment WebHostEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         /// <summary>
@@ -65,9 +67,20 @@ namespace CPH
         /// <param name="services">The services<see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            string envName = WebHostEnvironment.EnvironmentName;
+
+            if (WebHostEnvironment.IsDevelopment())
+            {
+                services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        Configuration.GetConnectionString("DefaultConnection")));
+            }
+            else
+            {
+                services.AddDbContext<ApplicationDbContext>(options =>
+options.UseSqlServer(
+Configuration.GetConnectionString("LiveConnection")));
+            }
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -113,6 +126,8 @@ namespace CPH
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            
             app.UseSession();
             //app.UseMvc();
             app.UseHttpsRedirection();
