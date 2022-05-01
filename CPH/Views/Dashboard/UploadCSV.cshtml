@@ -36,19 +36,30 @@
             <!-- Original File Input-->
             <div class="form-group">
                 <label class="control-label">Select a CSV File</label>
-                 <input @@change="setAlteredCsv($event)" id="OriginalFile" type="file" asp-for="OriginalFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls"  />
+                <input @@change="setAlteredCsv($event)" id="OriginalFile" type="file" asp-for="OriginalFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" />
             </div>
 
             <!--Submit button-->
             <div class="form-group">
                 <input id="upload-button" @@click="validateAndUploadCsv()" type="submit" value="Upload" class="btn btn-primary" />
-            </div>
+            </div>  
         </div>
 
-    </div>
+        <!-- Display Uploaded Files-->
+        <div>
+            <label for="counties">Uploaded Years</label> 
+            <div class="col-3">
+                <ul style="list-style: none; height: auto; width: auto" class="form-control overflow-auto">
+                    @foreach (var file in (string[])ViewData["Files"])
+                    {
+                        <li>@file</li>
+                        }
+                </ul>        
+            </div>
+        </div>   
+        
+    </div>    
 </div>
-
 @section scripts{
     <script src="/js/uploadCsv.js"></script>
-
 }
