@@ -10,10 +10,32 @@
         </div>
         <input v-model="chartName" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
     </div>
+
+
     <div class="row">
+        <div class="float-container">
+
+            <div class="float-child-chart" v-show="aggregateDisplay">
             @*Draw the chart below*@
             <div id="ChartArea" class="col-12"></div>
+            </div>
+
+            <div class="float-child-legend" v-show="aggregateDisplay">
+                <ul>
+                    <li v-for="(listItem) in listItems">
+                        {{listItem}}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="float-child-aggregate" v-show="aggregateDisplay">
+                <p id="AggregateAreaFull"><pre>{{aggregateDataFull}}</pre></p>
+                <p id="AggregateAreaSelected"><pre>{{aggregateDataSelected}}</pre></p>
+            </div>
+        </div>
     </div>
+
+
 
     @* The files are named the year that they represent. *@
     <select @@change="setChartAttributes($event)" id="Year" name="Year">

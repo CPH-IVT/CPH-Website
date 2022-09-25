@@ -108,3 +108,35 @@ body {
 .county-clicked {
     fill: orange;
 }
+
+
+.float-container {
+    border: 1px solid #fff;
+    padding: 20px;
+}
+
+.float-child-chart {
+    width: 60%;
+    float: left;
+    padding: 20px;
+    border: 1px solid black;
+    height: 700px;
+}
+
+
+.float-child-legend {
+    width: 20%;
+    float: left;
+    padding: 20px;
+    border: 1px solid black;
+    height: 700px;
+    overflow: scroll;
+}
+
+.float-child-aggregate {
+    width: 20%;
+    float: left;
+    padding: 20px;
+    border: 1px solid black;
+    height: 700px;
+}
