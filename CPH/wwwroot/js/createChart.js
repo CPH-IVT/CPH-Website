@@ -37,6 +37,7 @@ const ChartAttributes = new Vue({
 		aggregateDataSelected: '',
 		listItems: [],
 		aggregateDisplay: false,
+		tempHide: false,
 		chartName: null,
 		dataHolder: null,
 		maxValue: 0,
@@ -51,7 +52,10 @@ const ChartAttributes = new Vue({
 		selectedRegions: []
 	},
 	methods: {
-
+		/**
+		 * 
+		 * @param {any} arrayOfObjects
+		 */
 		createList(arrayOfObjects) {
 
 			//
@@ -62,8 +66,6 @@ const ChartAttributes = new Vue({
 			}
 			return this.listItems;
         },
-
-
 		/**
 		 * @param {object} dataObject
 		 * @param {bool} fullColumns
