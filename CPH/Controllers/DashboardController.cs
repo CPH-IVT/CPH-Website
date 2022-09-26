@@ -103,6 +103,17 @@ namespace CPH.Controllers
         /// <returns>The <see cref="IActionResult"/>.</returns>
         public IActionResult UploadCSV()
         {
+            var filePath = _csvManagement.UploadsFolder;
+            string[] files = Directory.GetFiles(filePath);
+
+            string[] fileNames = new string[files.Length];
+
+            for (var i = 0; i < files.Length; i++)
+            {
+                fileNames[i] = (Path.GetFileNameWithoutExtension(files[i]));
+            }
+
+            ViewData["Files"] = fileNames;
             return View();
         }
 
