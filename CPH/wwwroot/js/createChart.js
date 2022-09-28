@@ -15,7 +15,9 @@ const ChartAttributes = new Vue({
 	// chartArea -
 	// aggregateDataFull -
 	// aggregateDataSelected -
+	// listItems -
 	// aggregateDisplay -
+	// tempHide -
 	// chartName -
 	// dataHolder -
 	// maxValue -
@@ -53,15 +55,12 @@ const ChartAttributes = new Vue({
 	},
 	methods: {
 		/**
-		 * 
 		 * @param {any} arrayOfObjects
+		* Receives an array of objects, and populates an array with the counties found within
 		 */
-		createList(arrayOfObjects) {
-
-			//
+		createLegendList(arrayOfObjects) {
 			this.listItems = [];
 			for (let i = 0; i < arrayOfObjects.length; i++) {
-				//console.log(arrayOfObjects[i].info[0][1] + ", " + arrayOfObjects[i].info[0][2] + " || " + parseInt(arrayOfObjects[i].percentileInfo[0]));
 				this.listItems.push(arrayOfObjects[i].info[0][1] + ", " + arrayOfObjects[i].info[0][2] + " || " + parseInt(arrayOfObjects[i].percentileInfo[0]));
 			}
 			return this.listItems;
@@ -73,7 +72,6 @@ const ChartAttributes = new Vue({
 		 * if fullColumns is false, his function will attempt to aggregate the selected columns based on the data found within a passed createInfoObjects object
 		 */
 		columnMath(dataObject, fullColumns) {
-
 			// Checks if the array is empty. If found true, returns an empty array
 			// An empty array often occuers when a county is unselected 
 			if (dataObject.length === 0) {
@@ -179,7 +177,7 @@ const ChartAttributes = new Vue({
 			this.year = year.target.value;
 			await this.setRegionData(this.year);
 
-			console.log(this.regionData);
+			//console.log(this.regionData);
 
 			//Get the columns div
 			let healthAttrs = document.getElementById("HealthAttrs");
@@ -206,7 +204,7 @@ const ChartAttributes = new Vue({
 
 			let regionNames = await this.getRegionNames(this.year);
 
-			console.log(regionNames);
+			//console.log(regionNames);
 
 			await d3.csv(`../uploads/${year.target.value}.csv`)
 				.then((data) => {
@@ -402,11 +400,11 @@ const ChartAttributes = new Vue({
 
 				// create an object with collected information
 				let newObject = { info, percentileInfo };
-				console.log(newObject);
+				//console.log(newObject);
 
 				// push the object to an array
 				countyStateArray.push(newObject);
-				console.log(`countStateArrayObject:`, countyStateArray);
+				//console.log(`countStateArrayObject:`, countyStateArray);
             }
 
 
@@ -513,22 +511,64 @@ const ChartAttributes = new Vue({
 			return split;
 		},
 		createPlot(plotMarksArray = []) {
-			return Plot.plot({
-				margin: 80,
-				grid: true,
-				height: 700,
-				style: {
-					fontSize: "16px"
-                },
-				x: {
-					ticks: 10,
-					label: "Percentile →",
-				},
-				y: {
-					label: `↑ ${this.healthAttribute}`
-				},
-				marks: plotMarksArray
-			});
+
+			console.log(plotMarksArray);
+			if (typeof (plotMarksArray[3]) != "undefined") {
+				console.log(plotMarksArray.slice[3, plotMarksArray.length].data)
+				return Plot.plot({
+					margin: 80,
+					grid: true,
+					height: 700,
+					style: {
+						fontSize: "16px"
+					},
+					x: {
+						ticks: 10,
+						label: "Percentile →",
+					},
+					y: {
+						label: `↑ ${this.healthAttribute}`
+					},
+					color: {
+						type: "diverging",
+						scheme: "BuRd",
+						legend: true
+					},
+					marks: [
+						Plot.ruleY(plotMarksArray[0]),
+						Plot.ruleX(plotMarksArray[1]),
+						Plot.line(this.healthAttributeData),
+						Plot.dot(plotMarksArray)
+					]
+				});
+			} else {
+				return Plot.plot({
+					margin: 80,
+					grid: true,
+					height: 700,
+					style: {
+						fontSize: "16px"
+					},
+					x: {
+						ticks: 10,
+						label: "Percentile →",
+					},
+					y: {
+						label: `↑ ${this.healthAttribute}`
+					},
+					color: {
+						type: "diverging",
+						scheme: "BuRd",
+						legend: true
+					},
+					marks: [
+						Plot.ruleY(plotMarksArray[0]),
+						Plot.ruleX(plotMarksArray[1]),
+						Plot.line(this.healthAttributeData),
+					]
+				});
+
+            }
         }
 	},
 	compute: {
@@ -612,10 +652,10 @@ const ChartAttributes = new Vue({
 			//create object with information to be plotted. 
 			let arrayOfObjects = this.createInfoObjects(parsedArray);
 
-			//
-			this.createList(arrayOfObjects);
+			// Populates the lenged
+			this.createLegendList(arrayOfObjects);
 
-			//
+			// Creates and populates an array to display the selected counties aggregate data
 			let aggregateArraySelected = [];
 			aggregateArraySelected = this.columnMath(arrayOfObjects, false);
 			this.displayAggregateDataSelected(aggregateArraySelected);
