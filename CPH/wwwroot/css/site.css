@@ -108,3 +108,45 @@ body {
 .county-clicked {
     fill: orange;
 }
+
+.float-child-aggregate-left {
+    width: 50%;
+    float: left;
+    padding: 20px;
+    border: 1px solid black;
+    height: 250px;
+}
+
+.float-child-aggregate-right {
+    width: 50%;
+    float: left;
+    padding: 20px;
+    border: 1px solid black;
+    height: 250px;
+}
+
+.float-container {
+    border: 1px solid #fff;
+    padding: 20px;
+}
+
+.float-child-chart {
+    width: 70%;
+    float: left;
+    padding: 20px;
+    border: 1px solid black;
+    height: 750px;
+}
+
+.float-child-legend {
+    width: 30%;
+    float: left;
+    padding: 20px;
+    border: 1px solid black;
+    height: 750px;
+    overflow: scroll;
+}
+
+[v-cloak] {
+    display: none;
+}
