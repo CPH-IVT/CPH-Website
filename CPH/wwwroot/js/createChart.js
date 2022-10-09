@@ -38,6 +38,7 @@ const ChartAttributes = new Vue({
 		aggregateDataFull: '',
 		aggregateDataSelected: '',
 		listItems: [],
+		dotColorArray: [],
 		aggregateDisplay: false,
 		tempHide: false,
 		chartName: null,
@@ -511,10 +512,39 @@ const ChartAttributes = new Vue({
 			return split;
 		},
 		createPlot(plotMarksArray = []) {
-
-			console.log(plotMarksArray);
 			if (typeof (plotMarksArray[3]) != "undefined") {
-				console.log(plotMarksArray.slice[3, plotMarksArray.length].data)
+				// Creates an array that holds the X and Y values for the plot marks
+				let slicedArray = plotMarksArray.slice(3, plotMarksArray.length);
+				let dotArray = [];
+				for (let i = 0; i < slicedArray.length; i++) {
+					dotArray.push(slicedArray[i].data);
+				};
+
+				this.dotColorArray = [];
+				// Create a parallel color array for the dotArray
+				let count = 0;
+				for (let i = 0; i < dotArray.length; i++) {
+					if (count === 0) {
+						this.dotColorArray.push("red");
+					} else if (count === 1) {
+						this.dotColorArray.push("green");
+					} else if (count === 2) {
+						this.dotColorArray.push("blue");
+					} else if (count === 3) {
+						this.dotColorArray.push("gray")
+					} else {
+						this.dotColorArray.push("black");
+					};
+
+					// Resets the count to zero upon reaching the set limit
+					count++
+					if (count > 3) {
+						count = 0;
+					}
+				};
+
+				console.log(this.dotColorArray)
+
 				return Plot.plot({
 					margin: 80,
 					grid: true,
@@ -529,16 +559,11 @@ const ChartAttributes = new Vue({
 					y: {
 						label: `↑ ${this.healthAttribute}`
 					},
-					color: {
-						type: "diverging",
-						scheme: "BuRd",
-						legend: true
-					},
 					marks: [
-						Plot.ruleY(plotMarksArray[0]),
-						Plot.ruleX(plotMarksArray[1]),
-						Plot.line(this.healthAttributeData),
-						Plot.dot(plotMarksArray)
+						Plot.ruleY(plotMarksArray[0].data),
+						Plot.ruleX(plotMarksArray[1].data),
+						Plot.line(plotMarksArray[2].data),
+						Plot.dot(dotArray, { fill: this.dotColorArray })
 					]
 				});
 			} else {
@@ -555,11 +580,6 @@ const ChartAttributes = new Vue({
 					},
 					y: {
 						label: `↑ ${this.healthAttribute}`
-					},
-					color: {
-						type: "diverging",
-						scheme: "BuRd",
-						legend: true
 					},
 					marks: [
 						Plot.ruleY(plotMarksArray[0]),
