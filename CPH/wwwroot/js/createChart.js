@@ -247,6 +247,13 @@ const ChartAttributes = new Vue({
 		 */
 		addDataToUL(data, ulId, inputType = "checkbox") {
 			for (let i = 0; i < data.length; i++) {
+				// Removes all item from the Health Attribute list that do not contain the word "raw"
+				if (ulId.id === "HealthAttrs") {
+					let pos = data[i].search("raw")
+					if (pos < 0) {
+						continue;
+					}
+				}
 
 				//Create list item for the input and label to be inserted into
 				let liNode = document.createElement("li");
@@ -532,11 +539,11 @@ const ChartAttributes = new Vue({
 				};
 
 				// DEBUG
-				console.log("_________________________________________________")
-				console.log(dotArray)
-				console.log(this.dotColorArray)
-				console.log(plotMarksArray)
-				console.log("_________________________________________________")
+				//console.log("_________________________________________________")
+				//console.log(dotArray)
+				//console.log(this.dotColorArray)
+				//console.log(plotMarksArray)
+				//console.log("_________________________________________________")
 
 				return Plot.plot({
 					margin: 80,
