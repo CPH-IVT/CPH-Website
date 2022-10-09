@@ -117,6 +117,7 @@
             return rows;
         },
         /**
+         * TODO: Remove this
         *NOTE: Unused at the moment
         * @param {Array} rows
         */
