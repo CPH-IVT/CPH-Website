@@ -16,6 +16,7 @@ const ChartAttributes = new Vue({
 	// aggregateDataFull -
 	// aggregateDataSelected -
 	// listItems -
+	// dotColorArray -
 	// aggregateDisplay -
 	// tempHide -
 	// chartName -
@@ -178,8 +179,6 @@ const ChartAttributes = new Vue({
 			this.year = year.target.value;
 			await this.setRegionData(this.year);
 
-			//console.log(this.regionData);
-
 			//Get the columns div
 			let healthAttrs = document.getElementById("HealthAttrs");
 			let countiesDiv = document.getElementById("Counties");
@@ -188,8 +187,6 @@ const ChartAttributes = new Vue({
 			let countiesFieldIsEmpty = this.checkIfNodeIsEmpty(countiesDiv);
 			let regionsFieldIsEmpty = this.checkIfNodeIsEmpty(regionsDiv);
 
-			// Might blowup but removing. 
-			//this.chart = Chart;
 
 			if (countiesFieldIsEmpty === false) {
 				this.removeAllChildNodes(countiesDiv);
@@ -204,8 +201,6 @@ const ChartAttributes = new Vue({
 			}
 
 			let regionNames = await this.getRegionNames(this.year);
-
-			//console.log(regionNames);
 
 			await d3.csv(`../uploads/${year.target.value}.csv`)
 				.then((data) => {
@@ -353,7 +348,7 @@ const ChartAttributes = new Vue({
 			}
 		},
 		/**
-		 * This might need to be removed. 
+		 * TODO: This might need to be removed. 
 		 * @param {Event} clickEvent
 		 */
 		readCountyCheckbox(clickEvent) {
@@ -385,9 +380,7 @@ const ChartAttributes = new Vue({
 		 * @param {Array} parsedCountStateArray
 		 */
 		createInfoObjects(parsedCountStateArray) {
-
 			let countyStateArray = [];
-
 			// for each parsed county state
 			for (let a = 0; a < parsedCountStateArray.length; a++) {
 				//get the county state index
@@ -405,10 +398,7 @@ const ChartAttributes = new Vue({
 
 				// push the object to an array
 				countyStateArray.push(newObject);
-				//console.log(`countStateArrayObject:`, countyStateArray);
             }
-
-
 			//return the array of count state object information. 
 			return countyStateArray;
 		},
@@ -423,7 +413,6 @@ const ChartAttributes = new Vue({
 				// push plot dots to marks array
 				marksArray.push(this.createPlotDots(arrayOfObjects[a]));
 				// push plot text to marks array
-				//TODO: add text to sidebar and color the dots
 				//marksArray.push(this.createPlotText(arrayOfObjects[a]));
 			}
 
@@ -457,7 +446,6 @@ const ChartAttributes = new Vue({
 					}
 				}
 			);
-			//console.log(countyStateInformation);
 			return countyStateInformation;
 		},
 		/**
@@ -543,7 +531,12 @@ const ChartAttributes = new Vue({
 					}
 				};
 
+				// DEBUG
+				console.log("_________________________________________________")
+				console.log(dotArray)
 				console.log(this.dotColorArray)
+				console.log(plotMarksArray)
+				console.log("_________________________________________________")
 
 				return Plot.plot({
 					margin: 80,
@@ -596,8 +589,7 @@ const ChartAttributes = new Vue({
     },
 	watch: {
 		/**
-		 * Does await timeout and if so how long and can it be set? 
-		 * 
+		 * TODO: what does this do>
 		 * */
 		async healthAttribute() {
 
@@ -607,10 +599,9 @@ const ChartAttributes = new Vue({
 			// TODO: fix the removal of the counties on the chart when the health attribute is changed.
 			this.removeAllChildNodes(this.chartArea);
 
-			// uncheck selected counties in the html
+			// TODO: uncheck selected counties in the html
 
 			// set the selected counties array to empty
-
 			if (this.healthAttribute === null) {
 				console.error("Health Attribute is null.");
 				return;
@@ -631,31 +622,12 @@ const ChartAttributes = new Vue({
 			// element[0] is the health attribute number/data-point. This also serves as an index into a parallel array of the dataHolder property. 
 			this.healthAttributeData = this.dataHolder.map((element, index) => ([(index / this.dataHolder.length * 100), element[0]]));
 
-			// Need to remove this and hope it works! 
-			//this.chartArea = document.getElementById("ChartArea");
-
+			// TODO: what does this do?
 			this.plot = this.createPlot([
 				Plot.ruleY([0]),
 				Plot.ruleX([0]),
 				Plot.line(this.healthAttributeData),
 			]);
-
-			// old way of creating plot. It needed to be abstracted. 
-			//this.plot = Plot.plot({
-			//	grid: true,
-			//	height: 600,
-			//	x: {
-			//		label: "Percentile →"
-			//	},
-			//	y: {
-			//		label: `↑ ${this.healthAttribute}`
-			//	},
-			//	marks: [
-			//		Plot.ruleY([0]),
-			//		Plot.ruleX([0]),
-			//		Plot.line(this.healthAttributeData),
-			//	]
-			//});
 
 			//this.plot.style({fontSize: 25});
 			// Insert content into the #ChartArea Element.
