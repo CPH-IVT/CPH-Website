@@ -24,8 +24,7 @@
             </div>
             <div class="float-child-legend">
                 <h5>County || Percentile</h5>
-
-                <ul v-for="(listItem, index) in listItems">
+                <ul v-for="(listItem, index) in listItems" class="legendList">
                     <li v-bind:style="{ color: dotColorArray[index]}">{{listItem}}</li>
                 </ul>
             </div>
@@ -46,7 +45,12 @@
             </ul>
         </div>
         <div class="col-4">
-            <label for="counties">Counties</label>
+            <span><label for="counties">Counties</label></span>
+            <label class="switch">
+                <input type="checkbox" id="checkbox" v-on:click="countyStateToggle" />
+                <span class="slider round"></span>
+            </label>
+            <span><label for="states">States</label></span>
             <ul @@click="readCountyCheckbox($event)" id="Counties" style="list-style: none; height: 300px" class="form-control overflow-auto">
             </ul>
         </div>
@@ -56,6 +60,7 @@
             </ul>
         </div>
     </div>
+    <label for="checkbox">{{ showStateData }}</label>
     <button v-show="tempHide" v-cloak>Save Chart</button>
 </div>
 
