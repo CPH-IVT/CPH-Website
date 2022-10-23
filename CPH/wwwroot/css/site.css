@@ -157,7 +157,7 @@ body {
     line-height: 1em;
 }
 
-/* Switch's Positional Controls */
+/* Switch positional controls */
 .switch {
     position: relative;
     display: inline-block;
@@ -170,14 +170,14 @@ body {
         height: 0;
 }
 
-/* Switch background */
+/* Switch background appearance */
 .slider {
     position: absolute;
     cursor: pointer;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 15%;
     background-color: blue;
     -webkit-transition: .4s;
     transition: .4s;
@@ -190,7 +190,7 @@ body {
     height: 26px;
     width: 26px;
     left: 2%;
-    bottom: 12%;
+    bottom: 5%;
     background-color: white;
     -webkit-transition: .8s;
     transition: .8s;

@@ -19,7 +19,7 @@ const ChartAttributes = new Vue({
 	// dotColorArray -
 	// aggregateDisplay -
 	// tempHide -
-	// showStateData: false -
+	// showStateData -
 	// chartName -
 	// dataHolder -
 	// maxValue -
@@ -42,6 +42,9 @@ const ChartAttributes = new Vue({
 		listItems: [],
 		dotColorArray: [],
 		aggregateDisplay: false,
+		displayFilter: false,
+		filterItems: ["All", "Raw", "Numerator", "Denominator"],
+		filterSelect: 'All',
 		tempHide: false,
 		showStateData: false,
 		bigData: [],
@@ -59,9 +62,17 @@ const ChartAttributes = new Vue({
 		selectedRegions: []
 	},
 	methods: {
+		/**
+		* 
+	    * This fuction handles the hiding of the attribute filter items
+	    */
+		displayFilterToogle() {
+			this.displayFilter = true;
+        },
+
 		/** 
 		*  
-	    *  
+	    * this function handles the swtiching states and counties
 		*/
 		countyStateToggle() {
 			// Negates the boolean
@@ -69,8 +80,8 @@ const ChartAttributes = new Vue({
 			this.resetCounties()
 		},
 		/** 
-		 *
-		 * 
+		*
+		* This function clears and resets the county select display list
 		*/
 		resetCounties() {
 			// Gets the county div
@@ -92,7 +103,7 @@ const ChartAttributes = new Vue({
 		/**
 		 * @param {any} arrayOfObjects
 		* Receives an array of objects, and populates an array with the counties found within
-		 */
+		*/
 		createLegendList(arrayOfObjects) {
 			this.listItems = [];
 			for (let i = 0; i < arrayOfObjects.length; i++) {
@@ -120,21 +131,23 @@ const ChartAttributes = new Vue({
 			let rowValue = 0;
 
 			// Populate a numeric array from a column within the dataset and sum its values
-			dataObject.forEach(function (row) {
-				if (fullColumns === true) {
-					rowValue = parseFloat(row[1]);
+			for (let i = 0; i < dataObject.length; i++) {
+				if (fullColumns === true && this.dataHolder[i][4] != "0") {
+					rowValue = parseFloat(dataObject[i][1]);
+					if (!isNaN(rowValue) && rowValue > 0) {
+						columnNumericDataArray.push(rowValue);
+						columnSum += rowValue;
+					}
 				} else if (fullColumns === false) {
-					rowValue = parseFloat(row.percentileInfo[1]);
-				} else {
-					return 1
-                }
-				if (!isNaN(rowValue) && rowValue > 0) {
-					columnNumericDataArray.push(rowValue);
-					columnSum += rowValue;
+					rowValue = parseFloat(dataObject[i].percentileInfo[1]);
+					if (!isNaN(rowValue) && rowValue > 0) {
+						columnNumericDataArray.push(rowValue);
+						columnSum += rowValue;
+					}
 				}
-			});
+			};
 			// Creates an array to hold the titles of the aggregate data
-			let headerArray = ["Total", "Mean", "Min", "Max", "Range"];
+			let headerArray = ["Total", "Mean", "Min", "Max", "Range", "Count"];
 
 			// Checks the condition of fullColumns and applies the required header to the array
 			if (fullColumns === true) {
@@ -155,6 +168,8 @@ const ChartAttributes = new Vue({
 			mathArray.push(Math.max(...columnNumericDataArray));
 			// Adds the range of the data to the array
 			mathArray.push(Math.max(...columnNumericDataArray) - Math.min(...columnNumericDataArray));
+			// Adds the count to the array
+			mathArray.push(columnNumericDataArray.length);
 
 			// Pairs the parallel arrays into a single array that can be returned to the caller.
 			let tempArray = [];
@@ -285,6 +300,7 @@ const ChartAttributes = new Vue({
 		addDataToUL(dataset, data, ulId, inputType = "checkbox") {
 			// Searchs the dataset for the County FIPS Code index and saves that value to countyFIPS
 			let countyFIPS = -70;
+
 			for (let i = 0; i < data.length; i++) {
 				if (Object.keys(dataset[0])[i] == "County FIPS Code") {
 					countyFIPS = i;
@@ -293,13 +309,15 @@ const ChartAttributes = new Vue({
 			// Loops through and builds the html controls
 			for (let i = 0; i < data.length; i++) {
 
-				// Removes all item from the Health Attribute list that do not contain the word "raw"
-				if (ulId.id === "HealthAttrs") {
-					let pos = data[i].search("raw")
-					if (pos < 0) {
-						continue;
-					}
-				};
+				if (this.filterSelect != "All") {
+					// Removes all item from the Health Attribute list that do not contain the word "raw"
+					if (ulId.id === "HealthAttrs") {
+						let pos = data[i].search(this.filterSelect.toLowerCase())
+						if (pos < 0) {
+							continue;
+						}
+					};
+				}
 
 				// Checks the state of showStateData and skips the unwanted data
 				if (ulId.id === "Counties") {
@@ -344,6 +362,9 @@ const ChartAttributes = new Vue({
 				// append the checkbox and label to the li's
 				liNode.appendChild(nodeInput);
 				liNode.appendChild(label);
+
+				// Displays the filter dropdown
+				this.displayFilterToogle()
 			}
 		},
 		/**
@@ -679,7 +700,7 @@ const ChartAttributes = new Vue({
 			// read the health attribute from the csv correct year. 
 			this.dataHolder = await d3.csv(`../uploads/${this.year}.csv`)
 				.then((data) => {
-					return data.map((x) => [Number(x[this.healthAttribute]), x["Name"], x["State Abbreviation"], x["5-digit FIPS Code"]]);
+					return data.map((x) => [Number(x[this.healthAttribute]), x["Name"], x["State Abbreviation"], x["5-digit FIPS Code"], x["County FIPS Code"]]);
 				})
 				.catch((error) => {
 					console.error("Data mapping failed.");
@@ -707,6 +728,9 @@ const ChartAttributes = new Vue({
 			aggregateArrayFull = this.columnMath(this.healthAttributeData, true);
 			this.displayAggregateDataFull(aggregateArrayFull);
 		},
+		/**
+		* 
+		*/
 		selectedCounties() {
 			let parsedArray = this.parseSelectedCountyStateArray(); // loop through all the selected counties and split the county and state names into an array: [["Washington County", "TN"], ["Sullivan County", "TN"]];
 
@@ -726,6 +750,15 @@ const ChartAttributes = new Vue({
 
 			// Redraw the chart
 			this.redrawChart(plotMarksArray);
-		}
+		},
+
+		filterSelect() {
+			console.log("THING !")
+			let healthAttrs = document.getElementById("HealthAttrs");
+			let healthAttrsFieldIsEmpty = this.checkIfNodeIsEmpty(healthAttrs);
+			this.removeAllChildNodes(healthAttrs);
+			this.addDataToUL(this.bigData, this.bigData.columns, healthAttrs, "radio");
+        }
+
 	}
 })
