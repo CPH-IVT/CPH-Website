@@ -64,6 +64,53 @@ const ChartAttributes = new Vue({
 	methods: {
 		/**
 		* 
+		* 
+		*/
+		calculatePercentage(dataset) {
+
+
+
+			
+			let count = 0;
+			let posArray = [];
+			let indexMatchArray = [];
+			// Builds an array of positive and negative numbers where a positive number means a match was found
+			for (let i = 0; i < Object.keys(dataset[0]).length; i++) {
+				let pos = Object.keys(dataset[1])[i].search("numerator");
+				posArray.push(pos)
+			}
+
+			// Builds an index array with only positive matching values
+			for (let i = 0; i < posArray.length; i++) {
+				if (posArray[i] >= 0) {
+					indexMatchArray.push(count);
+					//console.log(Object.keys(dataset[0])[count + 1]);
+				}
+				count++;
+			}
+			console.log(indexMatchArray)
+
+/*			let ratioArray = [];
+			for (let i = 0; i < Object.keys(dataset[0]).length; i++) {
+				let pos = Object.keys(dataset[1])[i].search("numerator");
+				posArray.push(pos)
+				if (pos >= 0) {
+					if (!isNaN(parseFloat(Object.values(dataset[0])[i])) && !isNaN(parseFloat(Object.values(dataset[0])[i + 1]))) {
+						ratioArray.push(parseFloat(Object.values(dataset[0])[i]) / parseFloat(Object.values(dataset[0])[i + 1]))
+					} else {
+						ratioArray.push(0)
+                    }
+				}
+			}*/
+
+
+
+			
+
+
+        },
+		/**
+		* 
 	    * This fuction handles the hiding of the attribute filter items
 	    */
 		displayFilterToogle() {
@@ -300,7 +347,6 @@ const ChartAttributes = new Vue({
 		addDataToUL(dataset, data, ulId, inputType = "checkbox") {
 			// Searchs the dataset for the County FIPS Code index and saves that value to countyFIPS
 			let countyFIPS = -70;
-
 			for (let i = 0; i < data.length; i++) {
 				if (Object.keys(dataset[0])[i] == "County FIPS Code") {
 					countyFIPS = i;
@@ -323,6 +369,7 @@ const ChartAttributes = new Vue({
 				if (ulId.id === "Counties") {
 					// DEBUG
 					//console.log(`${Object.keys(dataset[i])[countyFIPS]}: ${Object.values(dataset[i])[countyFIPS]} ${Object.keys(dataset[i])[4]}: ${Object.values(dataset[i])[4]}`)
+					// TODO: fix this if statement
 					if (this.showStateData) {
 						if (Object.values(dataset[i])[countyFIPS] != "0") {
 							continue;
@@ -727,6 +774,8 @@ const ChartAttributes = new Vue({
 			let aggregateArrayFull = [];
 			aggregateArrayFull = this.columnMath(this.healthAttributeData, true);
 			this.displayAggregateDataFull(aggregateArrayFull);
+
+			this.calculatePercentage(this.bigData);
 		},
 		/**
 		* 
@@ -753,9 +802,7 @@ const ChartAttributes = new Vue({
 		},
 
 		filterSelect() {
-			console.log("THING !")
 			let healthAttrs = document.getElementById("HealthAttrs");
-			let healthAttrsFieldIsEmpty = this.checkIfNodeIsEmpty(healthAttrs);
 			this.removeAllChildNodes(healthAttrs);
 			this.addDataToUL(this.bigData, this.bigData.columns, healthAttrs, "radio");
         }
