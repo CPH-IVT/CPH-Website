@@ -162,7 +162,7 @@ const ChartAttributes = new Vue({
 		 * @param {object} dataObject
 		 * @param {bool} fullColumns
 		 * If fullColumns is true, this function will attempt to aggregate a full column based on the data found within a passed healthAttributeData object
-		 * if fullColumns is false, his function will attempt to aggregate the selected columns based on the data found within a passed createInfoObjects object
+		 * if fullColumns is false, this function will attempt to aggregate the selected columns based on the data found within a passed createInfoObjects object
 		 */
 		columnMath(dataObject, fullColumns) {
 			// Checks if the array is empty. If found true, returns an empty array
@@ -198,9 +198,10 @@ const ChartAttributes = new Vue({
 
 			// Checks the condition of fullColumns and applies the required header to the array
 			if (fullColumns === true) {
-				headerArray.unshift(`${this.healthAttribute} - All U.S`)
+
+				headerArray.unshift(`${this.healthAttribute}`)
 			} else if (fullColumns === false) {
-				headerArray.unshift(`${this.healthAttribute} - Selected Regions`)
+				headerArray.unshift(`${this.healthAttribute}`)
 			}
 
 			// Creates an array to hold the aggregate data
@@ -239,7 +240,6 @@ const ChartAttributes = new Vue({
 			for (let i = 1; i < dataArray.length; i++) {
 				this.aggregateDataFull += (`${dataArray[i][0]} : ${dataArray[i][1]}\n`)
 			};
-			this.aggregateDataFull += (`____________________\n`)
 
 			// Sets the aggregateDisplay element visible
 			this.aggregateDisplay = true;
@@ -262,7 +262,6 @@ const ChartAttributes = new Vue({
 			for (let i = 1; i < dataArray.length; i++) {
 				this.aggregateDataSelected += (`${dataArray[i][0]} : ${dataArray[i][1]}\n`)
 			};
-			this.aggregateDataSelected += (`____________________\n`)
 			return this.aggregateDataSelected;
 		},
 		/**
@@ -656,7 +655,7 @@ const ChartAttributes = new Vue({
 					} else if (count === 3) {
 						this.dotColorArray.push("DarkGray")
 					} else if (count === 4) {
-						this.dotColorArray.push("Chocolate");
+						this.dotColorArray.push("SaddleBrown");
 					} else {
 						this.dotColorArray.push("black");
 					};
