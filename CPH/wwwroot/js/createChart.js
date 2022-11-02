@@ -63,14 +63,11 @@ const ChartAttributes = new Vue({
 	},
 	methods: {
 		/**
-		* 
-		* 
+		* @param {any} arrayOfObjects
+		* This function calculates and returns the ratio of two variables
 		*/
 		calculatePercentage(dataset) {
-
-
-
-			
+		
 			let count = 0;
 			let posArray = [];
 			let indexMatchArray = [];
@@ -134,9 +131,13 @@ const ChartAttributes = new Vue({
 			// Gets the county div
 			let countiesDiv = document.getElementById("Counties");
 
+			this.chartArea.removeChild(this.plot);
+
 			// Sets the arrays to empty
-			this.selectedCounties = [];
+			//this.chartArea.replaceChildren()
+			//this.selectedCounties = [];
 			this.listItems = [];
+			this.aggregateDataSelected = ""
 
 			// removes the counties from the UL
 			this.removeAllChildNodes(countiesDiv);
@@ -146,6 +147,8 @@ const ChartAttributes = new Vue({
 
 			// populates the county div
 			this.addDataToUL(this.bigData, counties, countiesDiv);
+
+
         },
 		/**
 		 * @param {any} arrayOfObjects
@@ -354,8 +357,8 @@ const ChartAttributes = new Vue({
 			// Loops through and builds the html controls
 			for (let i = 0; i < data.length; i++) {
 
+				// Checks the filterSelect global and if it does not equal "All", filters the heath attribute list based upon the passed filter string
 				if (this.filterSelect != "All") {
-					// Removes all item from the Health Attribute list that do not contain the word "raw"
 					if (ulId.id === "HealthAttrs") {
 						let pos = data[i].search(this.filterSelect.toLowerCase())
 						if (pos < 0) {
@@ -366,9 +369,6 @@ const ChartAttributes = new Vue({
 
 				// Checks the state of showStateData and skips the unwanted data
 				if (ulId.id === "Counties") {
-					// DEBUG
-					//console.log(`${Object.keys(dataset[i])[countyFIPS]}: ${Object.values(dataset[i])[countyFIPS]} ${Object.keys(dataset[i])[4]}: ${Object.values(dataset[i])[4]}`)
-					// TODO: fix this if statement
 					if (this.showStateData) {
 						if (Object.values(dataset[i])[countyFIPS] != "0") {
 							continue;
@@ -483,32 +483,32 @@ const ChartAttributes = new Vue({
 			}
 		},
 		/**
-		 * TODO: This might need to be removed. 
+		 * This function adds and removes items from the selectedCounties global, based upon the results of a clickEvent
 		 * @param {Event} clickEvent
 		 */
 		readCountyCheckbox(clickEvent) {
 
-			if (clickEvent["target"].checked) {
-
-				// Removing make sure this doesn't blow up.
-				//let countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
+			// If a box is checked, run this code
+			if (clickEvent["target"].checked == true) {
 				this.selectedCounties.push(clickEvent["target"].value);
-				return;
 			}
 
-			//if (!clickEvent["target"].checked) {
-			let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
+			// If a box is enchecked, run this code
+			if (clickEvent["target"].checked == false) {
 
-			// as long as the item is found in the array, continue. 
-			if (indexOfItemToRemove > -1) {
-				// splice the item from the array to remove it. 
-				this.selectedCounties.splice(indexOfItemToRemove, indexOfItemToRemove);
-			}
+				// Gets the index of the item to be removed
+				let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
 
-			if (indexOfItemToRemove === 0) {
-				this.selectedCounties.shift();
+				// If the index value is greater or equal to 0, splice the item from the array to remove it.
+				if (indexOfItemToRemove >= 0) {
+					this.selectedCounties.splice(indexOfItemToRemove, 1);
+				}
+
+				// TODO: Remove this in the program is stable
+/*				if (indexOfItemToRemove === 0) {
+					this.selectedCounties.shift();
+				}*/
 			}
-			//}
 		},
 		/**
 		 * 
@@ -610,8 +610,6 @@ const ChartAttributes = new Vue({
 		redrawChart(plotMarksArray) {
 			this.removeAllChildNodes(this.chartArea);
 			this.plot = this.createPlot(plotMarksArray);
-			
-
 			this.chartArea.appendChild(this.plot);
 		},
 		/**
@@ -666,13 +664,6 @@ const ChartAttributes = new Vue({
 						count = 0;
 					}
 				};
-
-				// DEBUG
-				//console.log("_________________________________________________")
-				//console.log(dotArray)
-				//console.log(this.dotColorArray)
-				//console.log(plotMarksArray)
-				//console.log("_________________________________________________")
 
 				return Plot.plot({
 					margin: 80,
@@ -774,12 +765,14 @@ const ChartAttributes = new Vue({
 			aggregateArrayFull = this.columnMath(this.healthAttributeData, true);
 			this.displayAggregateDataFull(aggregateArrayFull);
 
-			this.calculatePercentage(this.bigData);
+			//TODO: finish this function
+			//this.calculatePercentage(this.bigData);
 		},
 		/**
 		* 
 		*/
 		selectedCounties() {
+
 			let parsedArray = this.parseSelectedCountyStateArray(); // loop through all the selected counties and split the county and state names into an array: [["Washington County", "TN"], ["Sullivan County", "TN"]];
 
 			//create object with information to be plotted. 
@@ -800,10 +793,20 @@ const ChartAttributes = new Vue({
 			this.redrawChart(plotMarksArray);
 		},
 
+		/**
+		*
+		*/
 		filterSelect() {
 			let healthAttrs = document.getElementById("HealthAttrs");
 			this.removeAllChildNodes(healthAttrs);
 			this.addDataToUL(this.bigData, this.bigData.columns, healthAttrs, "radio");
+
+
+			this.resetCounties();
+
+
+			
+
         }
 
 	}
