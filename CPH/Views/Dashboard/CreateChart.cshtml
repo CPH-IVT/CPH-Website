@@ -71,22 +71,25 @@
 
 </div>
     <div class="row">
-        <div class="col-4">
+        <div class="col-4" v-show="displayHealthAttribute" v-cloak>
             <label for="columns">Health Attributes</label>
             <ul @@click="readHealthAttribute($event)" id="HealthAttrs" style="list-style: none; height: 300px" class="form-control overflow-auto">
             </ul>
         </div>
+
         <div class="col-4" v-show="aggregateDisplay" v-cloak>
             <span><label for="counties">Locations</label></span>
             <ul @@click="readCountyCheckbox($event)" id="Counties" style="list-style: none; height: 300px" class="form-control overflow-auto"></ul>
         </div>
+
         <div class="col-4" v-show="tempHide" v-cloak>
             <label for="regions">Regions</label>
             <ul @@click="readRegionCheckbox($event)" id="Regions" style="list-style: none; height: 300px" class="form-control overflow-auto">
             </ul>
         </div>
+
     </div>
-    <label for="checkbox">{{ filterSelect }}</label>            
+    <!--<label for="checkbox">{{ aggregateDisplay }}</label>-->            
     <button v-show="tempHide" v-cloak>Save Chart</button>
 </div>
 

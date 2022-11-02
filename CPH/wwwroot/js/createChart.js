@@ -43,6 +43,7 @@ const ChartAttributes = new Vue({
 		dotColorArray: [],
 		aggregateDisplay: false,
 		displayFilter: false,
+		displayHealthAttribute: false,
 		filterItems: ["All", "Raw", "Numerator", "Denominator"],
 		filterSelect: 'All',
 		tempHide: false,
@@ -62,6 +63,14 @@ const ChartAttributes = new Vue({
 		selectedRegions: []
 	},
 	methods: {
+		/**
+		*
+	    * This fuction handles the hiding of the health attribute list
+		*/
+		displayHealthAttributeToggle() {
+			this.displayHealthAttribute = true;
+        },
+
 		/**
 		* @param {any} arrayOfObjects
 		* This function calculates and returns the ratio of two variables
@@ -99,12 +108,6 @@ const ChartAttributes = new Vue({
                     }
 				}
 			}*/
-
-
-
-			
-
-
         },
 		/**
 		* 
@@ -121,23 +124,48 @@ const ChartAttributes = new Vue({
 		countyStateToggle() {
 			// Negates the boolean
 			this.showStateData = !this.showStateData;
-			this.resetCounties()
+			this.resetCountiesStateList();
+			this.clearlegend();
 		},
+		/**
+		* 
+	    * Clears the chart area
+		*/
+		clearChartArea() {
+
+			//this.chartArea.removeChild(this.plot);
+			//this.chartArea.replaceChildren()
+			this.aggregateDisplay = false;
+			this.healthAttribute = null;	
+		},
+		/**
+		* 
+	    * 
+		*/
+		clearlegend() {
+			this.listItems = [];
+        },
+
+		/**
+		* 
+	    * 
+		*/
+		clearAggregateData() {
+			this.aggregateDataFull = '';
+			this.aggregateDataSelected = '';
+        },
+
 		/** 
 		*
 		* This function clears and resets the county select display list
 		*/
-		resetCounties() {
+		resetCountiesStateList() {
+
+			// Sets the arrays to empty, thus removing the chart dots
+			this.selectedCounties = [];
+			
 			// Gets the county div
 			let countiesDiv = document.getElementById("Counties");
-
-			this.chartArea.removeChild(this.plot);
-
-			// Sets the arrays to empty
-			//this.chartArea.replaceChildren()
-			//this.selectedCounties = [];
-			this.listItems = [];
-			this.aggregateDataSelected = ""
 
 			// removes the counties from the UL
 			this.removeAllChildNodes(countiesDiv);
@@ -145,7 +173,7 @@ const ChartAttributes = new Vue({
 			// Gets the county list
 			let counties = this.getCountyList(this.bigData);
 
-			// populates the county div
+			// populates the county div, thus resting the county/state list
 			this.addDataToUL(this.bigData, counties, countiesDiv);
 
 
@@ -312,6 +340,12 @@ const ChartAttributes = new Vue({
 					console.error("Getting selected year from the CSV directory failed.");
 					console.error(error);
 				});
+
+			// Displays the filter dropdown
+			this.displayFilterToogle();
+
+			// Displays the health attribute list
+			this.displayHealthAttributeToggle();
 		},
 		/**
 		*
@@ -408,9 +442,6 @@ const ChartAttributes = new Vue({
 				// append the checkbox and label to the li's
 				liNode.appendChild(nodeInput);
 				liNode.appendChild(label);
-
-				// Displays the filter dropdown
-				this.displayFilterToogle()
 			}
 		},
 		/**
@@ -801,12 +832,10 @@ const ChartAttributes = new Vue({
 			this.removeAllChildNodes(healthAttrs);
 			this.addDataToUL(this.bigData, this.bigData.columns, healthAttrs, "radio");
 
-
-			this.resetCounties();
-
-
+			this.resetCountiesStateList();
+			this.clearChartArea();
+			this.clearlegend();
 			
-
         }
 
 	}
