@@ -1,6 +1,10 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+[v-cloak] {
+    display: none;
+}
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
@@ -109,27 +113,6 @@ body {
     fill: orange;
 }
 
-.float-child-aggregate-left {
-    width: 50%;
-    float: left;
-    padding: 20px;
-    border: 1px solid black;
-    height: 250px;
-}
-
-.float-child-aggregate-right {
-    width: 50%;
-    float: left;
-    padding: 20px;
-    border: 1px solid black;
-    height: 250px;
-}
-
-.float-container {
-    border: 1px solid #fff;
-    padding: 20px;
-}
-
 .float-child-chart {
     width: 70%;
     float: left;
@@ -138,15 +121,138 @@ body {
     height: 750px;
 }
 
-.float-child-legend {
+.float-legend-div {
     width: 30%;
     float: left;
     padding: 20px;
     border: 1px solid black;
-    height: 750px;
+    height: 40%;
     overflow: scroll;
+    display: inline;
 }
 
-[v-cloak] {
-    display: none;
+.float-legend-div > * {
+    margin-top: -20px;
+    margin-left: -15px;
+}
+
+.legendList {
+    margin: 0;
+    padding: 0.2em;
+    line-height: 1em;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.float-child-aggregate-left {
+    width: 30%;
+    float: left;
+    padding: 20px;
+    border: 1px solid black;
+    height: 30%;
+    display: inline;
+}
+
+.float-child-aggregate-left > * {
+    margin-top: -20px;
+    margin-left: -15px;
+    font-size: 16px;
+}
+
+
+.float-child-aggregate-left > h5, .float-child-aggregate-right > h5, .float-legend-div > h5 {
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.float-child-aggregate-right {
+    width: 30%;
+    float: left;
+    padding: 20px;
+    border: 1px solid black;
+    height: 30%;
+}
+
+.float-child-aggregate-right > * {
+    margin-top: -20px;
+    margin-left: -15px;
+    font-size: 16px;
+}
+
+.float-container {
+    border: 1px solid #fff;
+    padding: 20px;
+}
+
+.countryStateSwtich {
+    margin-left: 7%;
+}
+
+#attributeFilter {
+    margin-left: 8%;
+}
+
+/* Switch positional controls */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 10%;
+    height: 34px;
+}
+.switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+}
+
+/* Switch background appearance */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 15%;
+    background-color: blue;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+/* Switch inner dot appearance */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 2%;
+    bottom: 5%;
+    background-color: white;
+    -webkit-transition: .8s;
+    transition: .8s;
+}
+
+/* Swtich clicked logic */
+input:checked + .slider {
+    background-color: green;
+}
+
+/* Swtich focus effect */
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+/* Controls the swtich's range of movement */
+input:checked + .slider:before {
+    -webkit-transform: translateX(310%);
+    -ms-transform: translateX(310%);
+    transform: translateX(310%);
+}
+
+/* Rounds the sliders */
+.slider.round {
+    border-radius: 34px;
+}
+.slider.round:before {   
+    border-radius: 50%;
 }

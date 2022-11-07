@@ -10,28 +10,40 @@
         </div>
         <!--<input v-model="chartName" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
     </div>
+
     <div class="row" v-show="aggregateDisplay" v-cloak>
-        <div class="float-child-aggregate-left">
-            <p id="AggregateAreaFull"><pre>{{aggregateDataFull}}</pre></p>
-        </div>
-        <div class="float-child-aggregate-right">
-            <p id="AggregateAreaSelected"><pre>{{aggregateDataSelected}}</pre></p>
-        </div>
+
         <div class="float-container">
             <div class="float-child-chart">
                 @*Draw the chart below*@
                 <div id="ChartArea" class="col-12"></div>
             </div>
-            <div class="float-child-legend">
-                <h5>County || Percentile</h5>
 
-                <ul v-for="(listItem, index) in listItems">
+            <div class="float-legend-div">
+                <h5>Location || Percentile</h5>
+                <ul v-for="(listItem, index) in listItems" class="legendList">
                     <li v-bind:style="{ color: dotColorArray[index]}">{{listItem}}</li>
                 </ul>
             </div>
+
+            <div class="float-child-aggregate-left">
+                <h5>All U.S</h5>
+                <p id="AggregateAreaFull"><pre>{{aggregateDataFull}}</pre></p>
+            </div>
+
+            <div class="float-child-aggregate-right">
+                <h5>Selected Regions</h5>
+                <p id="AggregateAreaSelected"><pre>{{aggregateDataSelected}}</pre></p>
+            </div>
+
         </div>
     </div>
+    <div>
+        <label for="Year">Year Select</label>
+        <label style="margin-left: 13.5%" for="attributeFilter" v-show="displayFilter" v-cloak>Attribute Filter</label>
+    </div>
     @* The files are named the year that they represent. *@
+<div>
     <select @@change="setChartAttributes($event)" id="Year" name="Year">
         <option value="SelectYear">Select a Year</option>
         @foreach (var file in (string[])ViewData["Files"])
@@ -39,23 +51,45 @@
             <option value="@file">@file</option>
         }
     </select>
+    <select name="attributeFilter" id="attributeFilter" v-show="displayFilter" v-cloak v-model="filterSelect">
+        <option disabled value="">Please select one</option>
+        <option v-for="(filterItem, index) in filterItems" :key="filterItem" :value="filterItem">
+            {{filterItem}}
+        </option>
+    </select>
+    
+
+    <span class="countryStateSwtich" v-show="aggregateDisplay" v-cloak>
+        <label for="counties">Counties</label>
+        <label class="switch">
+            <input type="checkbox" id="checkbox" v-on:click="countyStateToggle" />
+            <span class="slider round"></span>
+        </label>
+        <label for="states">States</label>
+    </span>
+
+
+</div>
     <div class="row">
-        <div class="col-4">
+        <div class="col-4" v-show="displayHealthAttribute" v-cloak>
             <label for="columns">Health Attributes</label>
             <ul @@click="readHealthAttribute($event)" id="HealthAttrs" style="list-style: none; height: 300px" class="form-control overflow-auto">
             </ul>
         </div>
-        <div class="col-4">
-            <label for="counties">Counties</label>
-            <ul @@click="readCountyCheckbox($event)" id="Counties" style="list-style: none; height: 300px" class="form-control overflow-auto">
-            </ul>
+
+        <div class="col-4" v-show="aggregateDisplay" v-cloak>
+            <span><label for="counties">Locations</label></span>
+            <ul @@click="readCountyCheckbox($event)" id="Counties" style="list-style: none; height: 300px" class="form-control overflow-auto"></ul>
         </div>
+
         <div class="col-4" v-show="tempHide" v-cloak>
             <label for="regions">Regions</label>
             <ul @@click="readRegionCheckbox($event)" id="Regions" style="list-style: none; height: 300px" class="form-control overflow-auto">
             </ul>
         </div>
+
     </div>
+    <!--<label for="checkbox">{{ aggregateDisplay }}</label>-->
     <button v-show="tempHide" v-cloak>Save Chart</button>
 </div>
 

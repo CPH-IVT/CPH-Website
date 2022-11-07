@@ -26,73 +26,14 @@
         fileYearMatch: null,
         uploadSuccess: null,
         overrideDuplicate: null,
-        // TODO: probably better to upload this 'blacklist' data from an authority like the ISO lists of state codes
-        nonCountyBlacklist: [
-            "UNITED STATES",
-            "ALABAMA",
-            "ALASKA",
-            "ARIZONA",
-            "ARKANSAS",
-            "CALIFORNIA",
-            "COLORADO",
-            "CONNECTICUT",
-            "DELAWARE",
-            "DISTRICT OF COLUMBIA",
-            "FLORIDA",
-            "GEORGIA",
-            "HAWAII",
-            "IDAHO",
-            "ILLINOIS",
-            "INDIANA",
-            "IOWA",
-            "KANSAS",
-            "KENTUCKY",
-            "LOUISIANA",
-            "MAINE",
-            "MARSHALL ISLANDS",
-            "MARYLAND",
-            "MASSACHUSETTS",
-            "MICHIGAN",
-            "MINNESOTA",
-            "MISSISSIPPI",
-            "MISSOURI",
-            "MONTANA",
-            "NEBRASKA",
-            "NEVADA",
-            "NEW HAMPSHIRE",
-            "NEW JERSEY",
-            "NEW MEXICO",
-            "NEW YORK",
-            "NORTH CAROLINA",
-            "NORTH DAKOTA",
-            "OHIO",
-            "OKLAHOMA",
-            "OREGON",
-            "PENNSYLVANIA",
-            "RHODE ISLAND",
-            "SOUTH CAROLINA",
-            "SOUTH DAKOTA",
-            "TENNESSEE",
-            "TEXAS",
-            "UTAH",
-            "VERMONT",
-            "VIRGIN ISLANDS",
-            "VIRGINIA",
-            "WASHINGTON",
-            "WEST VIRGINIA",
-            "WISCONSIN",
-            "WYOMING"
-        ]
     },
     methods: {
         /**
         *
         * @param {Array} rows
         */
-        removeNonCountyEntriesInDataset(rows) {
-            // Create a temporary array of keys for rows that aggregate data from multiple counties - i.e., states and the U.S. as a whole
-            let nonCountyBlacklistArray = this.nonCountyBlacklist.slice();
-
+        removeUSTotal(rows) {
+            // Loops through the rows looking for a matching value with the iterated column value
             // Create an index that is decremented from within the following loop
             let rowIndex = rows.length;
             while (rowIndex-- > 0) {
@@ -100,42 +41,20 @@
                 let row = rows[rowIndex];
                 // Holds iterated county column value data
                 let thisKey = row.split(",")[4] === undefined ? undefined : row.split(",")[4].toUpperCase();
-                // Loops through nonCountyBlacklistArray looking for matching values with the iterated column value
-                nonCountyBlacklistArray.forEach(function (value) {
-                    if (thisKey == value) {
-                        //console.log(`Removed Row Index: ${rowIndex} - Non-county Value: ${thisKey}`); ////Debug Code: Consoles out the indices and values of the rows that were removed.
-                        // Removes the matched non-county data from the CSV array
-                        rows.splice(rowIndex, 1);
-                        // Removes the item from the blacklist, assuming that items key this list
-                        if (thisKey !== undefined) nonCountyBlacklistArray.splice(nonCountyBlacklistArray.indexOf(value), 1);
-                        return;
+                if (thisKey == "UNITED STATES") {
+                    // Removes the matched non-county data from the CSV array
+                    rows.splice(rowIndex, 1);
+                    // Removes the item from the blacklist, assuming that items key this list
+                    if (thisKey !== undefined){
                     }
-                })
+                }
             };
-            // returns the array
-            console.log("State data removed from the county column");
             return rows;
         },
         /**
-         * TODO: Remove this
-        *NOTE: Unused at the moment
-        * @param {Array} rows
+        * 
+        * @param {any} event
         */
-        columnMath(rows) {      
-            // Populate a numeric array from a cloumn within the dataset and sum its values
-            let columnSum = 0;
-            let columnNumericDataArray = [];
-            rows.forEach(function (row) {
-                let rowValue = parseFloat(row.split(",")[8]);
-                if (!isNaN(rowValue)) {
-                    columnNumericDataArray.push(rowValue);
-                    columnSum += rowValue
-                }              
-            });
-
-            // console the results
-            console.log(`Column: ${rows[0].split(",")[8]}\nTotal: ${columnSum}\nMean: ${Math.round((columnSum / columnNumericDataArray.length) * 100) / 100}\nMin: ${Math.min(...columnNumericDataArray)}\nMax: ${Math.max(...columnNumericDataArray)}\nRange: ${Math.max(...columnNumericDataArray) - Math.min(...columnNumericDataArray)}`);
-        },
         getSelectedCsv(event) {
             let csvFile = event.target.files[0];
             
@@ -145,6 +64,10 @@
             }
             return csvFile;
         },
+        /**
+        * 
+        * 
+        */
         createNewCsv() {
             if (this.originalCsv === undefined) {
                 console.log("Internal Error: createNewCsv Failed to load");
@@ -160,8 +83,11 @@
                 // Remove the second row of the CSV
                 rows.splice(1, 1);
 
-                // Removes the state totals from the dataset
-                this.removeNonCountyEntriesInDataset(rows);
+                // Removes the last the last item in the array
+                //rows = rows.pop();
+
+                // Removes the U.S from the dataset
+                this.removeUSTotal(rows);
 
                 // Get the year of the file
                 this.year = rows[2].split(",")[5];
