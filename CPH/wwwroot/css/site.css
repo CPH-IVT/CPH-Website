@@ -131,11 +131,17 @@ body {
     display: inline;
 }
 
+.float-legend-div > * {
+    margin-top: -20px;
+    margin-left: -15px;
+}
+
 .legendList {
     margin: 0;
     padding: 0.2em;
     line-height: 1em;
     font-size: 14px;
+    font-weight: bold;
 }
 
 .float-child-aggregate-left {
@@ -150,8 +156,14 @@ body {
 .float-child-aggregate-left > * {
     margin-top: -20px;
     margin-left: -15px;
-    font-size: 14px;
+    font-size: 16px;
+}
 
+
+.float-child-aggregate-left > h5, .float-child-aggregate-right > h5, .float-legend-div > h5 {
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .float-child-aggregate-right {
@@ -165,7 +177,7 @@ body {
 .float-child-aggregate-right > * {
     margin-top: -20px;
     margin-left: -15px;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .float-container {

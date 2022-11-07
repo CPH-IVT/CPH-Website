@@ -20,7 +20,7 @@
             </div>
 
             <div class="float-legend-div">
-                <h5>County || Percentile</h5>
+                <h5>Location || Percentile</h5>
                 <ul v-for="(listItem, index) in listItems" class="legendList">
                     <li v-bind:style="{ color: dotColorArray[index]}">{{listItem}}</li>
                 </ul>
@@ -89,7 +89,7 @@
         </div>
 
     </div>
-    <!--<label for="checkbox">{{ aggregateDisplay }}</label>-->            
+    <!--<label for="checkbox">{{ aggregateDisplay }}</label>-->
     <button v-show="tempHide" v-cloak>Save Chart</button>
 </div>
 
