@@ -426,15 +426,6 @@ const ChartAttributes = new Vue({
 					this.bigData = data;
 					let counties = this.getCountyList(data);
 
-
-					// TODOL GET THIS WORKING!
-					/*					let test = this.calculatePercentage(this.bigData)
-										for (let i = 0; i < data.length; i++) {
-											Object.assign(data[i], test[0]);
-										}
-										console.log(data)*/
-
-
 					// Add to the html list.
 					this.addDataToUL(data, data.columns, healthAttrs, "radio"); // data.columns are the health attributes from the csv file.
 					this.addDataToUL(data, regionNames, regionsDiv);
@@ -892,9 +883,6 @@ const ChartAttributes = new Vue({
 
 			// Resets the selected counties on the chart and within the list
 			this.resetCountiesStateList()
-
-			//TODO: finish this function
-			//this.calculatePercentage(this.bigData);
 
 		},
 		/**

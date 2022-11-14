@@ -28,6 +28,170 @@
         overrideDuplicate: null,
     },
     methods: {
+
+        /**
+         *
+         *
+         */
+        calculatePercentage(rows) {
+            //let count = 0;
+            let tempValue = 0;
+            let posArray = [];
+            let indexMatchArray = [];
+            let ratioArray = [];
+            let attributeNameArray = [];
+            let countyFIPSArray = [];
+            let IndexConutyFIPS = 0;
+
+            let newStr = ",Hello World"
+            //console.log(typeof(rows))
+            //console.log(typeof (rows[0]))
+            //rows[0] = rows[0].concat(newStr)
+            //console.log(rows[0])
+
+            //console.log(rows[0].indexOf("numerator"))
+            //console.log(rows[0][157])
+            //console.log(rows[0].split(",")[157 -1])
+
+
+            // Gets the string index of each occurrence of the word numerator
+            var regex = /numerator/g, result, strIndices = [];
+            while ((result = regex.exec(rows[0]))) {
+                strIndices.push(result.index);
+            }
+
+            // Gets the index of each occurrence of commas based on a range of between 0 and the numerator string index
+            commaIndices = [];
+            for (let i = 0; i < strIndices.length; i++) {
+                commaIndices.push((rows[0].substring(0, strIndices[i]).match(/,/g) || []).length)
+            }
+
+            // Builds an array with the healthattribute names
+            for (let i = 0; i < commaIndices.length; i++) {
+                attributeNameArray.push(rows[0].split(",")[commaIndices[i]].replace('numerator', 'ratio'))
+            }
+
+
+            let strHeader = "";
+            for (let i = 0; i < attributeNameArray.length; i++) {
+                strHeader = strHeader.concat(`,${attributeNameArray[i]}`)
+            }
+
+
+            rows[0] = rows[0].concat(strHeader)
+            console.log(rows[0])
+
+
+/*
+            let numeratorArray = [];
+            let strTemp = '';
+            // Gets all rows and columns
+            for (let row = 0; row < rows.length; row++) {
+
+                if (row === 0) {
+
+                    strTemp = 
+
+                } else {
+
+     
+                    for (let column = 0; column < commaIndices.length; column++) {
+                        //numeratorArray.push(rows[row].split(",")[commaIndices[column]]);
+                    }
+                }
+
+
+ 
+            }*/
+
+
+        // Builds an array of the aggregated values and the parallel FIPS codes
+  
+/*            for (let i = 0; i < rows.length; i++) {
+
+                tempValue = (row / parseFloat(Object.values(dataset[i])[indexMatchArray[indexPosition] + 1]));
+
+                // Replaces NaN values with 0
+                if (isNaN(tempValue)) {
+                    ratioArray.push(0);
+                } else {
+                    ratioArray.push(tempValue);
+                }
+            }*/
+
+
+
+/*            // Creates an object with the aggregated data, column headings, and FIPS codes
+            let objArray = []
+            for (let i = 0; i < dataset.length; i++) {
+                let obj = {
+                    "County FIPS Code": countyFIPSArray[0],
+                    [input]: ratioArray[0]
+                }
+                objArray.push(obj)
+            }*/
+
+
+
+
+
+/*
+            // Testing
+            let testArray = []
+            let obj2 = {}
+            for (let i = 0; i < attributeNameArray.length; i++) {
+                let tempObj = {
+                    [attributeNameArray[i]]: parseFloat((i + 2) * 77)
+                }
+                Object.assign(obj2, tempObj);
+            }
+            //console.log(obj2);
+
+            for (let i = 0; i < 3193; i++) {
+                testArray.push(obj2)
+            }
+            //console.log(testArray);
+
+            return testArray;*/
+
+
+			//console.log(this.bigData)
+			//console.log(objArray)
+
+
+
+
+        /*			for (let i = 0; i < attributeNameArray.length; i++) {
+                        if (attributeNameArray[i] === testStr) {
+                            console.log(attributeNameArray[i])
+                        }
+                    }*/
+
+
+
+			//console.log(attributeNameArray)
+			//console.log(numeratorArray)
+
+
+        /*			let numeratorArray = [];
+                    // Gets all rows and columns
+                    for (let row = 0; row < dataset.length; row++) {
+                        for (let column = 0; column < indexMatchArray.length; column++) {
+                            numeratorArray.push(Object.values(dataset[row])[indexMatchArray[column]]);
+                        }
+                    }
+    
+                    console.log(numeratorArray)*/
+
+
+					// TODOL GET THIS WORKING!
+        /*					let test = this.calculatePercentage(this.bigData)
+                            for (let i = 0; i < data.length; i++) {
+                                Object.assign(data[i], test[0]);
+                            }
+                            console.log(data)*/
+        },
+
         /**
         *
         * @param {Array} rows
@@ -88,6 +252,9 @@
 
                 // Removes the U.S from the dataset
                 this.removeUSTotal(rows);
+
+                //
+                this.calculatePercentage(rows)
 
                 // Get the year of the file
                 this.year = rows[2].split(",")[5];
