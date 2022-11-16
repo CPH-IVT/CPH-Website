@@ -26,33 +26,42 @@
         fileYearMatch: null,
         uploadSuccess: null,
         overrideDuplicate: null,
+        chartUploadStatusDisplay: false,
+        chartUploadStatusState: false,
+        chartUploadStatusText: ''
     },
     methods: {
+        /**
+         * 
+         * Displays the loading status
+         */
+        chartUploadStatusDisplayToggle() {
+            this.chartUploadStatusDisplay = true;
+        },
+        /**
+         * 
+         * Updates the loading status text
+         */
+        chartLoadingText() {
+
+            if (this.chartUploadStatusState === false) {
+                this.chartUploadStatusText = "Uploading"
+                this.chartUploadStatusState = true
+            } else if (this.chartUploadStatusState === true) {
+                this.chartUploadStatusText = "Uploading Complete"
+                this.chartUploadStatusState = false
+            } else {
+                this.chartUploadStatusText = "Error"
+                this.chartUploadStatusState = false
+            }
+        },
+
 
         /**
-         *
-         *
+         * Creates new ratio columns based upon the numerator and denominator column found within the data
+         * @param {Object} rows
          */
         calculatePercentage(rows) {
-            //let count = 0;
-            let tempValue = 0;
-            let posArray = [];
-            let indexMatchArray = [];
-            let ratioArray = [];
-            let attributeNameArray = [];
-            let countyFIPSArray = [];
-            let IndexConutyFIPS = 0;
-
-            let newStr = ",Hello World"
-            //console.log(typeof(rows))
-            //console.log(typeof (rows[0]))
-            //rows[0] = rows[0].concat(newStr)
-            //console.log(rows[0])
-
-            //console.log(rows[0].indexOf("numerator"))
-            //console.log(rows[0][157])
-            //console.log(rows[0].split(",")[157 -1])
-
 
             // Gets the string index of each occurrence of the word numerator
             var regex = /numerator/g, result, strIndices = [];
@@ -63,133 +72,40 @@
             // Gets the index of each occurrence of commas based on a range of between 0 and the numerator string index
             commaIndices = [];
             for (let i = 0; i < strIndices.length; i++) {
-                commaIndices.push((rows[0].substring(0, strIndices[i]).match(/,/g) || []).length)
+                commaIndices.push((rows[0].substring(0, strIndices[i]).match(/,/g) || []).length);
             }
 
             // Builds an array with the healthattribute names
+            let attributeNameArray = [];
             for (let i = 0; i < commaIndices.length; i++) {
-                attributeNameArray.push(rows[0].split(",")[commaIndices[i]].replace('numerator', 'ratio'))
+                attributeNameArray.push(rows[0].split(",")[commaIndices[i]].replace('numerator', 'ratio'));
             }
 
-
+            // Creates a header string
             let strHeader = "";
             for (let i = 0; i < attributeNameArray.length; i++) {
-                strHeader = strHeader.concat(`,${attributeNameArray[i]}`)
+                strHeader = strHeader.concat(`,${attributeNameArray[i]}`);
             }
+            rows[0] = rows[0].concat(strHeader);
 
-
-            rows[0] = rows[0].concat(strHeader)
-            console.log(rows[0])
-
-
-/*
-            let numeratorArray = [];
-            let strTemp = '';
-            // Gets all rows and columns
-            for (let row = 0; row < rows.length; row++) {
-
-                if (row === 0) {
-
-                    strTemp = 
-
+            // Aggregate the numerator and denominator column, and concats them to each string row
+            for (let rowNum = 0; rowNum < rows.length; rowNum++) {
+                if (rowNum === 0) {
+                    continue;
                 } else {
-
-     
-                    for (let column = 0; column < commaIndices.length; column++) {
-                        //numeratorArray.push(rows[row].split(",")[commaIndices[column]]);
-                    }
+                    let strNum = '';
+                    for (let i = 0; i < commaIndices.length; i++) {
+                        if (isNaN(parseFloat(rows[rowNum].split(",")[commaIndices[i]]) / parseFloat(rows[rowNum].split(",")[commaIndices[i] + 1]))) {
+                            strNum = strNum.concat(`,`);
+                        } else {
+                            strNum = strNum.concat(`,${(parseFloat(rows[rowNum].split(",")[commaIndices[i]]) / parseFloat(rows[rowNum].split(",")[commaIndices[i] + 1])).toFixed(5)}`);
+                        }          
+                    };
+                    rows[rowNum] = rows[rowNum].concat(strNum);
                 }
+            };
 
-
- 
-            }*/
-
-
-        // Builds an array of the aggregated values and the parallel FIPS codes
-  
-/*            for (let i = 0; i < rows.length; i++) {
-
-                tempValue = (row / parseFloat(Object.values(dataset[i])[indexMatchArray[indexPosition] + 1]));
-
-                // Replaces NaN values with 0
-                if (isNaN(tempValue)) {
-                    ratioArray.push(0);
-                } else {
-                    ratioArray.push(tempValue);
-                }
-            }*/
-
-
-
-/*            // Creates an object with the aggregated data, column headings, and FIPS codes
-            let objArray = []
-            for (let i = 0; i < dataset.length; i++) {
-                let obj = {
-                    "County FIPS Code": countyFIPSArray[0],
-                    [input]: ratioArray[0]
-                }
-                objArray.push(obj)
-            }*/
-
-
-
-
-
-/*
-            // Testing
-            let testArray = []
-            let obj2 = {}
-            for (let i = 0; i < attributeNameArray.length; i++) {
-                let tempObj = {
-                    [attributeNameArray[i]]: parseFloat((i + 2) * 77)
-                }
-                Object.assign(obj2, tempObj);
-            }
-            //console.log(obj2);
-
-            for (let i = 0; i < 3193; i++) {
-                testArray.push(obj2)
-            }
-            //console.log(testArray);
-
-            return testArray;*/
-
-
-			//console.log(this.bigData)
-			//console.log(objArray)
-
-
-
-
-        /*			for (let i = 0; i < attributeNameArray.length; i++) {
-                        if (attributeNameArray[i] === testStr) {
-                            console.log(attributeNameArray[i])
-                        }
-                    }*/
-
-
-
-			//console.log(attributeNameArray)
-			//console.log(numeratorArray)
-
-
-        /*			let numeratorArray = [];
-                    // Gets all rows and columns
-                    for (let row = 0; row < dataset.length; row++) {
-                        for (let column = 0; column < indexMatchArray.length; column++) {
-                            numeratorArray.push(Object.values(dataset[row])[indexMatchArray[column]]);
-                        }
-                    }
-    
-                    console.log(numeratorArray)*/
-
-
-					// TODOL GET THIS WORKING!
-        /*					let test = this.calculatePercentage(this.bigData)
-                            for (let i = 0; i < data.length; i++) {
-                                Object.assign(data[i], test[0]);
-                            }
-                            console.log(data)*/
+            return rows;
         },
 
         /**
@@ -230,14 +146,20 @@
         },
         /**
         * 
-        * 
+        * Creats the new CSV file
         */
         createNewCsv() {
             if (this.originalCsv === undefined) {
                 console.log("Internal Error: createNewCsv Failed to load");
                 return;
-            }               
+            }     
+
+            // Display the loading status
+            this.chartUploadStatusDisplayToggle();
+            this.chartLoadingText();
+
             this.fileReader.onload = (csvToRead) => {
+        
                 // get the content of the original csv that the user selected
                 let contents = csvToRead.target.result;
 
@@ -253,7 +175,7 @@
                 // Removes the U.S from the dataset
                 this.removeUSTotal(rows);
 
-                //
+                // Adds ratio columns to the dataset
                 this.calculatePercentage(rows)
 
                 // Get the year of the file
@@ -263,8 +185,11 @@
                 let csvBlob = new Blob([rows], { type: 'text/csv' });
 
                 this.alteredCsv = new File([csvBlob], `${this.year}.csv`, { type: "text/csv", lastModified: new Date().getTime() });
+
+                // update the loading status
+                this.chartLoadingText();
             }
-            this.fileReader.readAsBinaryString(this.originalCsv);                   
+            this.fileReader.readAsBinaryString(this.originalCsv); 
         },
         setAlteredCsv(event) {
             this.originalCsv = this.getSelectedCsv(event);

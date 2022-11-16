@@ -5,60 +5,69 @@
     ViewData["Title"] = "Upload CPH Data";
 }
 
-<h1>CSV Upload</h1>
+<div id="upload-form">
+    <h1>CSV Upload</h1>
 
-<h4>Upload yearly CSV's from the County Health Rankings website.</h4>
-<hr />
+    <h4>Upload yearly CSV's from the County Health Rankings website.</h4>
 
-@* Stylizing classes uses Twitter Bootstrap CSS library. Form-groups hold content for areas of the DOM. *@
-<div class="row">
-    <div class="col-md-4">
+    <hr />
 
-        @* JavaScript grabs the upload-form id and manipulates the uploaded file.*@
-        <div id="upload-form">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @* Stylizing classes uses Twitter Bootstrap CSS library. Form-groups hold content for areas of the DOM. *@
+    <div class="row">
+        <div class="col-md-4">
 
-            <!-- User Identity Input -->
-            <div class="form-group">
-                <input v-model="userId" id="UserIdentity" hidden value="@User.Identity.Name" asp-for="UserIdentity" class="form-control" />
-                <span asp-validation-for="UserIdentity" class="text-danger"></span>
+            @* JavaScript grabs the upload-form id and manipulates the uploaded file.*@
+            <div id="upload-form">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- User Identity Input -->
+                <div class="form-group">
+                    <input v-model="userId" id="UserIdentity" hidden value="@User.Identity.Name" asp-for="UserIdentity" class="form-control" />
+                    <span asp-validation-for="UserIdentity" class="text-danger"></span>
+                </div>
+
+                <!-- Date Input -->
+                <div class="form-group">
+                    <input v-model="uploadDate" hidden id="UploadDate" value="@DateTime.Now" asp-for="UploadDate" class="form-control" />
+                    <span asp-validation-for="UploadDate" class="text-danger"></span>
+                </div>
+
+                <!-- Altered File Input -->
+                <input @@change="alteredCsv" id="AlteredFile" type="file" asp-for="AlteredFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" hidden />
+
+                <!-- Original File Input-->
+                <div class="form-group">
+                    <label class="control-label">Select a CSV File</label>
+                    <input @@change="setAlteredCsv($event)" id="OriginalFile" type="file" asp-for="OriginalFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" />
+                </div>
+
+                <!--Submit button-->
+                <div class="form-group">
+                    <input id="upload-button" @@click="validateAndUploadCsv()" type="submit" value="Upload" class="btn btn-primary" />
+                </div>
             </div>
 
-            <!-- Date Input -->
-            <div class="form-group">
-                <input v-model="uploadDate" hidden id="UploadDate" value="@DateTime.Now" asp-for="UploadDate" class="form-control" />
-                <span asp-validation-for="UploadDate" class="text-danger"></span>
+            <div class="progressDisplay" v-show="chartUploadStatusDisplay" v-cloak>
+                <ul style="list-style: none; height: auto; width: 50%" class="form-control overflow-auto">
+                    <li>{{ chartUploadStatusText }}</li>
+                </ul>
             </div>
 
-            <!-- Altered File Input -->
-            <input @@change="alteredCsv" id="AlteredFile" type="file" asp-for="AlteredFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" hidden />
-
-            <!-- Original File Input-->
-            <div class="form-group">
-                <label class="control-label">Select a CSV File</label>
-                <input @@change="setAlteredCsv($event)" id="OriginalFile" type="file" asp-for="OriginalFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" />
-            </div>
-
-            <!--Submit button-->
-            <div class="form-group">
-                <input id="upload-button" @@click="validateAndUploadCsv()" type="submit" value="Upload" class="btn btn-primary" />
-            </div>  
-        </div>
-
-        <!-- Display Uploaded Files-->
-        <div>
-            <label for="counties">Uploaded Years</label> 
-            <div class="col-3">
-                <ul style="list-style: none; height: auto; width: auto" class="form-control overflow-auto">
-                    @foreach (var file in (string[])ViewData["Files"])
-                    {
-                        <li>@file</li>
+            <!-- Display Uploaded Files-->
+            <div>
+                <label for="counties">Uploaded Years</label>
+                <div class="col-3">
+                    <ul style="list-style: none; height: auto; width: auto" class="form-control overflow-auto">
+                        @foreach (var file in (string[])ViewData["Files"])
+                        {
+                            <li>@file</li>
                         }
-                </ul>        
+                    </ul>
+                </div>
             </div>
-        </div>   
-        
-    </div>    
+
+        </div>
+    </div>
 </div>
 @section scripts{
     <script src="/js/uploadCsv.js"></script>

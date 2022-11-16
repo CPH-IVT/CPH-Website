@@ -44,7 +44,7 @@ const ChartAttributes = new Vue({
 		aggregateDisplay: false,
 		displayFilter: false,
 		displayHealthAttribute: false,
-		filterItems: ["All", "Raw", "Numerator", "Denominator"],
+		filterItems: ["All", "Raw", "Numerator", "Denominator", "Ratio"],
 		filterSelect: 'All',
 		tempHide: false,
 		showStateData: false,
@@ -86,126 +86,6 @@ const ChartAttributes = new Vue({
 			this.displayHealthAttribute = true;
 		},
 
-		/**
-		* @param {any} arrayOfObjects
-		* This function calculates and returns the ratio of two variables
-		*/
-		calculatePercentage(dataset) {
-
-			let count = 0;
-			let tempValue = 0;
-			let posArray = [];
-			let indexMatchArray = [];
-			let ratioArray = [];
-			let attributeNameArray = [];
-			let countyFIPSArray = [];
-			let IndexConutyFIPS = 0;
-
-			// Get the index of the county FIPS code
-			IndexConutyFIPS = this.getCountyFIPSIndex(dataset);
-
-			// Builds an array of positive and negative numbers where a positive number means a match was found
-			// Example: Object.values(dataset[ROW])[COLUMN]
-			for (let i = 0; i < Object.keys(dataset[0]).length; i++) {
-				let pos = Object.keys(dataset[1])[i].search("numerator");
-				posArray.push(pos)
-			}
-
-			// Builds an index array with only positive matching values
-			for (let i = 0; i < posArray.length; i++) {
-				if (posArray[i] >= 0) {
-					indexMatchArray.push(count);
-				}
-				count++;
-			}
-
-			// Builds an array with the healthattribute names
-			for (let i = 0; i < indexMatchArray.length; i++) {
-				attributeNameArray.push(Object.keys(dataset[0])[indexMatchArray[i]].replace('numerator', 'ratio'))
-			}
-
-			// Gets the column index value of the clicked health attribute
-			let input = 'Premature death ratio';
-			let indexPosition = attributeNameArray.indexOf(input)
-
-			// Builds an array of the aggregated values and the parallel FIPS codes
-			if (indexPosition >= 0) {
-				for (let row = 0; row < dataset.length; row++) {
-					tempValue = (parseFloat(Object.values(dataset[row])[indexMatchArray[indexPosition]]) / parseFloat(Object.values(dataset[row])[indexMatchArray[indexPosition] + 1]));
-					countyFIPSArray.push(Object.values(dataset[row])[IndexConutyFIPS]);
-
-					// Replaces NaN values with 0
-					if (isNaN(tempValue)) {
-						ratioArray.push(0);
-					} else {
-						ratioArray.push(tempValue);
-					}
-				}
-			} else {
-				console.log(`No matching index value found for ${input} within the data array`)
-			}
-
-			// Creates an object with the aggregated data, column headings, and FIPS codes
-			let objArray = []
-			for (let i = 0; i < dataset.length; i++) {
-				let obj = {
-					"County FIPS Code": countyFIPSArray[0],
-					[input]: ratioArray[0]
-				}
-				objArray.push(obj)
-			}
-
-
-
-
-			// Testing
-			let testArray = []
-			let obj2 = {}
-			for (let i = 0; i < attributeNameArray.length; i++) {
-				let tempObj = {
-					[attributeNameArray[i]]: parseFloat((i + 2) * 77)
-				}
-				Object.assign(obj2, tempObj);
-			}
-			//console.log(obj2);
-
-			for (let i = 0; i < 3193; i++) {
-				testArray.push(obj2)
-			}
-			//console.log(testArray);
-
-			return testArray;
-
-
-			//console.log(this.bigData)
-			//console.log(objArray)
-
-
-
-
-			/*			for (let i = 0; i < attributeNameArray.length; i++) {
-							if (attributeNameArray[i] === testStr) {
-								console.log(attributeNameArray[i])
-							}
-						}*/
-
-
-
-			//console.log(attributeNameArray)
-			//console.log(numeratorArray)
-
-
-			/*			let numeratorArray = [];
-						// Gets all rows and columns
-						for (let row = 0; row < dataset.length; row++) {
-							for (let column = 0; column < indexMatchArray.length; column++) {
-								numeratorArray.push(Object.values(dataset[row])[indexMatchArray[column]]);
-							}
-						}
-			
-						console.log(numeratorArray)*/
-
-		},
 		/**
 		* This fuction handles the hiding of the attribute filter items
 		*/
