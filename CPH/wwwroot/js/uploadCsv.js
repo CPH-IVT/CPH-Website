@@ -26,17 +26,17 @@
         fileYearMatch: null,
         uploadSuccess: null,
         overrideDuplicate: null,
-        chartUploadStatusDisplay: false,
-        chartUploadStatusState: false,
-        chartUploadStatusText: ''
+        chartParsingStatusDisplay: false,
+        chartParsingStatusState: false,
+        chartParsingStatusText: ''
     },
     methods: {
         /**
          * 
          * Displays the loading status
          */
-        chartUploadStatusDisplayToggle() {
-            this.chartUploadStatusDisplay = true;
+        chartParsingStatusDisplayToggle() {
+            this.chartParsingStatusDisplay = true;
         },
         /**
          * 
@@ -44,15 +44,15 @@
          */
         chartLoadingText() {
 
-            if (this.chartUploadStatusState === false) {
-                this.chartUploadStatusText = "Uploading"
-                this.chartUploadStatusState = true
-            } else if (this.chartUploadStatusState === true) {
-                this.chartUploadStatusText = "Uploading Complete"
-                this.chartUploadStatusState = false
+            if (this.chartParsingStatusState === false) {
+                this.chartParsingStatusText = "Parsing"
+                this.chartParsingStatusState = true
+            } else if (this.chartParsingStatusState === true) {
+                this.chartParsingStatusText = "Parsing Complete"
+                this.chartParsingStatusState = false
             } else {
-                this.chartUploadStatusText = "Error"
-                this.chartUploadStatusState = false
+                this.chartParsingStatusText = "Error"
+                this.chartParsingStatusState = false
             }
         },
 
@@ -155,7 +155,7 @@
             }     
 
             // Display the loading status
-            this.chartUploadStatusDisplayToggle();
+            this.chartParsingStatusDisplayToggle();
             this.chartLoadingText();
 
             this.fileReader.onload = (csvToRead) => {
