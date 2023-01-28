@@ -11,27 +11,33 @@ const ChartAttributes = new Vue({
 	el: '#Chart',
 	//****
 	// driver variables for pocessing chart creation
-	// countiesDiv -
-	// chartArea -
-	// aggregateDataFull -
-	// aggregateDataSelected -
-	// listItems -
-	// dotColorArray -
-	// aggregateDisplay -
-	// tempHide -
-	// showStateData -
-	// chartName -
-	// dataHolder -
-	// maxValue -
-	// minValue -
-	// year -
-	// healthAttribute -
-	// healthAttributeData -
-	// selectedCounties -
-	// marks -
-	// plot -
-	// regionData -
-	// selectedRegions -
+	//---------------------------------------
+	// countiesDiv - Holds the current HTML county element
+	// chartArea - Holds the current HTML CharArea element
+	// aggregateDataFull - Holds the aggregate value of all counties
+	// aggregateDataSelected - Holds the aggregate value of the selected counties
+	// listItems - Holds the list of items for the legend
+	// dotColorArray - This string holds the current dot color for use on the chart
+	// aggregateDisplay - This boolean is responsible for hiding/showing the aggregate display elements
+	// displayFilter - This boolean handles the hiding/showing of the attribute filter elements
+	// displayHealthAttribute - This boolean handles the hiding/showing of the health attribute list
+	// filterItems - Holds the filter option
+	// filterSelect - Holds the defualt and the selected filter's state
+	// tempHide - DEBUG hide element
+	// showStateData - This boolean handles the switch toggling of states and counties
+	// chartName - Holds the chart's name --UNUSED--
+	// dataHolder - Holds the sorted and process ready file data
+	// maxValue - Holds the selected column's max value
+	// minValue - Holds the selected column's minimum value
+	// year - Holds the selected file's year
+	// healthAttribute - holds the user selected health attribute
+	// healthAttributeData - Holds the data values of the selected health attribute
+	// selectedCounties - Holds the user selected counties
+	// marks - Holds the charts draw data
+	// plot - Holds the plot
+	// regionData - Holds the selected region --UNUSED--
+	// selectedRegions - Holds the selected region value
+	//---------------------------------------
 	//****
 
 	data: {
@@ -98,6 +104,8 @@ const ChartAttributes = new Vue({
 		*/
 		countyStateToggle() {
 			// Negates the boolean
+			console.log(this.dataHolder)
+			console.log(this.healthAttributeData)
 			this.showStateData = !this.showStateData;
 			this.resetCountiesStateList();
 			this.clearlegend();
@@ -135,7 +143,6 @@ const ChartAttributes = new Vue({
 		* This function clears and resets the county select display list
 		*/
 		resetCountiesStateList() {
-
 			// Sets the arrays to empty, thus removing the chart dots
 			this.selectedCounties = [];
 
@@ -150,8 +157,6 @@ const ChartAttributes = new Vue({
 
 			// populates the county div, thus resting the county/state list
 			this.addDataToUL(this.bigData, counties, countiesDiv);
-
-
 		},
 		/**
 		 * @param {any} arrayOfObjects
