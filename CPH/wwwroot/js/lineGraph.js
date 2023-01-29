@@ -1,5 +1,6 @@
 ﻿import { Chart } from '../js/chart.js';
 
+// TODO: UNUSED
 const LineGraph = {
     __proto__: Chart,
     xType: d3.scaleLinear(this.xDomain, this.xRange),

@@ -1,5 +1,4 @@
-﻿import { Chart } from '../js/charts.js';
-import * as Plot from "https://cdn.skypack.dev/@observablehq/plot@0.4";
+﻿import * as Plot from "https://cdn.skypack.dev/@observablehq/plot@0.4";
 
 /**
  * 
@@ -439,7 +438,6 @@ const ChartAttributes = new Vue({
 		checkIfNodeIsEmpty(node) {
 			return node.childNodes.length === 0;
 		},
-
 		/**
 		 * @param {any} event
 		 * Handles the reading of the selected region checkbox - TODO: UNUSED
@@ -513,15 +511,15 @@ const ChartAttributes = new Vue({
 		 *  Creates an object that holds identifying and percentile/value information
 		 */
 		createInfoObjects(parsedCountStateArray) {
-
+			const columnCountyName = 0;
 			let countyStateArray = [];
 			// for each parsed county state
 			for (let a = 0; a < parsedCountStateArray.length; a++) {
 				//get the county state index
-				let index = this.getCountStateIndex(parsedCountStateArray[a][0]);
+				let index = this.getCountStateIndex(parsedCountStateArray[a][columnCountyName]);
 
 				// get the county state information
-				let info = this.getCountyInformation(parsedCountStateArray[a][0]);
+				let info = this.getCountyInformation(parsedCountStateArray[a][columnCountyName]);
 
 				// get the county state percentile information
 				let percentileInfo = this.getCountyStateDatapointPercentile(index);
@@ -610,15 +608,15 @@ const ChartAttributes = new Vue({
 			this.chartArea.appendChild(this.plot);
 		},
 		/**
-		 * 
 		 * @param {Number} indexOfCountyState
+		 * This function returns the county state percentile information
 		 */
 		getCountyStateDatapointPercentile(indexOfCountyState) {
 			return this.healthAttributeData[indexOfCountyState];
 		},
 		/**
-		 * 
 		 * @param {string} countyState
+		 * Splits the counties and states on ","
 		 */
 		parseCountyAndStateName(countyState) {
 			var split = countyState.split(",");
@@ -628,6 +626,10 @@ const ChartAttributes = new Vue({
 
 			return split;
 		},
+		/** 
+		 * @param {any} plotMarksArray
+		 * this function populates the plot's lines and dots
+		 */
 		createPlot(plotMarksArray = []) {
 			if (typeof (plotMarksArray[3]) != "undefined") {
 				// Creates an array that holds the X and Y values for the plot marks
@@ -662,6 +664,7 @@ const ChartAttributes = new Vue({
 					}
 				};
 
+				// Returns the plot to the calling function when a county is clicked
 				return Plot.plot({
 					margin: 80,
 					grid: true,
@@ -684,6 +687,7 @@ const ChartAttributes = new Vue({
 					]
 				});
 			} else {
+				// Returns the plot to the calling function when a health attribute is clicked
 				return Plot.plot({
 					margin: 80,
 					grid: true,
@@ -704,12 +708,10 @@ const ChartAttributes = new Vue({
 						Plot.line(this.healthAttributeData),
 					]
 				});
-
 			}
 		}
 	},
 	compute: {
-
 	},
 	watch: {
 		/**
@@ -790,7 +792,7 @@ const ChartAttributes = new Vue({
 		},
 
 		/**
-		*
+		* This function watches for changes to the filterSelect variable, and executes the following code
 		*/
 		filterSelect() {
 			let healthAttrs = document.getElementById("HealthAttrs");

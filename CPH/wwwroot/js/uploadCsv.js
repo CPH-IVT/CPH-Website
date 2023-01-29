@@ -255,9 +255,6 @@
                     console.error("Bad server response!")
                 }
             });
-
-            
-
         },
         /**
         * This function overrides an older uploaded file

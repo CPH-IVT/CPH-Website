@@ -3,39 +3,37 @@
 }
 
 <div id="Chart">
-
-    <div class="input-group mb-3">
+    <!--Chart name - TODO: UNUSED REGION-->
+    @*<div class="input-group mb-3">
         <div class="input-group-prepend">
-            <!--<span class="input-group-text" id="inputGroup-sizing-default">Chart Name</span>-->
+            <span class="input-group-text" id="inputGroup-sizing-default">Chart Name</span>
         </div>
-        <!--<input v-model="chartName" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
-    </div>
-
+        <input v-model="chartName" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+    </div>*@
     <div class="row" v-show="aggregateDisplay" v-cloak>
-
+        <!--Main Chart-->
         <div class="float-container">
             <div class="float-child-chart">
                 @*Draw the chart below*@
                 <div id="ChartArea" class="col-12"></div>
             </div>
-
+            <!--Legend-->
             <div class="float-legend-div">
                 <h5>Location || Percentile</h5>
                 <ul v-for="(listItem, index) in listItems" class="legendList">
                     <li v-bind:style="{ color: dotColorArray[index]}">{{listItem}}</li>
                 </ul>
             </div>
-
+            <!--Full aggregate-->
             <div class="float-child-aggregate-left">
                 <h5>All U.S</h5>
                 <p id="AggregateAreaFull"><pre>{{aggregateDataFull}}</pre></p>
             </div>
-
+            <!--Selected aggregate-->
             <div class="float-child-aggregate-right">
                 <h5>Selected Regions</h5>
                 <p id="AggregateAreaSelected"><pre>{{aggregateDataSelected}}</pre></p>
             </div>
-
         </div>
     </div>
     <div>
@@ -43,54 +41,53 @@
         <label style="margin-left: 13.5%" for="attributeFilter" v-show="displayFilter" v-cloak>Attribute Filter</label>
     </div>
     @* The files are named the year that they represent. *@
-<div>
-    <!--Select year dropdown-->
-    <select @@change="setChartAttributes($event)" id="Year" name="Year">
-        <option value="SelectYear">Select a Year</option>
-        @foreach (var file in (string[])ViewData["Files"])
-        {
-            <option value="@file">@file</option>
-        }
-    </select>
-    <select name="attributeFilter" id="attributeFilter" v-show="displayFilter" v-cloak v-model="filterSelect">
-        <option disabled value="">Please select one</option>
-        <option v-for="(filterItem, index) in filterItems" :key="filterItem" :value="filterItem">
-            {{filterItem}}
-        </option>
-    </select>
-    
-
-    <span class="countryStateSwtich" v-show="aggregateDisplay" v-cloak>
-        <label for="counties">Counties</label>
-        <label class="switch">
-            <input type="checkbox" id="checkbox" v-on:click="countyStateToggle" />
-            <span class="slider round"></span>
-        </label>
-        <label for="states">States</label>
-    </span>
-
-
-</div>
+    <div>
+        <!--Select year dropdown-->
+        <select @@change="setChartAttributes($event)" id="Year" name="Year">
+            <option value="SelectYear">Select a Year</option>
+            @foreach (var file in (string[])ViewData["Files"])
+            {
+                <option value="@file">@file</option>
+            }
+        </select>
+        <!--Select attribute filter dropdown-->
+        <select name="attributeFilter" id="attributeFilter" v-show="displayFilter" v-cloak v-model="filterSelect">
+            <option disabled value="">Please select one</option>
+            <option v-for="(filterItem, index) in filterItems" :key="filterItem" :value="filterItem">
+                {{filterItem}}
+            </option>
+        </select>
+        <!--county state switch-->
+        <span class="countryStateSwtich" v-show="aggregateDisplay" v-cloak>
+            <label for="counties">Counties</label>
+            <label class="switch">
+                <input type="checkbox" id="checkbox" v-on:click="countyStateToggle" />
+                <span class="slider round"></span>
+            </label>
+            <label for="states">States</label>
+        </span>
+    </div>
+    <!--Select health attribute list-->
     <div class="row">
         <div class="col-4" v-show="displayHealthAttribute" v-cloak>
             <label for="columns">Health Attributes</label>
             <ul @@click="readHealthAttribute($event)" id="HealthAttrs" style="list-style: none; height: 300px" class="form-control overflow-auto">
             </ul>
         </div>
-
+        <!--Select county or state list-->
         <div class="col-4" v-show="aggregateDisplay" v-cloak>
             <span><label for="counties">Locations</label></span>
             <ul @@click="readCountyCheckbox($event)" id="Counties" style="list-style: none; height: 300px" class="form-control overflow-auto"></ul>
         </div>
-
+        <!--Select region - TODO: UNUSED REGION-->
         <div class="col-4" v-show="tempHide" v-cloak>
             <label for="regions">Regions</label>
             <ul @@click="readRegionCheckbox($event)" id="Regions" style="list-style: none; height: 300px" class="form-control overflow-auto">
             </ul>
         </div>
-
     </div>
     <!--<label for="checkbox">{{ aggregateDisplay }}</label>-->
+    <!--Save region button - TODO: UNUSED REGION-->
     <button v-show="tempHide" v-cloak>Save Chart</button>
 </div>
 
