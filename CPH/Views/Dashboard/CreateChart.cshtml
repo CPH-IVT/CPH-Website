@@ -44,6 +44,7 @@
     </div>
     @* The files are named the year that they represent. *@
 <div>
+    <!--Select year dropdown-->
     <select @@change="setChartAttributes($event)" id="Year" name="Year">
         <option value="SelectYear">Select a Year</option>
         @foreach (var file in (string[])ViewData["Files"])

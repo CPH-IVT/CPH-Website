@@ -25,13 +25,14 @@ const ChartAttributes = new Vue({
 	// filterSelect - Holds the defualt and the selected filter's state
 	// tempHide - DEBUG hide element
 	// showStateData - This boolean handles the switch toggling of states and counties
+	// fullRawData - Holds the seclected file's full data
 	// chartName - Holds the chart's name --UNUSED--
-	// dataHolder - Holds the sorted and process ready file data
+	// dataHolder - Holds the selected file's identifying data
 	// maxValue - Holds the selected column's max value
 	// minValue - Holds the selected column's minimum value
 	// year - Holds the selected file's year
 	// healthAttribute - holds the user selected health attribute
-	// healthAttributeData - Holds the data values of the selected health attribute
+	// healthAttributeData - Holds the data values and percentiles of the selected health attribute
 	// selectedCounties - Holds the user selected counties
 	// marks - Holds the charts draw data
 	// plot - Holds the plot
@@ -54,7 +55,7 @@ const ChartAttributes = new Vue({
 		filterSelect: 'All',
 		tempHide: false,
 		showStateData: false,
-		bigData: [],
+		fullRawData: [],
 		chartName: null,
 		dataHolder: null,
 		maxValue: 0,
@@ -76,9 +77,10 @@ const ChartAttributes = new Vue({
 		getCountyFIPSIndex(dataset) {
 
 			let countyFIPS = 0;
+			const columnPositionFIPS = 0;
 
-			for (let i = 0; i < this.bigData.length; i++) {
-				if (Object.keys(dataset[0])[i] == "County FIPS Code") {
+			for (let i = 0; i < this.fullRawData.length; i++) {
+				if (Object.keys(dataset[columnPositionFIPS])[i] == "County FIPS Code") {
 					countyFIPS = i;
 				};
 			};
@@ -104,34 +106,26 @@ const ChartAttributes = new Vue({
 		*/
 		countyStateToggle() {
 			// Negates the boolean
-			console.log(this.dataHolder)
-			console.log(this.healthAttributeData)
 			this.showStateData = !this.showStateData;
 			this.resetCountiesStateList();
 			this.clearlegend();
 		},
 		/**
-		* 
 		* Clears the chart area
 		*/
 		clearChartArea() {
-
-			//this.chartArea.removeChild(this.plot);
-			//this.chartArea.replaceChildren()
 			this.aggregateDisplay = false;
 			this.healthAttribute = null;
 		},
 		/**
-		* 
-		* 
+		* Clears the Legend
 		*/
 		clearlegend() {
 			this.listItems = [];
 		},
 
 		/**
-		* 
-		* 
+		* Clears the aggregate data fields
 		*/
 		clearAggregateData() {
 			this.aggregateDataFull = '';
@@ -139,7 +133,6 @@ const ChartAttributes = new Vue({
 		},
 
 		/** 
-		*
 		* This function clears and resets the county select display list
 		*/
 		resetCountiesStateList() {
@@ -153,10 +146,10 @@ const ChartAttributes = new Vue({
 			this.removeAllChildNodes(countiesDiv);
 
 			// Gets the county list
-			let counties = this.getCountyList(this.bigData);
+			let counties = this.getCountyList(this.fullRawData);
 
 			// populates the county div, thus resting the county/state list
-			this.addDataToUL(this.bigData, counties, countiesDiv);
+			this.addDataToUL(this.fullRawData, counties, countiesDiv);
 		},
 		/**
 		 * @param {any} arrayOfObjects
@@ -164,71 +157,65 @@ const ChartAttributes = new Vue({
 		*/
 		createLegendList(arrayOfObjects) {
 			this.listItems = [];
+			const infoIndex = 0;
+			const percentileIndex = 0;
+			const columnPositionCounty = 1;
+			const columnPositionState = 2;
+
+			//Builds a list of strings that contain the legend information
 			for (let i = 0; i < arrayOfObjects.length; i++) {
-				this.listItems.push(arrayOfObjects[i].info[0][1] + ", " + arrayOfObjects[i].info[0][2] + " || " + parseInt(arrayOfObjects[i].percentileInfo[0]));
+				this.listItems.push(arrayOfObjects[i].info[infoIndex][columnPositionCounty] + ", " + arrayOfObjects[i].info[infoIndex][columnPositionState] + " || " + parseInt(arrayOfObjects[i].percentileInfo[percentileIndex]));
 			}
+
 			return this.listItems;
 		},
 		/**
 		 * @param {object} dataObject
-		 * @param {bool} fullColumns
-		 * If fullColumns is true, this function will attempt to aggregate a full column based on the data found within a passed healthAttributeData object
-		 * if fullColumns is false, this function will attempt to aggregate the selected columns based on the data found within a passed createInfoObjects object
+		 * @param {boolean} isFullColumn
+		 * This function aggregates the passed data.
 		 */
-		columnMath(dataObject, fullColumns) {
-			// Checks if the array is empty. If found true, returns an empty array
-			// An empty array often occuers when a county is unselected 
+		columnMath(dataObject, isFullColumn) {
+			// Checks if the array is empty, and returns an empty array if true. An empty array often occurs when a county is unselected 
 			if (dataObject.length === 0) {
 				let emptyArray = [];
 				return emptyArray;
 			};
 
-			// Creates variables that will be populated in the following loop
+			const valueIndex = 1;
+			const columnPositionCountyRanked = 4;
 			let columnSum = 0;
 			let columnNumericDataArray = [];
 			let rowValue = 0;
-
-			// Populate a numeric array from a column within the dataset and sum its values
+			// Populate a numeric array from a column within the dataset aggregate values
 			for (let i = 0; i < dataObject.length; i++) {
-				if (fullColumns === true && this.dataHolder[i][4] != "0") {
-					rowValue = parseFloat(dataObject[i][1]);
+				// Checks that a full column is selected and that it has been ranked. if true, sum the column values. else sum only the selected values
+				if (isFullColumn === true && this.dataHolder[i][columnPositionCountyRanked] != "0") {
+					rowValue = parseFloat(dataObject[i][valueIndex]);
 					if (!isNaN(rowValue) && rowValue > 0) {
 						columnNumericDataArray.push(rowValue);
 						columnSum += rowValue;
 					}
-				} else if (fullColumns === false) {
-					rowValue = parseFloat(dataObject[i].percentileInfo[1]);
+				} else if (isFullColumn === false) {
+					rowValue = parseFloat(dataObject[i].percentileInfo[valueIndex]);
 					if (!isNaN(rowValue) && rowValue > 0) {
 						columnNumericDataArray.push(rowValue);
 						columnSum += rowValue;
 					}
 				}
 			};
-			// Creates an array to hold the titles of the aggregate data
+
+			// Creates header
 			let headerArray = ["Total", "Mean", "Min", "Max", "Range", "Count"];
+			headerArray.unshift(`${this.healthAttribute}`)
 
-			// Checks the condition of fullColumns and applies the required header to the array
-			if (fullColumns === true) {
-
-				headerArray.unshift(`${this.healthAttribute}`)
-			} else if (fullColumns === false) {
-				headerArray.unshift(`${this.healthAttribute}`)
-			}
-
-			// Creates an array to hold the aggregate data
+			// Pushes aggregate data to the math array
 			let mathArray = [0];
-			// Adds the sum of the data to the array
-			mathArray.push(columnSum);
-			// Adds the mean of the data to the array
-			mathArray.push(Math.round((columnSum / columnNumericDataArray.length) * 100) / 100);
-			// Adds the min of the data to the array
-			mathArray.push(Math.min(...columnNumericDataArray));
-			// Adds the max of the data to the array
-			mathArray.push(Math.max(...columnNumericDataArray));
-			// Adds the range of the data to the array
-			mathArray.push(Math.max(...columnNumericDataArray) - Math.min(...columnNumericDataArray));
-			// Adds the count to the array
-			mathArray.push(columnNumericDataArray.length);
+			mathArray.push(columnSum); // Sum
+			mathArray.push(Math.round((columnSum / columnNumericDataArray.length) * 100) / 100); // Mean
+			mathArray.push(Math.min(...columnNumericDataArray)); // Min
+			mathArray.push(Math.max(...columnNumericDataArray)); // Max
+			mathArray.push(Math.max(...columnNumericDataArray) - Math.min(...columnNumericDataArray)); // Range
+			mathArray.push(columnNumericDataArray.length); // Count
 
 			// Pairs the parallel arrays into a single array that can be returned to the caller.
 			let tempArray = [];
@@ -239,45 +226,48 @@ const ChartAttributes = new Vue({
 				resultArray.push(tempArray);
 				tempArray = [];
 			}
-			return resultArray;
-		},
-		/**
-		 * Displays a health attribute's full aggregate data on the chart page
-		 * @param {array} dataArray
-		 */
-		async displayAggregateDataFull(dataArray) {
-			// Populates the aggregateDisplay element
-			this.aggregateDataFull = (`${dataArray[0][0]}\n`)
-			for (let i = 1; i < dataArray.length; i++) {
-				this.aggregateDataFull += (`${dataArray[i][0]} : ${dataArray[i][1]}\n`)
-			};
 
-			// Sets the aggregateDisplay element visible
-			this.aggregateDisplay = true;
-			return this.aggregateDataFull;
+			let returnArray = [resultArray, isFullColumn];
+			return returnArray;
 		},
 		/**
-		 * Displays a health attribute's selected aggregate data on the chart page
-		 * @param {array} dataArray
+		 * @param {any} dataArray
+		 *  Displays a health attribute's aggregate data on the chart page
 		 */
-		async displayAggregateDataSelected(dataArray) {
-			// Checks if the array is empty. If found true, returns an empty string
-			// An empty array often occuers when a county is unselected 
-			if (dataArray.length === 0) {
-				this.aggregateDataSelected = "";
+		async displayAggregateData(dataArray) {
+
+			const isFullColumnFlag = 1;
+			const dataIndex = 0;
+			const attributeHeader = 0;
+			const nameIndex = 0;
+			const valueIndex = 1;
+
+			if (dataArray[isFullColumnFlag] === true) {
+				// Populates the aggregateDisplay element
+				this.aggregateDataFull = (`${dataArray[dataIndex][attributeHeader][attributeHeader]}\n`);
+				for (let i = 1; i < dataArray[dataIndex].length; i++) {
+					this.aggregateDataFull += (`${dataArray[dataIndex][i][nameIndex]} : ${dataArray[dataIndex][i][valueIndex]}\n`);
+				};
+				// Sets the aggregateDisplay element visible
+				this.aggregateDisplay = true;
+				return this.aggregateDataFull;
+			} else if (dataArray[isFullColumnFlag] == false) {
+				// Checks if the array is empty, and returns an empty string if true. An empty array often occurs when a county is unselected 
+				if (dataArray[dataIndex].length === 0) {
+					this.aggregateDataSelected = "";
+					return this.aggregateDataSelected;
+				}
+				// Populates the aggregateDisplay element
+				this.aggregateDataSelected = (`${dataArray[dataIndex][attributeHeader][attributeHeader]}\n`);
+				for (let i = 1; i < dataArray[dataIndex].length; i++) {
+					this.aggregateDataSelected += (`${dataArray[dataIndex][i][nameIndex]} : ${dataArray[dataIndex][i][valueIndex]}\n`);
+				};
 				return this.aggregateDataSelected;
-			}
-
-			// Populates the aggregateDisplay element
-			this.aggregateDataSelected = (`${dataArray[0][0]}\n`)
-			for (let i = 1; i < dataArray.length; i++) {
-				this.aggregateDataSelected += (`${dataArray[i][0]} : ${dataArray[i][1]}\n`)
-			};
-			return this.aggregateDataSelected;
-		},
+            }
+        },
 		/**
-		 * 
 		 * @param {HtmlNode} year
+		 * This function fires on year selection, and reads the selected file
 		 */
 		async setChartAttributes(year) {
 			this.year = year.target.value;
@@ -305,10 +295,11 @@ const ChartAttributes = new Vue({
 
 			let regionNames = await this.getRegionNames(this.year);
 
+			// Reads the selected file into the "data" variable
 			await d3.csv(`../uploads/${year.target.value}.csv`)
 				.then((data) => {
 
-					this.bigData = data;
+					this.fullRawData = data;
 					let counties = this.getCountyList(data);
 
 					// Add to the html list.
@@ -328,8 +319,7 @@ const ChartAttributes = new Vue({
 			this.displayHealthAttributeToggle();
 		},
 		/**
-		*
-		*
+		* Sets the region data - TODO: UNUSED 
 		*/
 		async setRegionData() {
 			let regionData = await fetch('/Dashboard/ReadAllRegions')
@@ -342,8 +332,8 @@ const ChartAttributes = new Vue({
 			this.regionData = regionData;
 		},
 		/**
-		*
-		*
+		* @param {int} year
+		* Gets the region data - TODO: UNUSED
 		*/
 		async getRegionNames(year) {
 			let regionNames = await fetch('/Dashboard/ReadAllRegions')
@@ -359,6 +349,7 @@ const ChartAttributes = new Vue({
 		 * @param {Array} data
 		 * @param {string} ulId UL = Unordered list in HTML
 		 * @param {string} inputType
+		 * Populates the list elements
 		 */
 		addDataToUL(dataset, data, ulId, inputType = "checkbox") {
 
@@ -391,7 +382,6 @@ const ChartAttributes = new Vue({
 					}
 				}
 
-
 				//Create list item for the input and label to be inserted into
 				let liNode = document.createElement("li");
 
@@ -408,7 +398,6 @@ const ChartAttributes = new Vue({
 
 				//Label for the checkboxes
 				let label = document.createElement('label');
-
 				label.htmlFor = data[i];
 
 				// append the created text to the created label tag
@@ -423,8 +412,8 @@ const ChartAttributes = new Vue({
 			}
 		},
 		/**
-		 * 
 		 * @param {Array} data
+		 * Returns a list of counties
 		 */
 		getCountyList(data) {
 			let listOfCounties = [];
@@ -435,8 +424,8 @@ const ChartAttributes = new Vue({
 			return listOfCounties;
 		},
 		/**
-		 * 
 		 * @param {HtmlNode} parent
+		 * Removes all child nodes
 		 */
 		removeAllChildNodes(parent) {
 			while (parent.firstChild) {
@@ -444,12 +433,17 @@ const ChartAttributes = new Vue({
 			}
 		},
 		/**
-		 * 
 		 * @param {HtmlNode} node
+		 * Checks if a node is empty
 		 */
 		checkIfNodeIsEmpty(node) {
 			return node.childNodes.length === 0;
 		},
+
+		/**
+		 * @param {any} event
+		 * Handles the reading of the selected region checkbox - TODO: UNUSED
+		 */
 		readRegionCheckbox(event) {
 			if (clickEvent["target"].checked) {
 
@@ -515,10 +509,11 @@ const ChartAttributes = new Vue({
 			}
 		},
 		/**
-		 * 
 		 * @param {Array} parsedCountStateArray
+		 *  Creates an object that holds identifying and percentile/value information
 		 */
 		createInfoObjects(parsedCountStateArray) {
+
 			let countyStateArray = [];
 			// for each parsed county state
 			for (let a = 0; a < parsedCountStateArray.length; a++) {
@@ -549,31 +544,31 @@ const ChartAttributes = new Vue({
 			for (let a = 0; a < arrayOfObjects.length; a++) {
 				// push plot dots to marks array
 				marksArray.push(this.createPlotDots(arrayOfObjects[a]));
-				// push plot text to marks array
+				// push plot text to marks array - TODO: See if this can be brought back has hovor text
 				//marksArray.push(this.createPlotText(arrayOfObjects[a]));
 			}
 
 			return marksArray;
 		},
 		/**
-		 * 
 		 * @param {Object} countyStateObject
+		 * Plots grapth dots
 		 */
 		createPlotDots(countyStateObject) {
 			// Plot.dot([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33 })
 			return Plot.dot([countyStateObject.percentileInfo[0], countyStateObject.percentileInfo[1]], { x: countyStateObject.percentileInfo[0], y: countyStateObject.percentileInfo[1] });
 		},
 		/**
-		 * 
 		 * @param {Object} countyStateObject
+		 * Plots graph Text - TODO: See if this can be brought back has hovor text
 		 */
 		createPlotText(countyStateObject) {
 			// Plot text example: Plot.text([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33, text: ["testing"], dy: -8 })
 			return Plot.text([countyStateObject.percentileInfo[0], countyStateObject.percentileInfo[1]], { x: countyStateObject.percentileInfo[0], y: countyStateObject.percentileInfo[1], text: [`${countyStateObject.info[0][1]} ${countyStateObject.info[0][2]} ${countyStateObject.info[0][3]}`], dy: -8 });
 		},
 		/**
-		 * 
 		 * @param {Array} countyStateArray
+		 * Returns the county state information
 		 */
 		getCountyInformation(countyStateArray) {
 			let countyStateInformation = this.dataHolder.filter(
@@ -586,16 +581,15 @@ const ChartAttributes = new Vue({
 			return countyStateInformation;
 		},
 		/**
-		 * 
 		 * @param {Array} countyStateArray
+		 * Returns the county state index
 		 */
 		getCountStateIndex(countyStateArray) {
 			let index = this.dataHolder.findIndex(x => x[1] == countyStateArray[0] && x[2] == countyStateArray[1]);
 			return index;
 		},
 		/**
-		 * 
-		 * 
+		 * Loops through all the selected counties and split the county and state names into an array: [["Washington County", "TN"], ["Sullivan County", "TN"]];
 		*/
 		parseSelectedCountyStateArray() {
 			let countyStateArray = [];
@@ -607,8 +601,8 @@ const ChartAttributes = new Vue({
 			return countyStateArray;
 		},
 		/**
-		 * 
 		 * @param {Array} plotMarksArray
+		 * Redraws the chart
 		 */
 		redrawChart(plotMarksArray) {
 			this.removeAllChildNodes(this.chartArea);
@@ -762,9 +756,9 @@ const ChartAttributes = new Vue({
 			this.chartArea.appendChild(this.plot);
 
 			// Creates and populates an array to display the chart's aggregate data
-			let aggregateArrayFull = [];
-			aggregateArrayFull = this.columnMath(this.healthAttributeData, true);
-			this.displayAggregateDataFull(aggregateArrayFull);
+			let aggregateArray = [];
+			aggregateArray = this.columnMath(this.healthAttributeData, true);
+			this.displayAggregateData(aggregateArray);
 
 			// Resets the selected counties on the chart and within the list
 			this.resetCountiesStateList()
@@ -775,7 +769,7 @@ const ChartAttributes = new Vue({
 		*/
 		selectedCounties() {
 
-			let parsedArray = this.parseSelectedCountyStateArray(); // loop through all the selected counties and split the county and state names into an array: [["Washington County", "TN"], ["Sullivan County", "TN"]];
+			let parsedArray = this.parseSelectedCountyStateArray();
 
 			//create object with information to be plotted. 
 			let arrayOfObjects = this.createInfoObjects(parsedArray);
@@ -784,9 +778,9 @@ const ChartAttributes = new Vue({
 			this.createLegendList(arrayOfObjects);
 
 			// Creates and populates an array to display the selected counties aggregate data
-			let aggregateArraySelected = [];
-			aggregateArraySelected = this.columnMath(arrayOfObjects, false);
-			this.displayAggregateDataSelected(aggregateArraySelected);
+			let aggregateArray = [];
+			aggregateArray = this.columnMath(arrayOfObjects, false);
+			this.displayAggregateData(aggregateArray);
 
 			// create the plot marks: Dots and Text.
 			let plotMarksArray = this.createPlotMarksArray(arrayOfObjects);
@@ -801,7 +795,7 @@ const ChartAttributes = new Vue({
 		filterSelect() {
 			let healthAttrs = document.getElementById("HealthAttrs");
 			this.removeAllChildNodes(healthAttrs);
-			this.addDataToUL(this.bigData, this.bigData.columns, healthAttrs, "radio");
+			this.addDataToUL(this.fullRawData, this.fullRawData.columns, healthAttrs, "radio");
 
 			this.resetCountiesStateList();
 			this.clearChartArea();
