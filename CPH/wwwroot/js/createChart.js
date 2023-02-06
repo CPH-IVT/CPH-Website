@@ -1,5 +1,4 @@
 ﻿import * as Plot from "https://cdn.skypack.dev/@observablehq/plot@0.4";
-
 /**
  * 
  * Vue.js V2
@@ -69,6 +68,19 @@ const ChartAttributes = new Vue({
 		selectedRegions: []
 	},
 	methods: {
+
+		/**
+		 * Capitalizes the first latter of every word in a sentance
+		 * @param {any} str
+		 */
+		capitalizer(str) {
+			let words = str.split(" ");
+			for (let i = 0; i < words.length; i++) {
+				words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+			};
+			return words.join(" ");
+        },
+
 		/**
 		 * Searchs the dataset for the County FIPS Code column index and returns that value
 		 * @param {any} dataset
@@ -666,7 +678,7 @@ const ChartAttributes = new Vue({
 
 				// Returns the plot to the calling function when a county is clicked
 				return Plot.plot({
-					margin: 80,
+					margin: 60,
 					grid: true,
 					height: 700,
 					style: {
@@ -677,19 +689,19 @@ const ChartAttributes = new Vue({
 						label: "Percentile →",
 					},
 					y: {
-						label: `↑ ${this.healthAttribute}`
+						label: `↑ ${this.capitalizer(this.healthAttribute)}`
 					},
 					marks: [
 						Plot.ruleY(plotMarksArray[0].data),
 						Plot.ruleX(plotMarksArray[1].data),
 						Plot.line(plotMarksArray[2].data),
-						Plot.dot(dotArray, { fill: this.dotColorArray })
+						Plot.dot(dotArray, {opacity: 0.8, stroke: "black", r: 10, strokeWidth: 2, fill: this.dotColorArray})
 					]
 				});
 			} else {
 				// Returns the plot to the calling function when a health attribute is clicked
 				return Plot.plot({
-					margin: 80,
+					margin: 60,
 					grid: true,
 					height: 700,
 					style: {
@@ -700,7 +712,7 @@ const ChartAttributes = new Vue({
 						label: "Percentile →",
 					},
 					y: {
-						label: `↑ ${this.healthAttribute}`
+						label: `↑ ${this.capitalizer(this.healthAttribute)}`
 					},
 					marks: [
 						Plot.ruleY(plotMarksArray[0]),
@@ -746,7 +758,6 @@ const ChartAttributes = new Vue({
 			// element[0] is the health attribute number/data-point. This also serves as an index into a parallel array of the dataHolder property. 
 			this.healthAttributeData = this.dataHolder.map((element, index) => ([(index / this.dataHolder.length * 100), element[0]]));
 
-			// TODO: what does this do?
 			this.plot = this.createPlot([
 				Plot.ruleY([0]),
 				Plot.ruleX([0]),
