@@ -8,22 +8,26 @@
 const ChartAttributes = new Vue({
 	el: '#Chart',
 	//****
-	// driver variables for pocessing chart creation
+	// driver variables for processing chart creation
 	//---------------------------------------
-	// countiesDiv - Holds the current HTML county element
-	// chartArea - Holds the current HTML CharArea element
-	// aggregateDataFull - Holds the aggregate value of all counties
-	// aggregateDataSelected - Holds the aggregate value of the selected counties
+	// References to regions on the display
+	//    countiesDiv - References the HTML element for displaying the list of counties
+	//    chartArea - References the HTML element for displaying the percentile chart
+	// Strings for populating the display's regions
+	//    aggregateDataFull -     Gives the min, max, and average values for the current indicator,
+	//                               computed over the entirety of current regions of interest - i.e., states or counties
+	//    aggregateDataSelected - Gives the min, max, and average values for the current indicator,
+	//                               for each of the currently highlighted regions in the graph - i.e., states or counties
 	// listItems - Holds the list of items for the legend
 	// dotColorArray - This string holds the current dot color for use on the chart
-	// aggregateDisplay - This boolean is responsible for hiding/showing the aggregate display elements
-	// displayFilter - This boolean handles the hiding/showing of the attribute filter elements
-	// displayHealthAttribute - This boolean handles the hiding/showing of the health attribute list
-	// filterItems - Holds the filter option
-	// filterSelect - Holds the defualt and the selected filter's state
+	// aggregateDisplay - Boolean; enables/disables display of the list of health indicators of type "aggregate"
+	// displayFilter - Boolean; enables/disables display of the list of elements for specifying type of health indicator to display
+	// displayHealthAttribute - Boolean; enables/disables display of the entire list of health indicators
+	// filterItems - Holds the most recently selected health indicator
+	// filterSelect - Holds the most recently selected filter's state; initially, set to the filter's default state
 	// tempHide - DEBUG hide element
-	// showStateData - This boolean handles the switch toggling of states and counties
-	// fullRawData - Holds the seclected file's full data
+	// showStateData - Boolean; True if chart is currently show data for states - otherwise, county data is being shown 
+	// fullRawData - Captures the entirety of a selected column's data - used to compute dataset's min and max values
 	// chartName - Holds the chart's name --UNUSED--
 	// dataHolder - Holds the selected file's identifying data
 	// maxValue - Holds the selected column's max value
@@ -159,7 +163,7 @@ const ChartAttributes = new Vue({
 			// Gets the county list
 			let counties = this.getCountyList(this.fullRawData);
 
-			// populates the county div, thus resting the county/state list
+			// populates the county div, thus resetting the county/state list
 			this.addDataToUL(this.fullRawData, counties, countiesDiv);
 		},
 		/**
