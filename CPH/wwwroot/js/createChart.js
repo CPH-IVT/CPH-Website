@@ -8,55 +8,58 @@
 const ChartAttributes = new Vue({
 	el: '#Chart',
 	//****
-	// driver variables for processing chart creation
 	//---------------------------------------
-	// References to regions on the display
-	//    countiesDiv - References the HTML element for displaying the list of counties
-	//    chartArea - References the HTML element for displaying the percentile chart
-	// Strings for populating the display's regions
-	//    aggregateDataFull -     Gives the min, max, and average values for the current indicator,
-	//                               computed over the entirety of current regions of interest - i.e., states or counties
-	//    aggregateDataSelected - Gives the min, max, and average values for the current indicator,
-	//                               for each of the currently highlighted regions in the graph - i.e., states or counties
-	// listItems - Holds the list of items for the legend
-	// dotColorArray - This string holds the current dot color for use on the chart
-	// aggregateDisplay - Boolean; enables/disables display of the list of health indicators of type "aggregate"
-	// displayFilter - Boolean; enables/disables display of the list of elements for specifying type of health indicator to display
-	// displayHealthAttribute - Boolean; enables/disables display of the entire list of health indicators
-	// filterItems - Holds the most recently selected health indicator
-	// filterSelect - Holds the most recently selected filter's state; initially, set to the filter's default state
-	// tempHide - DEBUG hide element
-	// showStateData - Boolean; True if chart is currently show data for states - otherwise, county data is being shown 
-	// fullRawData - Captures the entirety of a selected column's data - used to compute dataset's min and max values
-	// chartName - Holds the chart's name --UNUSED--
-	// dataHolder - Holds the selected file's identifying data
-	// maxValue - Holds the selected column's max value
-	// minValue - Holds the selected column's minimum value
+	//					<<[driver variables for processing chart creation]>>
+	// countiesDiv - References the HTML element for displaying the list of counties
+	// chartArea - References the HTML element for displaying the percentile chart
 	// year - Holds the selected file's year
-	// healthAttribute - holds the user selected health attribute
-	// healthAttributeData - Holds the data values and percentiles of the selected health attribute
-	// selectedCounties - Holds the user selected counties
+	// dataHolder - Holds the selected file's identifying data - i.e., 'Aleutians East Borough', 'AK', '2013', '13'
+	// healthAttribute - holds a string of the user selected health attribute
+	// healthAttributeData - Holds the data values and percentiles of the selected health attribute - i.e., 1.096147823363608, 0
+	// fullRawData - Holds the selected file's unprocessed data as individual rows within an array
+	// selectedCounties - An array that holds all user selected counties
 	// marks - Holds the charts draw data
 	// plot - Holds the plot
 	// regionData - Holds the selected region --UNUSED--
-	// selectedRegions - Holds the selected region value
+	// chartName - Holds the chart's name --UNUSED--
+	// selectedRegions - Holds the selected region value --UNUSED--
 	//---------------------------------------
+	//					<<[Variables for hiding/displaying elements]>>
+	// DisplayAggregatePane - Boolean; enables/disables display of the list of health indicators of type "aggregate"
+	// displayFilter - Boolean; enables/disables display of the list of elements for specifying type of health indicator to display
+	// displayHealthAttribute - Boolean; enables/disables display of the entire list of health indicators
+	// toggleStateCounty - Boolean; True if chart is currently show data for states - otherwise, county data is being shown
+	// tempHide - DEBUG hide element used to hide region, untill finished
+	//---------------------------------------
+	//					<<[Aggregation variables]>>
+	// resultAggregateColumn - Holds the aggregated values of the entire selected column (health attribute) i.e., min, max, and average
+	// resultAggregateSelected - Holds the aggregated values of the selected rows (counties or states) within a column (health attribute) i.e., min, max, and average
+	// maxValue - Holds the selected column or rows max value
+	// minValue - Holds the selected column or rows minimum value
+	//---------------------------------------
+	//					<<[Filtering variables]>>
+	// filterAttributeOptions - Holds the available attribute filter options
+	// filterSelect - Holds the most recently selected filter's state; initially, set to the filter's default state
+	//---------------------------------------
+	//					<<[UI Elements]>>
+	// legendListItems - Holds selected counties string titles for display in the legend
+	// dotColorArray - Holds an array of string color values that are linked in parallel with each selected countie item
 	//****
 
 	data: {
 		countiesDiv: document.getElementById('Counties'),
 		chartArea: document.getElementById("ChartArea"),
-		aggregateDataFull: '',
-		aggregateDataSelected: '',
-		listItems: [],
+		resultAggregateColumn: '',
+		resultAggregateSelected: '',
+		legendListItems: [],
 		dotColorArray: [],
-		aggregateDisplay: false,
+		DisplayAggregatePane: false,
 		displayFilter: false,
 		displayHealthAttribute: false,
-		filterItems: ["All", "Raw", "Numerator", "Denominator", "Ratio"],
+		filterAttributeOptions: ["All", "Raw", "Numerator", "Denominator", "Ratio"],
 		filterSelect: 'All',
 		tempHide: false,
-		showStateData: false,
+		toggleStateCounty: false,
 		fullRawData: [],
 		chartName: null,
 		dataHolder: null,
@@ -69,20 +72,207 @@ const ChartAttributes = new Vue({
 		marks: [],
 		plot: undefined,
 		regionData: undefined,
-		selectedRegions: []
+		selectedRegions: [],
+		regionSaveLoadSelect: "",
+		fileReader: new FileReader()
 	},
 	methods: {
+
+
+
+
+
+
+
+
+		readFile(event) {
+
+
+			let statusIndex = 0;	// The array index temporarily holding the year or state county status
+
+
+			//
+			this.fileReader.onload = (txtToRead) => {
+
+				// get the content of the txt file that the user selected
+				let contents = txtToRead.target.result;
+
+				// Removes utf-8 BOM
+				contents = contents.replace(/^\uFEFF/gm, "").replace(/^\u00EF?\u00BB\u00BF/gm, "");
+
+				// split the txt on the commas
+				let rows = contents.split("',");
+
+				// Removes unneeded characters from the strings
+				for (let i = 0; i < rows.length; i++) {				
+					rows[i] = rows[i].replace(" '", '');
+					rows[i] = rows[i].replace('"', '');
+					rows[i] = rows[i].replace("'", '');
+                }
+
+
+				// Compares the uploaded file's year to the selected year
+				if (rows[statusIndex] === this.year) {
+					rows.shift();
+				} else if (rows[statusIndex] != this.year) {
+					console.log('Error: Mismatch Between Selected Year and File\'s Year');
+					alert('Error: Mismatch Between Selected Year and File\'s Year');
+					return;
+				} else {
+					console.log('Error: Unknown Year Status')
+					alert('Error: Unknown Year Status')
+                }
+
+				// Compares the uploaded file's State/County status to the selected status
+				if (rows[statusIndex] === this.toggleStateCounty.toString()) {
+					rows.shift();
+				} else if (rows[statusIndex] != this.toggleStateCounty.toString()) {
+					console.log('Error: Mismatch Between Selected State/County Status and File\'s State/County Status');
+					alert('Error: Mismatch Between Selected State/County Status and File\'s State/County Status');
+					return;
+				} else {
+					console.log('Error: Unknown County/State Status')
+					alert('Error: Unknown County/State Status')
+                }
+
+				//
+				//this.resetCountiesStateList();
+				//this.clearlegend();
+				this.selectedCounties = rows;
+
+				let countiesDiv = document.getElementById("Counties");
+				console.log(document.getElementById("Counties").getElementsByTagName('li'))
+				document.getElementById("Counties").getElementsByTagName('li')[3].firstChild.checked = true;
+				document.getElementById("Counties").getElementsByTagName('li')[2].firstChild.checked = true;
+				document.getElementById("Counties").getElementsByTagName('li')[10].firstChild.checked = true;
+				console.log(document.getElementById("Counties").getElementsByTagName('li')[0].firstChild.id)
+				//console.log(this.countiesDiv)
+				//console.log(countiesDiv)
+
+				//clickEvent["target"].checked == false
+				//console.log(clickEvent["target"].checked)
+
+
+
+
+
+/*				let countiesDiv = document.getElementById("Counties");
+				countiesDiv.removeChild(countiesDiv.firstChild);*/
+				
+/*				for (var i = 0; i < countiesDiv.getElementsByTagName('li').length; i++) {
+					countiesDiv.getElementsByTagName('li')[i].checked = true;
+					console.log(countiesDiv.getElementsByTagName('li')[i])
+				}
+				console.log(countiesDiv.getElementsByTagName('li'))*/
+
+
+				
+
+/*				
+ 				let inputs = document.getElementById('Counties').getElementsByTagName('li');
+ 				inputs[0].checked = false;
+				document.getElementById('Counties').getElementsByTagName('li')[0].checked = false;
+				document.getElementById('Counties').getElementsByTagName('li')[1].checked = true;
+				console.log(inputs[0])
+				console.log(inputs[1])
+				console.log(inputs)*/
+
+			/*				for (var i = 0; i < inputs.length; i++) {
+				//inputs[i].checked = false;
+				console.log(inputs[i])
+			}*/
+
+/*
+				let countiesDiv = document.getElementById("Counties");
+				this.removeAllChildNodes(countiesDiv)*/
+
+
+/*				while (this.countiesDiv.firstChild) {
+					this.countiesDiv.removeChild(this.countiesDiv.firstChild);
+				}*/
+
+
+
+
+				//$("Counties")[0].checked = true
+
+/*				var inputs = this.countiesDiv
+				for (var i = 0; i < inputs.length; i++) {
+					inputs[i].checked = false;
+					console.log(inputs[i])
+				}*/
+
+
+
+				//document.getElementById("Counties").checked = false;
+			}
+			this.fileReader.readAsBinaryString(event.target.files[0]);
+
+
+
+
+
+
+
+/*			this.file = this.$refs.doc.files[0];
+
+			const reader = new FileReader();
+
+			
+			if (this.file.name.includes(".txt")) {
+
+				reader.onload = (res) => {
+
+					
+					this.selectedCounties.push(res.target.result);
+					console.log(this.selectedCounties)
+
+					
+				};
+
+
+
+				reader.onerror = (err) => console.log(err);
+				reader.readAsText(this.file);
+			} else {
+
+
+
+				reader.onload = (res) => {
+					console.log(res.target.result);
+				};
+
+
+
+				reader.onerror = (err) => console.log(err);
+				reader.readAsText(this.file);
+			}*/
+
+
+
+
+		},
+
+
+
+
+
+
 
 		/**
 		 * Capitalizes the first latter of every word in a sentance
 		 * @param {any} str
 		 */
 		capitalizer(str) {
-			let words = str.split(" ");
-			for (let i = 0; i < words.length; i++) {
-				words[i] = words[i][0].toUpperCase() + words[i].substr(1);
-			};
-			return words.join(" ");
+			if (str != null) {
+				let words = str.split(" ");
+				for (let i = 0; i < words.length; i++) {
+					words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+				};
+				return words.join(" ");
+			} else {
+				return "";
+            }
         },
 
 		/**
@@ -121,7 +311,7 @@ const ChartAttributes = new Vue({
 		*/
 		countyStateToggle() {
 			// Negates the boolean
-			this.showStateData = !this.showStateData;
+			this.toggleStateCounty = !this.toggleStateCounty;
 			this.resetCountiesStateList();
 			this.clearlegend();
 		},
@@ -129,22 +319,22 @@ const ChartAttributes = new Vue({
 		* Clears the chart area
 		*/
 		clearChartArea() {
-			this.aggregateDisplay = false;
+			this.DisplayAggregatePane = false;
 			this.healthAttribute = null;
 		},
 		/**
 		* Clears the Legend
 		*/
 		clearlegend() {
-			this.listItems = [];
+			this.legendListItems = [];
 		},
 
 		/**
 		* Clears the aggregate data fields
 		*/
 		clearAggregateData() {
-			this.aggregateDataFull = '';
-			this.aggregateDataSelected = '';
+			this.resultAggregateColumn = '';
+			this.resultAggregateSelected = '';
 		},
 
 		/** 
@@ -171,7 +361,7 @@ const ChartAttributes = new Vue({
 		* Receives an array of objects, and populates an array with the counties found within
 		*/
 		createLegendList(arrayOfObjects) {
-			this.listItems = [];
+			this.legendListItems = [];
 			const infoIndex = 0;
 			const percentileIndex = 0;
 			const columnPositionCounty = 1;
@@ -179,10 +369,10 @@ const ChartAttributes = new Vue({
 
 			//Builds a list of strings that contain the legend information
 			for (let i = 0; i < arrayOfObjects.length; i++) {
-				this.listItems.push(arrayOfObjects[i].info[infoIndex][columnPositionCounty] + ", " + arrayOfObjects[i].info[infoIndex][columnPositionState] + " || " + parseInt(arrayOfObjects[i].percentileInfo[percentileIndex]));
+				this.legendListItems.push(arrayOfObjects[i].info[infoIndex][columnPositionCounty] + ", " + arrayOfObjects[i].info[infoIndex][columnPositionState] + " || " + parseInt(arrayOfObjects[i].percentileInfo[percentileIndex]));
 			}
 
-			return this.listItems;
+			return this.legendListItems;
 		},
 		/**
 		 * @param {object} dataObject
@@ -221,7 +411,7 @@ const ChartAttributes = new Vue({
 
 			// Creates header
 			let headerArray = ["Total", "Mean", "Min", "Max", "Range", "Count"];
-			headerArray.unshift(`${this.healthAttribute}`)
+			headerArray.unshift(`${this.capitalizer(this.healthAttribute)}`)
 
 			// Pushes aggregate data to the math array
 			let mathArray = [0];
@@ -258,26 +448,26 @@ const ChartAttributes = new Vue({
 			const valueIndex = 1;
 
 			if (dataArray[isFullColumnFlag] === true) {
-				// Populates the aggregateDisplay element
-				this.aggregateDataFull = (`${dataArray[dataIndex][attributeHeader][attributeHeader]}\n`);
+				// Populates the DisplayAggregatePane element
+				this.resultAggregateColumn = (`${dataArray[dataIndex][attributeHeader][attributeHeader]}\n`);
 				for (let i = 1; i < dataArray[dataIndex].length; i++) {
-					this.aggregateDataFull += (`${dataArray[dataIndex][i][nameIndex]} : ${dataArray[dataIndex][i][valueIndex]}\n`);
+					this.resultAggregateColumn += (`${dataArray[dataIndex][i][nameIndex]} : ${dataArray[dataIndex][i][valueIndex]}\n`);
 				};
-				// Sets the aggregateDisplay element visible
-				this.aggregateDisplay = true;
-				return this.aggregateDataFull;
+				// Sets the DisplayAggregatePane element visible
+				this.DisplayAggregatePane = true;
+				return this.resultAggregateColumn;
 			} else if (dataArray[isFullColumnFlag] == false) {
 				// Checks if the array is empty, and returns an empty string if true. An empty array often occurs when a county is unselected 
 				if (dataArray[dataIndex].length === 0) {
-					this.aggregateDataSelected = "";
-					return this.aggregateDataSelected;
+					this.resultAggregateSelected = "";
+					return this.resultAggregateSelected;
 				}
-				// Populates the aggregateDisplay element
-				this.aggregateDataSelected = (`${dataArray[dataIndex][attributeHeader][attributeHeader]}\n`);
+				// Populates the DisplayAggregatePane element
+				this.resultAggregateSelected = (`${dataArray[dataIndex][attributeHeader][attributeHeader]}\n`);
 				for (let i = 1; i < dataArray[dataIndex].length; i++) {
-					this.aggregateDataSelected += (`${dataArray[dataIndex][i][nameIndex]} : ${dataArray[dataIndex][i][valueIndex]}\n`);
+					this.resultAggregateSelected += (`${dataArray[dataIndex][i][nameIndex]} : ${dataArray[dataIndex][i][valueIndex]}\n`);
 				};
-				return this.aggregateDataSelected;
+				return this.resultAggregateSelected;
             }
         },
 		/**
@@ -384,9 +574,9 @@ const ChartAttributes = new Vue({
 					};
 				}
 
-				// Checks the state of showStateData and skips the unwanted data
+				// Checks the state of toggleStateCounty and skips the unwanted data
 				if (ulId.id === "Counties") {
-					if (this.showStateData) {
+					if (this.toggleStateCounty) {
 						if (Object.values(dataset[i])[countyFIPS] != "0") {
 							continue;
 						};
@@ -512,7 +702,6 @@ const ChartAttributes = new Vue({
 
 			// If a box is enchecked, run this code
 			if (clickEvent["target"].checked == false) {
-
 				// Gets the index of the item to be removed
 				let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
 
@@ -824,7 +1013,38 @@ const ChartAttributes = new Vue({
 	    */
 		year() {
 			this.clearChartArea();
-        }
+		},
 
+		/** 
+		*
+		*/
+		regionSaveLoadSelect() {
+			if (this.regionSaveLoadSelect != '') {
+				if (this.regionSaveLoadSelect === "SAVE") {
+
+					//
+					if (this.selectedCounties.length === 0) {
+						alert("No Selected Counties/States to Save")
+					} else {
+						console.log(this.selectedCounties);
+					}
+				} else if (this.regionSaveLoadSelect === "LOAD") {
+					//
+
+					this.readFile();
+
+					this.selectedCounties.push("Bibb County, AL", "Barbour County, AL", "Choctaw County, AL");
+				} else {
+					//
+					alert("Invalid Save/Load Option Selected");
+                }
+
+
+
+			
+            }
+			
+			this.regionSaveLoadSelect = '';
+        }
 	}
 })
