@@ -84,12 +84,10 @@
     
     
     
-    -<input type="file" ref="doc" @@change="readFile($event)" />
-                   
-                
+    <input type="file" ref="doc" @@input="readFile($event)" id="readFile"/>
 
 
-
+    <button @@click="writeFile">Download</button>
 
 
 @*    <select v-model="regionSaveLoadSelect">

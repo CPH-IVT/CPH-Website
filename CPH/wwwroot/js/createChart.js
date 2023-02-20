@@ -74,24 +74,18 @@ const ChartAttributes = new Vue({
 		regionData: undefined,
 		selectedRegions: [],
 		regionSaveLoadSelect: "",
-		fileReader: new FileReader()
+		fileReader: new FileReader(),
+		writeFileName: ''
 	},
 	methods: {
-
-
-
-
-
-
-
-
+		/**
+		 * Reads the user selected file, draws the chart data
+		 * @param {object} event
+		 */
 		readFile(event) {
-
-
 			let statusIndex = 0;	// The array index temporarily holding the year or state county status
 
-
-			//
+			// Reads the file.
 			this.fileReader.onload = (txtToRead) => {
 
 				// get the content of the txt file that the user selected
@@ -104,12 +98,11 @@ const ChartAttributes = new Vue({
 				let rows = contents.split("',");
 
 				// Removes unneeded characters from the strings
-				for (let i = 0; i < rows.length; i++) {				
+				for (let i = 0; i < rows.length; i++) {
 					rows[i] = rows[i].replace(" '", '');
 					rows[i] = rows[i].replace('"', '');
 					rows[i] = rows[i].replace("'", '');
-                }
-
+				}
 
 				// Compares the uploaded file's year to the selected year
 				if (rows[statusIndex] === this.year) {
@@ -121,7 +114,7 @@ const ChartAttributes = new Vue({
 				} else {
 					console.log('Error: Unknown Year Status')
 					alert('Error: Unknown Year Status')
-                }
+				}
 
 				// Compares the uploaded file's State/County status to the selected status
 				if (rows[statusIndex] === this.toggleStateCounty.toString()) {
@@ -133,127 +126,74 @@ const ChartAttributes = new Vue({
 				} else {
 					console.log('Error: Unknown County/State Status')
 					alert('Error: Unknown County/State Status')
-                }
+				}
 
-				//
-				//this.resetCountiesStateList();
-				//this.clearlegend();
+				// Clears previous dots and legend
+				this.resetCountiesStateList();
+				this.clearlegend();
+
+				// Sort the array and adds the uploaded dots and legend
+				rows.sort();
 				this.selectedCounties = rows;
 
-				let countiesDiv = document.getElementById("Counties");
-				console.log(document.getElementById("Counties").getElementsByTagName('li'))
-				document.getElementById("Counties").getElementsByTagName('li')[3].firstChild.checked = true;
-				document.getElementById("Counties").getElementsByTagName('li')[2].firstChild.checked = true;
-				document.getElementById("Counties").getElementsByTagName('li')[10].firstChild.checked = true;
-				console.log(document.getElementById("Counties").getElementsByTagName('li')[0].firstChild.id)
-				//console.log(this.countiesDiv)
-				//console.log(countiesDiv)
 
-				//clickEvent["target"].checked == false
-				//console.log(clickEvent["target"].checked)
-
-
-
-
-
-/*				let countiesDiv = document.getElementById("Counties");
-				countiesDiv.removeChild(countiesDiv.firstChild);*/
-				
-/*				for (var i = 0; i < countiesDiv.getElementsByTagName('li').length; i++) {
-					countiesDiv.getElementsByTagName('li')[i].checked = true;
-					console.log(countiesDiv.getElementsByTagName('li')[i])
-				}
-				console.log(countiesDiv.getElementsByTagName('li'))*/
-
-
-				
-
-/*				
- 				let inputs = document.getElementById('Counties').getElementsByTagName('li');
- 				inputs[0].checked = false;
-				document.getElementById('Counties').getElementsByTagName('li')[0].checked = false;
-				document.getElementById('Counties').getElementsByTagName('li')[1].checked = true;
-				console.log(inputs[0])
-				console.log(inputs[1])
-				console.log(inputs)*/
-
-			/*				for (var i = 0; i < inputs.length; i++) {
-				//inputs[i].checked = false;
-				console.log(inputs[i])
-			}*/
-
-/*
-				let countiesDiv = document.getElementById("Counties");
-				this.removeAllChildNodes(countiesDiv)*/
-
-
-/*				while (this.countiesDiv.firstChild) {
-					this.countiesDiv.removeChild(this.countiesDiv.firstChild);
-				}*/
-
-
-
-
-				//$("Counties")[0].checked = true
-
-/*				var inputs = this.countiesDiv
-				for (var i = 0; i < inputs.length; i++) {
-					inputs[i].checked = false;
-					console.log(inputs[i])
-				}*/
-
-
-
-				//document.getElementById("Counties").checked = false;
-			}
-			this.fileReader.readAsBinaryString(event.target.files[0]);
-
-
-
-
-
-
-
-/*			this.file = this.$refs.doc.files[0];
-
-			const reader = new FileReader();
-
-			
-			if (this.file.name.includes(".txt")) {
-
-				reader.onload = (res) => {
-
-					
-					this.selectedCounties.push(res.target.result);
-					console.log(this.selectedCounties)
-
-					
+				// Checks the checkboxes based upon the the items found in the uploaded file.
+				let uploadIndex = 0;
+				for (let i = 0; i < document.getElementById("Counties").getElementsByTagName('li').length; i++) {
+					if (document.getElementById("Counties").getElementsByTagName('li')[i].firstChild.id === this.selectedCounties[uploadIndex]) {
+						document.getElementById("Counties").getElementsByTagName('li')[i].firstChild.checked = true;
+						uploadIndex++;
+						if (this.selectedCounties[uploadIndex] === undefined) {
+							break;
+						};
+					};
 				};
-
-
-
-				reader.onerror = (err) => console.log(err);
-				reader.readAsText(this.file);
+				document.getElementById("readFile").value = [];
+			};
+			if (event.target.files[0] === undefined) {
+				return;
 			} else {
-
-
-
-				reader.onload = (res) => {
-					console.log(res.target.result);
-				};
-
-
-
-				reader.onerror = (err) => console.log(err);
-				reader.readAsText(this.file);
-			}*/
-
-
-
-
+				this.fileReader.readAsBinaryString(event.target.files[0]);
+			}
 		},
 
+		/**
+		 * Saves the user selected counties/states to a file
+		 * @param {any} event
+		 */
+		writeFile() {
 
+			// Creates and captures user input for the save's file name
+			let userResponse = prompt("Please Enter File Save Name:", "ChartSave");
+			if (userResponse == null) {
+				return
+			} else if (userResponse == "") {
+				alert("No Name Entered. File Not Saved")
+				return
+            } else {
+				this.writeFileName = userResponse + '.txt'
+			}
+
+			// Formats and writes the save file
+			let text = `\'${this.year}\', \'${this.toggleStateCounty.toString()}\', `
+			for (let i = 0; i < this.selectedCounties.length; i++) {
+				text += "'";
+				text += this.selectedCounties[i];
+				text += "'";
+				if (i != this.selectedCounties.length - 1) {
+					text += ", "
+				};
+			};
+
+			// Create temporarily element for file saving
+			let element = document.createElement('a');
+			element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+			element.setAttribute('download', this.writeFileName);
+			element.style.display = 'none';
+			document.body.appendChild(element);
+			element.click();
+			document.body.removeChild(element);
+        },
 
 
 
