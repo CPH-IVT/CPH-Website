@@ -183,14 +183,7 @@ body {
     padding: 20px;
 }
 
-.countryStateSwtich {
-    margin-left: 7%;
-}
-
-#attributeFilter {
-    margin-left: 8%;
-}
-
+/*----------CreateChart: Switch Settings----------*/
 /* Switch positional controls */
 .switch {
     position: relative;
@@ -198,6 +191,7 @@ body {
     width: 10%;
     height: 34px;
 }
+
 .switch input {
         opacity: 0;
         width: 0;
@@ -251,6 +245,65 @@ input:checked + .slider:before {
 .slider.round {
     border-radius: 34px;
 }
+
 .slider.round:before {   
     border-radius: 50%;
+}
+
+/*----------CreateChart: Label Options and Controls----------*/
+.labelYearSelect, Year {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.labelAttributeFilter, attributeFilter {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.countryStateSwtich {
+}
+
+.btnClear {
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    color: black;
+    border-radius: 30%;
+    background-color: silver;
+}
+
+.labelRegionSaveLoad, regionSaveLoad {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+/*----------CreateChart: Label Options and Controls Divs/Spans----------*/
+.divYear {
+    display: inline-block;
+}
+
+.divAttributeFilter {
+    display: inline-block;
+    padding-left: 8%;
+}
+
+.countryStateSwtich {
+    padding-left: 7%;
+}
+
+.divBtnClear {
+    display: block;
+    margin-left: 48%;
+    margin-bottom: -2.6%;
+    z-index: 1;
+    position: relative;
+}
+
+.divRegionSaveLoad {
+    display: inline-block;
+    padding-left: 10%;
 }

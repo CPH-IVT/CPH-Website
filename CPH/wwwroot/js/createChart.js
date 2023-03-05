@@ -44,6 +44,11 @@ const ChartAttributes = new Vue({
 	//					<<[UI Elements]>>
 	// legendListItems - Holds selected counties string titles for display in the legend
 	// dotColorArray - Holds an array of string color values that are linked in parallel with each selected countie item
+	//---------------------------------------
+	//					<<[Save/Load Variables]>>
+	// regionSaveLoadSelect - Holds the string LOAD or SAVE based upon user selection. Initial state is empty string
+	// fileReader - Holds the data to be written to a file
+	// writeFileName - Holds user inputed file name
 	//****
 
 	data: {
@@ -78,6 +83,15 @@ const ChartAttributes = new Vue({
 		writeFileName: ''
 	},
 	methods: {
+
+		testFun() {
+
+			this.resetCountiesStateList();
+			this.clearlegend();
+			this.clearAggregateData();
+        },
+
+
 		/**
 		 * Reads the user selected file, draws the chart data
 		 * @param {object} event
@@ -195,10 +209,6 @@ const ChartAttributes = new Vue({
 			document.body.removeChild(element);
         },
 
-
-
-
-
 		/**
 		 * Capitalizes the first latter of every word in a sentance
 		 * @param {any} str
@@ -254,6 +264,7 @@ const ChartAttributes = new Vue({
 			this.toggleStateCounty = !this.toggleStateCounty;
 			this.resetCountiesStateList();
 			this.clearlegend();
+			this.clearAggregateData();
 		},
 		/**
 		* Clears the chart area
@@ -270,10 +281,9 @@ const ChartAttributes = new Vue({
 		},
 
 		/**
-		* Clears the aggregate data fields
+		* Clears the selected aggregate data field
 		*/
 		clearAggregateData() {
-			this.resultAggregateColumn = '';
 			this.resultAggregateSelected = '';
 		},
 
@@ -956,35 +966,28 @@ const ChartAttributes = new Vue({
 		},
 
 		/** 
-		*
+		* This function watches for changes to the year variable, and executes the following code
 		*/
 		regionSaveLoadSelect() {
 			if (this.regionSaveLoadSelect != '') {
 				if (this.regionSaveLoadSelect === "SAVE") {
-
-					//
 					if (this.selectedCounties.length === 0) {
 						alert("No Selected Counties/States to Save")
 					} else {
-						console.log(this.selectedCounties);
+						// Calls the writeFile function, so that a user can save chart state
+						this.writeFile();
 					}
 				} else if (this.regionSaveLoadSelect === "LOAD") {
-					//
-
-					this.readFile();
-
-					this.selectedCounties.push("Bibb County, AL", "Barbour County, AL", "Choctaw County, AL");
+					// Gets the hidden button from the DOM and clicks it
+					// This results in the readfile function being called
+					const elem = document.getElementById("readFile")
+					elem.click();
 				} else {
-					//
 					alert("Invalid Save/Load Option Selected");
                 }
-
-
-
-			
             }
-			
+			// Resets the variable to its default state of empty string
 			this.regionSaveLoadSelect = '';
-        }
+		}
 	}
 })

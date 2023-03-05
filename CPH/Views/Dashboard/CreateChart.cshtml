@@ -10,7 +10,7 @@
             </div>
             <input v-model="chartName" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
         </div>*@
-    <div class="row" v-show="DisplayAggregatePane" v-cloak>
+    <div class="row" v-show="DisplayAggregatePane" v-cloak id="divAggregate">
         <!--Main Chart-->
         <div class="float-container">
             <div class="float-child-chart">
@@ -36,28 +36,39 @@
             </div>
         </div>
     </div>
-    <div>
-        <label for="Year">Year Select</label>
-        <label style="margin-left: 13.5%" for="attributeFilter" v-show="displayFilter" v-cloak>Attribute Filter</label>
-        <label style="margin-left: 36.0%" for="regionSaveLoad" v-show="DisplayAggregatePane" v-cloak>Region Save/Load</label>
-    </div>
-@* The files are named the year that they represent. *@
+
 <div>
-    <!--Select year dropdown-->
-    <select @@change="setChartAttributes($event)" id="Year" name="Year">
-        <option value="SelectYear">Select a Year</option>
-        @foreach (var file in (string[])ViewData["Files"])
-        {
-            <option value="@file">@file</option>
-        }
-    </select>
-    <!--Select attribute filter dropdown-->
-    <select name="attributeFilter" id="attributeFilter" v-show="displayFilter" v-cloak v-model="filterSelect">
-        <option disabled value="">Please select one</option>
-        <option v-for="(filterItem, index) in filterAttributeOptions" :key="filterItem" :value="filterItem">
-            {{filterItem}}
-        </option>
-    </select>
+
+
+    <!--Clear Button-->
+    <div class="divBtnClear" v-show="DisplayAggregatePane" v-cloak>
+        <button @@click="testFun()" class="btnClear" v-show="DisplayAggregatePane" v-cloak>CLEAR</button>
+    </div>
+
+
+
+    @* The files are named the year that they represent. *@
+    <div class="divYear">
+        <!--Select year dropdown-->
+        <label class="labelYearSelect" for="Year" v-cloak>Year Select</label>
+        <select @@change="setChartAttributes($event)" id="Year" name="Year" v-cloak>
+            <option value="SelectYear">Select a Year</option>
+            @foreach (var file in (string[])ViewData["Files"])
+            {
+                <option value="@file">@file</option>
+            }
+        </select>
+    </div>
+    <div class="divAttributeFilter" v-cloak>
+        <!--Select attribute filter dropdown-->
+        <label class="labelAttributeFilter" for="attributeFilter" v-show="displayFilter" v-cloak>Attribute Filter</label>
+        <select name="attributeFilter" id="attributeFilter" v-show="displayFilter" v-cloak v-model="filterSelect">
+            <option disabled value="">Please select one</option>
+            <option v-for="(filterItem, index) in filterAttributeOptions" :key="filterItem" :value="filterItem">
+                {{filterItem}}
+            </option>
+        </select>
+    </div>
     <!--county state switch-->
     <span class="countryStateSwtich" v-show="DisplayAggregatePane" v-cloak>
         <label for="counties">Counties</label>
@@ -67,49 +78,17 @@
         </label>
         <label for="states">States</label>
     </span>
-
-
-
-
-    <!--testing
-    <select name="regionSaveLoad" id="regionSaveLoad" v-show="DisplayAggregatePane" v-cloak v-model="regionSaveLoadSelect">
-        <option disabled value="">Please select one</option>
-        <option value="SAVE">Save</option>
-        <option value="LOAD">Load</option>
-    </select>-->
-
-
-    <!--<input @@change="setAlteredCsv($event)" id="OriginalFile" type="file" asp-for="OriginalFile" class="form-control" accept=".csv" />-->
-    
-    
-    
-    
-    <input type="file" ref="doc" @@input="readFile($event)" id="readFile"/>
-
-
-    <button @@click="writeFile">Download</button>
-
-
-@*    <select v-model="regionSaveLoadSelect">
-        <option disabled value="">Please select one</option>
-        <option value="SAVE">Save</option>
-        <option value="LOAD">Load</option>
-    </select>*@
-
-
-
-
-
-
-
+    <!--Save/Load-->
+    <div class="divRegionSaveLoad" v-cloak>
+        <label class="labelRegionSaveLoad" for="regionSaveLoad" v-show="DisplayAggregatePane" v-cloak>Regions</label>
+        <select v-model="regionSaveLoadSelect" v-show="DisplayAggregatePane" v-cloak class="regionSaveLoad">
+            <option disabled value="">File</option>
+            <option value="SAVE">Save</option>
+            <option value="LOAD">Load</option>
+        </select>
+        <input type="file" @@input="readFile($event)" id="readFile" style="display: none;" accept=".txt" />
+    </div>
 </div>
-
-
-
-
-
-
-
     <!--Select health attribute list-->
     <div class="row">
         <div class="col-4" v-show="displayHealthAttribute" v-cloak>
