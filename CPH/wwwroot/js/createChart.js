@@ -20,16 +20,13 @@ const ChartAttributes = new Vue({
 	// selectedCounties - An array that holds all user selected counties
 	// marks - Holds the charts draw data
 	// plot - Holds the plot
-	// regionData - Holds the selected region --UNUSED--
-	// chartName - Holds the chart's name --UNUSED--
-	// selectedRegions - Holds the selected region value --UNUSED--
 	//---------------------------------------
 	//					<<[Variables for hiding/displaying elements]>>
 	// DisplayAggregatePane - Boolean; enables/disables display of the list of health indicators of type "aggregate"
 	// displayFilter - Boolean; enables/disables display of the list of elements for specifying type of health indicator to display
 	// displayHealthAttribute - Boolean; enables/disables display of the entire list of health indicators
 	// toggleStateCounty - Boolean; True if chart is currently show data for states - otherwise, county data is being shown
-	// tempHide - DEBUG hide element used to hide region, untill finished
+	// tempHide - DEBUG hide element used to hide region, until finished
 	//---------------------------------------
 	//					<<[Aggregation variables]>>
 	// resultAggregateColumn - Holds the aggregated values of the entire selected column (health attribute) i.e., min, max, and average
@@ -66,7 +63,6 @@ const ChartAttributes = new Vue({
 		tempHide: false,
 		toggleStateCounty: false,
 		fullRawData: [],
-		chartName: null,
 		dataHolder: null,
 		maxValue: 0,
 		minValue: 0,
@@ -76,22 +72,19 @@ const ChartAttributes = new Vue({
 		selectedCounties: [],
 		marks: [],
 		plot: undefined,
-		regionData: undefined,
-		selectedRegions: [],
 		regionSaveLoadSelect: "",
 		fileReader: new FileReader(),
 		writeFileName: ''
 	},
 	methods: {
-
-		testFun() {
-
+		/**
+		* This function clears the selected counties, legend, and aggregate fields
+		*/
+		clearButton() {
 			this.resetCountiesStateList();
 			this.clearlegend();
 			this.clearAggregateData();
         },
-
-
 		/**
 		 * Reads the user selected file, draws the chart data
 		 * @param {object} event
@@ -426,15 +419,12 @@ const ChartAttributes = new Vue({
 		 */
 		async setChartAttributes(year) {
 			this.year = year.target.value;
-			await this.setRegionData(this.year);
 
 			//Get the columns div
 			let healthAttrs = document.getElementById("HealthAttrs");
 			let countiesDiv = document.getElementById("Counties");
-			let regionsDiv = document.getElementById("Regions");
 			let healthAttrsFieldIsEmpty = this.checkIfNodeIsEmpty(healthAttrs);
 			let countiesFieldIsEmpty = this.checkIfNodeIsEmpty(countiesDiv);
-			let regionsFieldIsEmpty = this.checkIfNodeIsEmpty(regionsDiv);
 
 			if (countiesFieldIsEmpty === false) {
 				this.removeAllChildNodes(countiesDiv);
@@ -443,12 +433,6 @@ const ChartAttributes = new Vue({
 			if (healthAttrsFieldIsEmpty === false) {
 				this.removeAllChildNodes(healthAttrs);
 			}
-
-			if (regionsFieldIsEmpty === false) {
-				this.removeAllChildNodes(regionsDiv);
-			}
-
-			let regionNames = await this.getRegionNames(this.year);
 
 			// Reads the selected file into the "data" variable
 			await d3.csv(`../uploads/${year.target.value}.csv`)
@@ -459,7 +443,6 @@ const ChartAttributes = new Vue({
 
 					// Add to the html list.
 					this.addDataToUL(data, data.columns, healthAttrs, "radio"); // data.columns are the health attributes from the csv file.
-					this.addDataToUL(data, regionNames, regionsDiv);
 					this.addDataToUL(data, counties, countiesDiv);
 				})
 				.catch((error) => {
@@ -472,32 +455,6 @@ const ChartAttributes = new Vue({
 
 			// Displays the health attribute list
 			this.displayHealthAttributeToggle();
-		},
-		/**
-		* Sets the region data - TODO: UNUSED 
-		*/
-		async setRegionData() {
-			let regionData = await fetch('/Dashboard/ReadAllRegions')
-				.then((response) => { return response.json(); })
-				.then(data => { return data.filter(each => each.year === this.year) })
-				.catch(error => {
-					console.error(error);
-				});
-
-			this.regionData = regionData;
-		},
-		/**
-		* @param {int} year
-		* Gets the region data - TODO: UNUSED
-		*/
-		async getRegionNames(year) {
-			let regionNames = await fetch('/Dashboard/ReadAllRegions')
-				.then((response) => { return response.json(); })// handle the response
-				.then(data => { return data.filter(each => each.year === this.year).map(x => x.name) })// then read the data
-				.catch(error => {
-					console.error(error);
-				});
-			return regionNames;
 		},
 		/**
 		 * @param {Array} dataset
@@ -593,33 +550,6 @@ const ChartAttributes = new Vue({
 		 */
 		checkIfNodeIsEmpty(node) {
 			return node.childNodes.length === 0;
-		},
-		/**
-		 * @param {any} event
-		 * Handles the reading of the selected region checkbox - TODO: UNUSED
-		 */
-		readRegionCheckbox(event) {
-			if (clickEvent["target"].checked) {
-
-				// Removing make sure this doesn't blow up.
-				//let countyAndState = this.parseCountyAndStateName(clickEvent["target"].value);
-				this.selectedRegions.push(clickEvent["target"].value);
-				return;
-			}
-
-			//if (!clickEvent["target"].checked) {
-			let indexOfItemToRemove = this.selectedRegions.indexOf(clickEvent["target"].value);
-
-			// as long as the item is found in the array, continue. 
-			if (indexOfItemToRemove > -1) {
-				// splice the item from the array to remove it. 
-				this.selectedRegions.splice(indexOfItemToRemove, indexOfItemToRemove);
-			}
-
-			if (indexOfItemToRemove === 0) {
-				this.selectedRegions.shift();
-			}
-			//}
 		},
 		/**
 		 * This function handles the health attribute click event logic
@@ -823,9 +753,11 @@ const ChartAttributes = new Vue({
 				return Plot.plot({
 					margin: 60,
 					grid: true,
-					height: 700,
+					height: 900,
+					width: 1000,
 					style: {
-						fontSize: "16px"
+						fontSize: "18px",
+						marginLeft: "1.5%",
 					},
 					x: {
 						ticks: 10,
@@ -837,7 +769,7 @@ const ChartAttributes = new Vue({
 					marks: [
 						Plot.ruleY(plotMarksArray[0].data),
 						Plot.ruleX(plotMarksArray[1].data),
-						Plot.line(plotMarksArray[2].data),
+						Plot.line(plotMarksArray[2].data, { strokeWidth: 2.5, stroke: "black"}),
 						Plot.dot(dotArray, {opacity: 0.8, stroke: "black", r: 10, strokeWidth: 2, fill: this.dotColorArray})
 					]
 				});
@@ -846,9 +778,11 @@ const ChartAttributes = new Vue({
 				return Plot.plot({
 					margin: 60,
 					grid: true,
-					height: 700,
+					height: 900,
+					width: 1000,
 					style: {
-						fontSize: "16px"
+						fontSize: "18px",
+						marginLeft: "1.5%",
 					},
 					x: {
 						ticks: 10,
@@ -860,7 +794,7 @@ const ChartAttributes = new Vue({
 					marks: [
 						Plot.ruleY(plotMarksArray[0]),
 						Plot.ruleX(plotMarksArray[1]),
-						Plot.line(this.healthAttributeData),
+						Plot.line(this.healthAttributeData, { strokeWidth: 2.5, stroke: "black" }),
 					]
 				});
 			}
@@ -907,7 +841,6 @@ const ChartAttributes = new Vue({
 				Plot.line(this.healthAttributeData),
 			]);
 
-			//this.plot.style({fontSize: 25});
 			// Insert content into the #ChartArea Element.
 			this.chartArea.appendChild(this.plot);
 
