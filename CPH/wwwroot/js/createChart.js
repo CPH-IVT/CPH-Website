@@ -40,7 +40,7 @@ const ChartAttributes = new Vue({
 	//---------------------------------------
 	//					<<[UI Elements]>>
 	// legendListItems - Holds selected counties string titles for display in the legend
-	// dotColorArray - Holds an array of string color values that are linked in parallel with each selected countie item
+	// dotColorArray - Holds an array of string color values that are linked in parallel with each selected county item
 	//---------------------------------------
 	//					<<[Save/Load Variables]>>
 	// regionSaveLoadSelect - Holds the string LOAD or SAVE based upon user selection. Initial state is empty string
@@ -111,7 +111,7 @@ const ChartAttributes = new Vue({
 					rows[i] = rows[i].replace("'", '');
 				}
 
-				// Compares the uploaded file's year to the selected year
+				// Confirm that year in selected file’s name matches year in file content.
 				if (rows[statusIndex] === this.year) {
 					rows.shift();
 				} else if (rows[statusIndex] != this.year) {
@@ -123,7 +123,7 @@ const ChartAttributes = new Vue({
 					alert('Error: Unknown Year Status')
 				}
 
-				// Compares the uploaded file's State/County status to the selected status
+				// Confirm that selected file’s administrative divisions (State/County) match user specified division type.
 				if (rows[statusIndex] === this.toggleStateCounty.toString()) {
 					rows.shift();
 				} else if (rows[statusIndex] != this.toggleStateCounty.toString()) {
@@ -135,22 +135,22 @@ const ChartAttributes = new Vue({
 					alert('Error: Unknown County/State Status')
 				}
 
-				// Clears previous dots and legend
+				// Clears previous chart dots and legend
 				this.resetCountiesStateList();
 				this.clearlegend();
 
-				// Sort the array and adds the uploaded dots and legend
+				// Sort the array and add the uploaded dots and legend
 				rows.sort();
 				this.selectedCounties = rows;
 
-
-				// Checks the checkboxes based upon the the items found in the uploaded file.
+				// Marks the checkboxes based upon the the items found in the uploaded file.
 				let uploadIndex = 0;
 				for (let i = 0; i < document.getElementById("Counties").getElementsByTagName('li').length; i++) {
 					if (document.getElementById("Counties").getElementsByTagName('li')[i].firstChild.id === this.selectedCounties[uploadIndex]) {
 						document.getElementById("Counties").getElementsByTagName('li')[i].firstChild.checked = true;
 						uploadIndex++;
 						if (this.selectedCounties[uploadIndex] === undefined) {
+							//TODO: Convert to while loop or create a better comment
 							break;
 						};
 					};
@@ -159,9 +159,8 @@ const ChartAttributes = new Vue({
 			};
 			if (event.target.files[0] === undefined) {
 				return;
-			} else {
-				this.fileReader.readAsBinaryString(event.target.files[0]);
 			}
+			this.fileReader.readAsBinaryString(event.target.files[0]);	
 		},
 
 		/**
@@ -174,13 +173,13 @@ const ChartAttributes = new Vue({
 			let userResponse = prompt("Please Enter File Save Name:", "ChartSave");
 			if (userResponse == null) {
 				return
-			} else if (userResponse == "") {
+			}
+			if (userResponse == "") {
 				alert("No Name Entered. File Not Saved")
 				return
-            } else {
-				this.writeFileName = userResponse + '.txt'
-			}
-
+            }  
+			this.writeFileName = userResponse + '.txt'
+			
 			// Formats and writes the save file
 			let text = `\'${this.year}\', \'${this.toggleStateCounty.toString()}\', `
 			for (let i = 0; i < this.selectedCounties.length; i++) {
@@ -207,15 +206,14 @@ const ChartAttributes = new Vue({
 		 * @param {any} str
 		 */
 		capitalizer(str) {
-			if (str != null) {
-				let words = str.split(" ");
-				for (let i = 0; i < words.length; i++) {
-					words[i] = words[i][0].toUpperCase() + words[i].substr(1);
-				};
-				return words.join(" ");
-			} else {
+			if (str === null) {
 				return "";
-            }
+			}
+			let words = str.split(" ");
+			for (let i = 0; i < words.length; i++) {
+				words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+			};
+			return words.join(" ");
         },
 
 		/**
@@ -223,37 +221,36 @@ const ChartAttributes = new Vue({
 		 * @param {any} dataset
 		 */
 		getCountyFIPSIndex(dataset) {
-
 			let countyFIPS = 0;
 			const columnPositionFIPS = 0;
 
 			for (let i = 0; i < this.fullRawData.length; i++) {
 				if (Object.keys(dataset[columnPositionFIPS])[i] == "County FIPS Code") {
 					countyFIPS = i;
+					break;
 				};
 			};
 			return countyFIPS;
 		},
 
 		/**
-		* This fuction handles the hiding of the health attribute list
+		* This function handles the hiding of the health attribute list
 		*/
 		displayHealthAttributeToggle() {
 			this.displayHealthAttribute = true;
 		},
 
 		/**
-		* This fuction handles the hiding of the attribute filter items
+		* This function handles the hiding of the attribute filter items
 		*/
 		displayFilterToogle() {
 			this.displayFilter = true;
 		},
 
 		/** 
-		* this function handles the swtiching states and counties
+		* this function handles the switching states and counties
 		*/
 		countyStateToggle() {
-			// Negates the boolean
 			this.toggleStateCounty = !this.toggleStateCounty;
 			this.resetCountiesStateList();
 			this.clearlegend();
@@ -335,20 +332,15 @@ const ChartAttributes = new Vue({
 			let columnNumericDataArray = [];
 			let rowValue = 0;
 			// Populate a numeric array from a column within the dataset aggregate values
-			for (let i = 0; i < dataObject.length; i++) {
+			for (let i = 0; i < dataObject.length; i++) {			
+				if (isFullColumn === true && this.dataHolder[i][columnPositionCountyRanked] === "0") {
+					continue;
+				}
 				// Checks that a full column is selected and that it has been ranked. if true, sum the column values. else sum only the selected values
-				if (isFullColumn === true && this.dataHolder[i][columnPositionCountyRanked] != "0") {
-					rowValue = parseFloat(dataObject[i][valueIndex]);
-					if (!isNaN(rowValue) && rowValue > 0) {
-						columnNumericDataArray.push(rowValue);
-						columnSum += rowValue;
-					}
-				} else if (isFullColumn === false) {
-					rowValue = parseFloat(dataObject[i].percentileInfo[valueIndex]);
-					if (!isNaN(rowValue) && rowValue > 0) {
-						columnNumericDataArray.push(rowValue);
-						columnSum += rowValue;
-					}
+				rowValue = parseFloat(isFullColumn ? dataObject[i][valueIndex] : dataObject[i].percentileInfo[valueIndex]);
+				if (!isNaN(rowValue) && rowValue > 0) {
+					columnNumericDataArray.push(rowValue);
+					columnSum += rowValue;
 				}
 			};
 
@@ -390,7 +382,7 @@ const ChartAttributes = new Vue({
 			const nameIndex = 0;
 			const valueIndex = 1;
 
-			if (dataArray[isFullColumnFlag] === true) {
+			if (dataArray[isFullColumnFlag]) {
 				// Populates the DisplayAggregatePane element
 				this.resultAggregateColumn = (`${dataArray[dataIndex][attributeHeader][attributeHeader]}\n`);
 				for (let i = 1; i < dataArray[dataIndex].length; i++) {
@@ -399,20 +391,21 @@ const ChartAttributes = new Vue({
 				// Sets the DisplayAggregatePane element visible
 				this.DisplayAggregatePane = true;
 				return this.resultAggregateColumn;
-			} else if (dataArray[isFullColumnFlag] == false) {
-				// Checks if the array is empty, and returns an empty string if true. An empty array often occurs when a county is unselected 
-				if (dataArray[dataIndex].length === 0) {
-					this.resultAggregateSelected = "";
-					return this.resultAggregateSelected;
-				}
+			}
+			// Checks if the array is empty, and returns an empty string if true. An empty array often occurs when a county is unselected 
+			if (dataArray[dataIndex] === undefined) {
+				this.resultAggregateSelected = "";
+				return this.resultAggregateSelected;
+			};
+			if (dataArray[isFullColumnFlag] == false) {
 				// Populates the DisplayAggregatePane element
 				this.resultAggregateSelected = (`${dataArray[dataIndex][attributeHeader][attributeHeader]}\n`);
 				for (let i = 1; i < dataArray[dataIndex].length; i++) {
 					this.resultAggregateSelected += (`${dataArray[dataIndex][i][nameIndex]} : ${dataArray[dataIndex][i][valueIndex]}\n`);
 				};
 				return this.resultAggregateSelected;
-            }
-        },
+			}
+		},
 		/**
 		 * @param {HtmlNode} year
 		 * This function fires on year selection, and reads the selected file
@@ -435,6 +428,7 @@ const ChartAttributes = new Vue({
 			}
 
 			// Reads the selected file into the "data" variable
+			//TODO: Create a timeout
 			await d3.csv(`../uploads/${year.target.value}.csv`)
 				.then((data) => {
 
@@ -451,6 +445,7 @@ const ChartAttributes = new Vue({
 				});
 
 			// Displays the filter dropdown
+			//TODO: fix spelling
 			this.displayFilterToogle();
 
 			// Displays the health attribute list
@@ -578,17 +573,15 @@ const ChartAttributes = new Vue({
 			// If a box is checked, run this code
 			if (clickEvent["target"].checked == true) {
 				this.selectedCounties.push(clickEvent["target"].value);
+				return;
 			}
 
-			// If a box is enchecked, run this code
-			if (clickEvent["target"].checked == false) {
-				// Gets the index of the item to be removed
-				let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
+			// If a box is unchecked, run this code
+			let indexOfItemToRemove = this.selectedCounties.indexOf(clickEvent["target"].value);
 
-				// If the index value is greater or equal to 0, splice the item from the array to remove it.
-				if (indexOfItemToRemove >= 0) {
-					this.selectedCounties.splice(indexOfItemToRemove, 1);
-				}
+			// If the index value is greater or equal to 0, splice the item from the array to remove it.
+			if (indexOfItemToRemove >= 0) {
+				this.selectedCounties.splice(indexOfItemToRemove, 1);
 			}
 		},
 		/**
@@ -627,7 +620,7 @@ const ChartAttributes = new Vue({
 			for (let a = 0; a < arrayOfObjects.length; a++) {
 				// push plot dots to marks array
 				marksArray.push(this.createPlotDots(arrayOfObjects[a]));
-				// push plot text to marks array - TODO: See if this can be brought back has hovor text
+				// push plot text to marks array - TODO: See if this can be brought back as hover text
 				//marksArray.push(this.createPlotText(arrayOfObjects[a]));
 			}
 
@@ -643,7 +636,7 @@ const ChartAttributes = new Vue({
 		},
 		/**
 		 * @param {Object} countyStateObject
-		 * Plots graph Text - TODO: See if this can be brought back has hovor text
+		 * Plots graph Text - TODO: See if this can be brought back as hover text
 		 */
 		createPlotText(countyStateObject) {
 			// Plot text example: Plot.text([93.95552771688067, 12212.33], { x: 93.95552771688067, y: 12212.33, text: ["testing"], dy: -8 })
@@ -653,6 +646,7 @@ const ChartAttributes = new Vue({
 		 * @param {Array} countyStateArray
 		 * Returns the county state information
 		 */
+		//TODO: Rename to reflect that states and counties are returned
 		getCountyInformation(countyStateArray) {
 			let countyStateInformation = this.dataHolder.filter(
 				function findCountState(row) {
@@ -726,6 +720,8 @@ const ChartAttributes = new Vue({
 
 				this.dotColorArray = [];
 				// Create a parallel color array for the dotArray
+				// TODO: Prepopulate the dotColorArray.
+				// replace loop body with this.dotColorArray.push(dotArray[i])
 				let count = 0;
 				for (let i = 0; i < dotArray.length; i++) {
 					if (count === 0) {
