@@ -21,24 +21,27 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <!-- User Identity Input -->
+                <!--Hidden captures the user ID-->
                 <div class="form-group">
                     <input v-model="userId" id="UserIdentity" hidden value="@User.Identity.Name" asp-for="UserIdentity" class="form-control" />
                     <span asp-validation-for="UserIdentity" class="text-danger"></span>
                 </div>
 
                 <!-- Date Input -->
+                <!-- Hidden capture the upload date -->
                 <div class="form-group">
                     <input v-model="uploadDate" hidden id="UploadDate" value="@DateTime.Now" asp-for="UploadDate" class="form-control" />
                     <span asp-validation-for="UploadDate" class="text-danger"></span>
                 </div>
 
+                <!--REMOVE-->
                 <!-- Altered File Input -->
-                <input @@change="alteredCsv" id="AlteredFile" type="file" asp-for="AlteredFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" hidden />
-
-                <!-- Original File Input-->
+                <!-- <input @@change="alteredCsv" id="AlteredFile" type="file" asp-for="AlteredFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" hidden /> -->
+                
+                <!-- Original File Input -->
                 <div class="form-group">
                     <label class="control-label">Select a CSV File</label>
-                    <input @@change="setAlteredCsv($event)" id="OriginalFile" type="file" asp-for="OriginalFile" class="form-control" accept=".csv, .xlsx, .xlsm, .xlsb, .xls" />
+                    <input @@change="setAlteredCsv($event)" id="OriginalFile" type="file" asp-for="OriginalFile" class="form-control" accept=".csv" />
                 </div>
 
                 <!--Submit button-->

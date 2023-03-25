@@ -1,4 +1,5 @@
-﻿//let map;
+﻿// TODO: UNUSED
+//let map;
 //let marker;
 //let markers = [];
 //let usStates = [

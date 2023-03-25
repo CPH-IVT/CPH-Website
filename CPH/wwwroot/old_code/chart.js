@@ -1,4 +1,5 @@
-﻿const Chart = {
+﻿// TODO: UNUSED
+const Chart = {
     height: 400,
     width: 640,
     marginTop: 20,

@@ -1,15 +1,8 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-[v-cloak] {
-    display: none;
-}
+/*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\General Settings/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
 
 /* Provide sufficient contrast against white background */
 a {
@@ -22,44 +15,18 @@ a {
   border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
 }
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
-}
-
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-  position: relative;
-  min-height: 100%;
 }
 
 body {
@@ -74,61 +41,23 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 
-
-/* Google Map CSS */
-#map {
-    height: 80%;
-    width: 80%;
-    position: absolute;
-}
-
-/* D3 Map Css*/
-
-.marker {
-    fill: #31558d;
-    stroke: #31558d;
-    fill-opacity: .75;
-    transition: all .2s ease-in-out;
-}
-
-.marker:hover {
-
-    fill: #8d3155;
-    fill-opacity: 1;
-    cursor: pointer;
-
-}
-
-.county-boundary {
-    fill: #aaa;
-    stroke: #fff;
-    stroke-width: .5px;
-}
-
-.county-boundary:hover, .state:hover {
-    fill: orange;
-}
-
-.county-clicked {
-    fill: orange;
-}
-
+/*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\CreateChart: Chart and Aggregate Section/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 .float-child-chart {
     width: 70%;
     float: left;
-    padding: 20px;
-    border: 1px solid black;
-    height: 750px;
+    border: inset;
 }
 
 .float-legend-div {
     width: 30%;
     float: left;
     padding: 20px;
-    border: 1px solid black;
+    border: inset;
     height: 40%;
-    overflow: scroll;
-    display: inline;
+    max-height: 258px;
+    display: block;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 
 .float-legend-div > * {
@@ -148,9 +77,10 @@ body {
     width: 30%;
     float: left;
     padding: 20px;
-    border: 1px solid black;
+    border: inset;
     height: 30%;
     display: inline;
+    overflow: hidden;
 }
 
 .float-child-aggregate-left > * {
@@ -158,7 +88,6 @@ body {
     margin-left: -15px;
     font-size: 16px;
 }
-
 
 .float-child-aggregate-left > h5, .float-child-aggregate-right > h5, .float-legend-div > h5 {
     font-size: 20px;
@@ -170,8 +99,9 @@ body {
     width: 30%;
     float: left;
     padding: 20px;
-    border: 1px solid black;
+    border: inset;
     height: 30%;
+    overflow: hidden;
 }
 
 .float-child-aggregate-right > * {
@@ -185,14 +115,69 @@ body {
     padding: 20px;
 }
 
+/*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\CreateChart: Control Section/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+.divYear {
+    display: inline-block;
+}
+
+.labelYearSelect, Year {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.divAttributeFilter {
+    display: inline-block;
+    padding-left: 8%;
+}
+
+.labelAttributeFilter, attributeFilter {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
 .countryStateSwtich {
-    margin-left: 7%;
+    padding-left: 6%;
+    font-size: 18px;
+    font-weight: bold;
 }
 
-#attributeFilter {
-    margin-left: 8%;
+.divBtnClear {
+    display: block;
+    margin-left: 45.7%;
+    margin-bottom: -2.6%;
+    z-index: 1;
+    position: relative;
 }
 
+.btnClear {
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    color: black;
+    border-radius: 30%;
+    background-color: silver;
+}
+
+.divRegionSaveLoad {
+    display: inline-block;
+    padding-left: 20%;
+}
+
+.labelRegionSaveLoad, regionSaveLoad {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/*----------CreateChart: Switch Settings----------*/
 /* Switch positional controls */
 .switch {
     position: relative;
@@ -200,10 +185,11 @@ body {
     width: 10%;
     height: 34px;
 }
+
 .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 /* Switch background appearance */
@@ -253,6 +239,59 @@ input:checked + .slider:before {
 .slider.round {
     border-radius: 34px;
 }
-.slider.round:before {   
+
+.slider.round:before {      
     border-radius: 50%;
+}
+
+/*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\CreateChart: Selection Section/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+.labelHealthAttrs {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 1%;
+    margin-bottom: -1%;
+    border-style: ridge ridge none ridge;
+}
+
+.labelCounties {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 1%;
+    margin-bottom: -1%;
+    border-style: ridge ridge none ridge;
+}
+
+#HealthAttrs {
+    font-weight: bold;
+    margin-left: 0.25%;
+}
+
+#Counties {
+    font-weight: bold;
+    margin-left: 0.25%;
+}
+
+#SelectRow {
+    margin-top: 1%;
+}
+
+.labelAnomalies {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 1%;
+    margin-bottom: -1%;
+    border-style: ridge ridge none ridge;
+}
+/*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\Vue.js Settings/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+[v-cloak] {
+    display: none;
 }
