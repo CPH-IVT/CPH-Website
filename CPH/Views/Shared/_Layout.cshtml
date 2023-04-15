@@ -34,8 +34,7 @@
                         <li class="nav-item">
                             <!--<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>-->
                         </li>
-                        @if (SignInManager.IsSignedIn(User))
-                        {
+                        @if (SignInManager.IsSignedIn(User)){}
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="CreateChart">Create Chart</a>
                             </li>
@@ -53,7 +52,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Regions">My Regions</a>
                                 </li>*@
-                        }
+                        <!--}-->
                     </ul>
                 </div>
             </div>
