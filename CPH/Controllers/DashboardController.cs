@@ -35,7 +35,8 @@ namespace CPH.Controllers
     /// https://stackoverflow.com/questions/4238345/asynchronously-wait-for-taskt-to-complete-with-timeout
     ///.
     /// </summary>
-    [Authorize]
+    //TODO: Reinstate authorize system
+    //[Authorize]
     public class DashboardController : Controller
     {
         private readonly IRegion _region;
